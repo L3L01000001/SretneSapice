@@ -17,6 +17,12 @@ namespace SretneSapice.Controllers
             _userService = service;
         }
 
+        [HttpPost("Login")]
+        public virtual async Task<UserDto> Login(string username, string password)
+        {
+            return await _userService.Login(username, password);
+        }
+
         [HttpPost("Register")]
         public virtual async Task<UserDto> Register([FromBody] UserInsertRequest registration)
         {

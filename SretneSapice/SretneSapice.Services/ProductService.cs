@@ -18,28 +18,32 @@ namespace SretneSapice.Services
         {
         }
 
-        //public override async Task<List<ProductDto>> GetAll(ProductSearchObject search)
-        //{
-        //    var query = _context.Set<Product>().AsQueryable();
-
-        //    if(!string.IsNullOrWhiteSpace(search?.Name))
-        //    {
-        //        query = query.Where( x => x.Name.StartsWith(search.Name));
-        //    }
-
-        //    var list = await query.ToListAsync();
-
-        //    return _mapper.Map<List<ProductDto>>(list);
-        //}
-
         public override IQueryable<Product> AddFilter(IQueryable<Product> query, ProductSearchObject? search = null)
         {
             if (!string.IsNullOrWhiteSpace(search?.Name))
             {
-                query = query.Where(x => x.Name.StartsWith(search.Name));
+                query = query.Where(x => x.Name.Contains(search.Name));
             }
 
             return base.AddFilter(query, search);
+        }
+
+        public async Task<List<ProductDto>> GetProductsByPriceLowToHighAsync()
+        {
+            var products = await _context.Products.OrderBy(p => p.Price).ToListAsync();
+            return _mapper.Map<List<ProductDto>>(products);
+        }
+
+        public async Task<List<ProductDto>> GetProductsByPriceHighToLowAsync()
+        {
+            var products = await _context.Products.OrderByDescending(p => p.Price).ToListAsync();
+            return _mapper.Map<List<ProductDto>>(products);
+        }
+
+        public async Task<List<ProductDto>> GetNewestProductsAsync()
+        {
+            var products = await _context.Products.OrderByDescending(p => p.CreatedDate).ToListAsync();
+            return _mapper.Map<List<ProductDto>>(products);
         }
 
     }

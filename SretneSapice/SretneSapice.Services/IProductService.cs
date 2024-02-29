@@ -11,6 +11,8 @@ namespace SretneSapice.Services
 {
     public interface IProductService : ICRUDService<ProductDto, ProductSearchObject, ProductInsertRequest, ProductUpdateRequest>
     {
-
+        Task<List<ProductDto>> GetProductsByPriceLowToHighAsync();
+        Task<List<ProductDto>> GetProductsByPriceHighToLowAsync();
+        Task<List<ProductDto>> GetNewestProductsAsync();
     }
 }

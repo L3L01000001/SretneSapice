@@ -30,7 +30,53 @@ namespace SretneSapice.Services.Profiles
             CreateMap<Role, RoleDto>();
 
             CreateMap<City, CityDto>();
+
             CreateMap<Country, CountryDto>();
+
+            CreateMap<Tag, TagDto>().ReverseMap();
+            CreateMap<TagInsertRequest, Tag>().ReverseMap();
+
+            CreateMap<Comment, CommentDto>();
+            CreateMap<CommentInsertRequest, Comment>();
+
+            CreateMap<CommentLike, CommentLikeDto>();
+
+            CreateMap<ForumPost, ForumPostDto>();
+            CreateMap<ForumPostInsertRequest, ForumPost>();
+
+            CreateMap<List<string>, ICollection<Tag>>()
+            .ConvertUsing<StringListToTagCollectionConverter>();
+        }
+    }
+
+    public class StringListToTagCollectionConverter : ITypeConverter<List<string>, ICollection<Tag>>
+    {
+        private readonly _180148Context _context;
+
+        public StringListToTagCollectionConverter(_180148Context context)
+        {
+            _context = context;
+        }
+
+        public ICollection<Tag> Convert(List<string> source, ICollection<Tag> destination, ResolutionContext context)
+        {
+            var tagEntities = new List<Tag>();
+
+            foreach (var tagName in source)
+            {
+                var existingTag = _context.Tags.FirstOrDefault(t => t.TagName == tagName);
+                if (existingTag != null)
+                {
+                    tagEntities.Add(existingTag);
+                }
+                else
+                {
+                    var newTag = new Tag { TagName = tagName };
+                    tagEntities.Add(newTag);
+                }
+            }
+
+            return tagEntities;
         }
     }
 }

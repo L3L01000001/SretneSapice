@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SretneSapice.Services.Database;
 
@@ -25,5 +26,6 @@ public partial class ForumPost
 
     public virtual User? User { get; set; }
 
+    [JsonIgnore]
     public virtual ICollection<Tag> Tags { get; } = new List<Tag>();
 }

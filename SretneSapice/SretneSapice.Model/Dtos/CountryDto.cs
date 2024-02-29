@@ -8,7 +8,7 @@ namespace SretneSapice.Model.Dtos
 {
     public class CountryDto
     {
-        public int CountryID { get; set; }
-        public string CountryName { get; set; }
+        public int CountryId { get; set; }
+        public string? CountryName { get; set; }
     }
 }

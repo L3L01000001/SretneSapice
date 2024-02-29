@@ -29,5 +29,17 @@ namespace SretneSapice.Controllers
             return await _service.Update(id, update);
         }
 
+        [HttpPut("{id}/Delete")]
+        public virtual async Task<T> Delete(int id)
+        {
+            return await _service.Delete(id);
+        }
+
+        [HttpPut("{id}/HardDelete")]
+        public virtual async Task<T> HardDelete(int id)
+        {
+            return await _service.HardDelete(id);
+        }
+
     }
 }

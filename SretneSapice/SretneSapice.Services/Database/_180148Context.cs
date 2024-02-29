@@ -55,6 +55,8 @@ public partial class _180148Context : DbContext
 
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
+    public virtual DbSet<ForumPostTag> ForumPostTags { get; set; }
+
     public virtual DbSet<UserShippingInformation> UserShippingInformations { get; set; }
 
     public virtual DbSet<WalkerReview> WalkerReviews { get; set; }
@@ -65,6 +67,8 @@ public partial class _180148Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<ForumPostTag>().HasNoKey();
+
         modelBuilder.Entity<City>(entity =>
         {
             entity.ToTable("City");
@@ -228,24 +232,7 @@ public partial class _180148Context : DbContext
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__ForumPost__UserI__40058253");
 
-            entity.HasMany(d => d.Tags).WithMany(p => p.Posts)
-                .UsingEntity<Dictionary<string, object>>(
-                    "PostTag",
-                    r => r.HasOne<Tag>().WithMany()
-                        .HasForeignKey("TagId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__PostTag__TagID__671F4F74"),
-                    l => l.HasOne<ForumPost>().WithMany()
-                        .HasForeignKey("PostId")
-                        .OnDelete(DeleteBehavior.ClientSetNull)
-                        .HasConstraintName("FK__PostTag__PostID__662B2B3B"),
-                    j =>
-                    {
-                        j.HasKey("PostId", "TagId").HasName("PK__PostTag__7C45AF9CC54F8090");
-                        j.ToTable("PostTag");
-                        j.IndexerProperty<int>("PostId").HasColumnName("PostID");
-                        j.IndexerProperty<int>("TagId").HasColumnName("TagID");
-                    });
+            entity.HasMany(d => d.Tags).WithMany(p => p.Posts);
         });
 
         modelBuilder.Entity<Order>(entity =>

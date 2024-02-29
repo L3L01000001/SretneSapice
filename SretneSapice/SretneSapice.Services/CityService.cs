@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services.Database;
@@ -14,6 +15,19 @@ namespace SretneSapice.Services
     {
         public CityService(_180148Context context, IMapper mapper) : base(context, mapper)
         {
+        }
+
+        public override IQueryable<City> AddInclude(IQueryable<City> query, BaseSearchObject? search = null)
+        {
+            query = query.Include(x => x.Country);
+            return base.AddInclude(query, search);
+        }
+
+        public override async Task<CityDto> GetById(int id)
+        {
+            var entity = await _context.Cities.Include(x => x.Country).FirstOrDefaultAsync(x => x.CityId == id);
+            return _mapper.Map<CityDto>(entity);
+
         }
     }
 }

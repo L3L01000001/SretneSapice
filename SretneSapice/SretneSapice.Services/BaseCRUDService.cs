@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using SretneSapice.Model.Helpers;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services.Database;
 using System;
@@ -76,6 +77,32 @@ namespace SretneSapice.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<T>(entity);
+        }
+
+        public virtual async Task<T> Delete(int id)
+        {
+            var set = _context.Set<TDb>();
+
+            var entity = await set.FindAsync(id);
+
+            StatusHelper<TDb>.SetStatus(entity, false);
+
+            await _context.SaveChangesAsync();
+
+            return await GetById(id);
+        }
+
+        public virtual async Task<T> HardDelete(int id)
+        {
+            var set = _context.Set<TDb>();
+
+            var entity = await set.FindAsync(id);
+
+            set.Remove(entity);
+
+            await _context.SaveChangesAsync();
+
+            return await GetById(id);
         }
     }
 }
