@@ -9,10 +9,7 @@ using System.Threading.Tasks;
 
 namespace SretneSapice.Services
 {
-    public interface IOrderService : ICRUDService<OrderDto, OrderSearchObject, OrderInsertRequest, OrderInsertRequest>
+    public interface IUserShippingInformationService : ICRUDService<UserShippingInformationDto, BaseSearchObject, UserShippingInformationInsertRequest, UserShippingInformationInsertRequest>
     {
-        Task<decimal?> CalculateTotalAmount(int orderId);
-        Task UpdateTotalAmount(int orderId);
-        Task<string> GenerateUniqueOrderNumber();
     }
 }

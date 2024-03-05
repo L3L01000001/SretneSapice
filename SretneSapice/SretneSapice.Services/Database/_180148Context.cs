@@ -373,8 +373,10 @@ public partial class _180148Context : DbContext
 
             entity.Property(e => e.ServiceRequestId).HasColumnName("ServiceRequestID");
             entity.Property(e => e.DogWalkerId).HasColumnName("DogWalkerID");
-            entity.Property(e => e.EndTime).HasColumnType("datetime");
-            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.EndTime).HasColumnType("time");
+            entity.Property(e => e.StartTime).HasColumnType("time");
+            entity.Property(e => e.Date).HasColumnType("datetime");
+            entity.Property(e => e.DogBreed).HasColumnType("string");
             entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 

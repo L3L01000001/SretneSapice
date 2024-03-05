@@ -17,11 +17,5 @@ namespace SretneSapice.Services
         public TagService(_180148Context context, IMapper mapper) : base(context, mapper)
         {
         }
-
-        public async Task<TagDto> GetTagByName(string tagName)
-        {
-            var tag = await _context.Tags.FirstOrDefaultAsync(t => t.TagName == tagName);
-            return _mapper.Map<TagDto>(tag);
-        }
     }
 }

@@ -9,10 +9,8 @@ using System.Threading.Tasks;
 
 namespace SretneSapice.Services
 {
-    public interface IOrderService : ICRUDService<OrderDto, OrderSearchObject, OrderInsertRequest, OrderInsertRequest>
+    public interface IWalkerReviewService : ICRUDService<WalkerReviewDto, BaseSearchObject, WalkerReviewInsertRequest, WalkerReviewInsertRequest>
     {
-        Task<decimal?> CalculateTotalAmount(int orderId);
-        Task UpdateTotalAmount(int orderId);
-        Task<string> GenerateUniqueOrderNumber();
+        Task UpdateDogWalkerRating(int dogWalkerId);
     }
 }

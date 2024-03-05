@@ -7,6 +7,7 @@ using SretneSapice.Model.Dtos;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services;
 using SretneSapice.Services.Database;
+using SretneSapice.Services.DogWalkerStatusStateMachine;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,8 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IService<ProductTypeDto, BaseSearchObject>, BaseService<ProductTypeDto, ProductType, BaseSearchObject>>();
-builder.Services.AddTransient<IService<CityDto, BaseSearchObject>, BaseService<CityDto, City, BaseSearchObject>>();
+builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<ICityService, CityService>();
 builder.Services.AddTransient<IForumPostService, ForumPostService>();
 builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<ICommentService, CommentService>();
@@ -24,6 +25,19 @@ builder.Services.AddTransient<ICommentLikeService, CommentLikeService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IOrderItemService, OrderItemService>();
+builder.Services.AddTransient<IDogWalkerService, DogWalkerService>();
+builder.Services.AddTransient<IServiceRequestService, ServiceRequestService>();
+builder.Services.AddTransient<IWalkerReviewService, WalkerReviewService>();
+builder.Services.AddTransient<IFavoriteWalkerService, FavoriteWalkerService>();
+
+builder.Services.AddTransient<BaseState>();
+builder.Services.AddTransient<PendingState>();
+builder.Services.AddTransient<ApprovedState>();
+builder.Services.AddTransient<RejectedState>();
+builder.Services.AddTransient<CancelledState>();
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
 
 builder.Services.AddControllers();
 
@@ -67,7 +81,7 @@ builder.Services.AddAutoMapper(typeof(IUserService));
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
-builder.Services.AddHttpContextAccessor();
+//builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 

@@ -29,6 +29,8 @@ public partial class DogWalker
 
     public bool? IsApproved { get; set; }
 
+    public string Status { get; set; }
+
     public virtual City? City { get; set; }
 
     public virtual ICollection<DogWalkerAvailability> DogWalkerAvailabilities { get; } = new List<DogWalkerAvailability>();

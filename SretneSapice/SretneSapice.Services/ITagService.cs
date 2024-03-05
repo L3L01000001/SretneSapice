@@ -11,6 +11,5 @@ namespace SretneSapice.Services
 {
     public interface ITagService : ICRUDService<TagDto, TagSearchObject, TagInsertRequest, TagInsertRequest>
     {
-        Task<TagDto> GetTagByName(string tagName);
     }
 }

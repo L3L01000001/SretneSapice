@@ -9,7 +9,7 @@ namespace SretneSapice.Controllers
     [ApiController]
     public class CitiesController : BaseController<CityDto, BaseSearchObject>
     {
-        public CitiesController( ILogger<BaseController<CityDto, BaseSearchObject>> logger, IService<CityDto, BaseSearchObject> service) : base(logger, service)
+        public CitiesController( ILogger<BaseController<CityDto, BaseSearchObject>> logger, ICityService service) : base(logger, service)
         {
         }
     }

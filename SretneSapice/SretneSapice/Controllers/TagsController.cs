@@ -10,16 +10,8 @@ namespace SretneSapice.Controllers
     [Route("[controller]")]
     public class TagsController : BaseCRUDController<TagDto, TagSearchObject, TagInsertRequest, TagInsertRequest>
     {
-        private readonly ITagService _tagService;
         public TagsController(ITagService service, ILogger<BaseController<TagDto, TagSearchObject>> logger ) : base(logger, service)
         {
-            _tagService = service;
-        }
-
-        [HttpGet("GetTagByName/{tagName}")]
-        public async Task<TagDto> GetTagByName(string tagName)
-        {
-            return await _tagService.GetTagByName(tagName);
         }
     }
 }

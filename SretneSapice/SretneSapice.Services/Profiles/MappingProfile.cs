@@ -44,6 +44,27 @@ namespace SretneSapice.Services.Profiles
             CreateMap<ForumPost, ForumPostDto>();
             CreateMap<ForumPostInsertRequest, ForumPost>();
 
+            CreateMap<OrderItem, OrderItemDto>();
+            CreateMap<OrderItemInsertRequest, OrderItem>();
+
+            CreateMap<Order, OrderDto>();
+
+            CreateMap<UserShippingInformation, UserShippingInformationDto>();
+            CreateMap<UserShippingInformationInsertRequest, UserShippingInformation>();
+
+            CreateMap<DogWalker, DogWalkerDto>();
+            CreateMap<DogWalkerInsertRequest, DogWalker>();
+
+            CreateMap<ServiceRequest, ServiceRequestDto>();
+            CreateMap<ServiceRequestInsertRequest, ServiceRequest>();
+
+            CreateMap<WalkerReview, WalkerReviewDto>();
+            CreateMap<WalkerReviewInsertRequest, WalkerReview>();
+
+            CreateMap<FavoriteWalker, FavoriteWalkerDto>();
+            CreateMap<FavoriteWalkerInsertRequest, FavoriteWalker>();
+
+
             CreateMap<List<string>, ICollection<Tag>>()
             .ConvertUsing<StringListToTagCollectionConverter>();
         }

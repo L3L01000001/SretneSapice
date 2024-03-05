@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using SretneSapice.Services.Database;
 
@@ -11,9 +12,11 @@ using SretneSapice.Services.Database;
 namespace SretneSapice.Services.Migrations
 {
     [DbContext(typeof(_180148Context))]
-    partial class _180148ContextModelSnapshot : ModelSnapshot
+    [Migration("20240302182636_AddStatusColumnToDogWalker")]
+    partial class AddStatusColumnToDogWalker
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -192,10 +195,6 @@ namespace SretneSapice.Services.Migrations
 
                     b.Property<int?>("Rating")
                         .HasColumnType("int");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Surname")
                         .IsRequired()
@@ -605,18 +604,15 @@ namespace SretneSapice.Services.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceRequestId"));
 
-                    b.Property<DateTime?>("Date")
-                        .HasColumnType("datetime");
-
                     b.Property<int?>("DogWalkerId")
                         .HasColumnType("int")
                         .HasColumnName("DogWalkerID");
 
-                    b.Property<TimeSpan?>("EndTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime?>("EndTime")
+                        .HasColumnType("datetime");
 
-                    b.Property<TimeSpan?>("StartTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime?>("StartTime")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Status")
                         .HasMaxLength(20)

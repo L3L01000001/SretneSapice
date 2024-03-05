@@ -16,8 +16,14 @@ namespace SretneSapice.Services
 {
     public class ForumPostService : BaseCRUDService<ForumPostDto, ForumPost, ForumPostSearchObject, ForumPostInsertRequest, ForumPostUpdateRequest>, IForumPostService
     {
-        public ForumPostService(_180148Context context, IMapper mapper) : base(context, mapper)
-        {  
+        public long LoggedInUserId;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public ForumPostService(_180148Context context, IMapper mapper,
+            IHttpContextAccessor httpContextAccessor) : base(context, mapper)
+        {
+            _httpContextAccessor = httpContextAccessor;
+            ClaimsIdentity user = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+            LoggedInUserId = Convert.ToUInt32(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
         public override async Task<ForumPostDto> Insert(ForumPostInsertRequest insertRequest)
         {
@@ -41,6 +47,8 @@ namespace SretneSapice.Services
             }
 
             var forumPostEntity = _mapper.Map<ForumPost>(insertRequest);
+
+            forumPostEntity.UserId = (int?)LoggedInUserId;
 
             foreach (var existingTag in existingTags)
             {
@@ -82,6 +90,12 @@ namespace SretneSapice.Services
             await _context.SaveChangesAsync();
 
             return await GetById(postId);
+        }
+
+        public override IQueryable<ForumPost> AddInclude(IQueryable<ForumPost> query, ForumPostSearchObject? search = null)
+        {
+            query = query.Include(x => x.Tags).Include(x => x.Comments);
+            return base.AddInclude(query, search);
         }
 
         public override IQueryable<ForumPost> AddFilter(IQueryable<ForumPost> query, ForumPostSearchObject? search = null)
