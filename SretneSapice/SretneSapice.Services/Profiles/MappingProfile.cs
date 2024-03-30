@@ -64,6 +64,10 @@ namespace SretneSapice.Services.Profiles
             CreateMap<FavoriteWalker, FavoriteWalkerDto>();
             CreateMap<FavoriteWalkerInsertRequest, FavoriteWalker>();
 
+            CreateMap<Payment, PaymentDto>();
+            CreateMap<PaymentInsertRequest, Payment>();
+
+
 
             CreateMap<List<string>, ICollection<Tag>>()
             .ConvertUsing<StringListToTagCollectionConverter>();

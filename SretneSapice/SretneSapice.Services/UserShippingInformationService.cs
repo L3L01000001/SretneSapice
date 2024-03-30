@@ -38,6 +38,12 @@ namespace SretneSapice.Services
 
             await _context.SaveChangesAsync();
 
+            var userOrder = await _context.Orders.FirstOrDefaultAsync(x => x.UserId == LoggedInUserId);
+
+            userOrder.ShippingInfoId = userShippingInfoEntity.ShippingInfoId;
+
+            await _context.SaveChangesAsync();
+
             return _mapper.Map<UserShippingInformationDto>(userShippingInfoEntity);
         }
     }

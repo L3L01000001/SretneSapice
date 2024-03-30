@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Client;
 using SretneSapice.Model.Constants;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
@@ -65,6 +66,38 @@ namespace SretneSapice.Services
             var deletedItem = await base.HardDelete(id);
 
             return deletedItem;
+        }
+
+        public async Task<bool> IsScheduledServiceTime(int serviceId)
+        {
+            var service = await _context.ScheduledServices.FindAsync(serviceId);
+            if (service == null)
+            {
+                return false;
+            }
+
+            DateTime currentTime = DateTime.Now;
+            return currentTime >= service.StartTime && currentTime <= service.EndTime;
+        }
+
+        public async Task UpdateLiveLocationEnabled(int serviceId, bool enableLiveLocation)
+        {
+            var service = await _context.ServiceRequests.FindAsync(serviceId);
+            if (service == null)
+            {
+                throw new Exception("Service request not found");
+            }
+
+            service.LiveLocationEnabled = enableLiveLocation;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+               throw new Exception("Failed to update live location status.");
+            }
         }
 
         public async Task AcceptServiceRequest(int serviceRequestId)

@@ -6,6 +6,7 @@ using SretneSapice.Handlers;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services;
+using SretneSapice.Services.Clients;
 using SretneSapice.Services.Database;
 using SretneSapice.Services.DogWalkerStatusStateMachine;
 using System.Text.Json.Serialization;
@@ -29,6 +30,7 @@ builder.Services.AddTransient<IDogWalkerService, DogWalkerService>();
 builder.Services.AddTransient<IServiceRequestService, ServiceRequestService>();
 builder.Services.AddTransient<IWalkerReviewService, WalkerReviewService>();
 builder.Services.AddTransient<IFavoriteWalkerService, FavoriteWalkerService>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
 
 builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<PendingState>();
@@ -81,6 +83,14 @@ builder.Services.AddAutoMapper(typeof(IUserService));
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
+// paypal client configuration
+builder.Services.AddSingleton(x =>
+    new PaypalClient(
+        builder.Configuration["PayPalOptions:ClientId"],
+        builder.Configuration["PayPalOptions:ClientSecret"],
+        builder.Configuration["PayPalOptions:Mode"]
+    )
+);
 //builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

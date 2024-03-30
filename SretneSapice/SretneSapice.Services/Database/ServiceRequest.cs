@@ -19,6 +19,7 @@ public partial class ServiceRequest
 
     public string? Status { get; set; }
     public string DogBreed { get; set; }
+    public bool LiveLocationEnabled { get; set; }
 
     public virtual DogWalker? DogWalker { get; set; }
 
