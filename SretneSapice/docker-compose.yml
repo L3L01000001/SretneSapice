@@ -1,0 +1,36 @@
+version: '3'
+services:
+#mssql docker
+  sretnesapice-sql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=SretneSapice123
+      - MSSQL_PID=Developer
+    ports:
+      - 1401:1433
+    expose:
+      - 1433
+    networks:
+      - sretnesapicenet
+
+  sretnesapice-api:
+    restart: unless-stopped
+    build:
+      context: .
+    environment:
+      - ConnectionStrings:DefaultConnection=Server=sretnesapice-sql,1433;Database=IB180148_docker;User=sa;Password=SretneSapice123;ConnectRetryCount=0; TrustServerCertificate=True
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - 7094:7094
+    networks:
+      - sretnesapicenet
+    links:
+      - sretnesapice-sql
+    depends_on:
+      - sretnesapice-sql
+      
+networks:
+  sretnesapicenet:
+    driver: bridge     

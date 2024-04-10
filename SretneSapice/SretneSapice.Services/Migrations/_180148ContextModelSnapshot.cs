@@ -610,7 +610,8 @@ namespace SretneSapice.Services.Migrations
 
                     b.Property<string>("DogBreed")
                         .IsRequired()
-                        .HasColumnType("string");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("DogWalkerId")
                         .HasColumnType("int")
@@ -618,6 +619,9 @@ namespace SretneSapice.Services.Migrations
 
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time");
+
+                    b.Property<bool>("LiveLocationEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");

@@ -12,8 +12,8 @@ using SretneSapice.Services.Database;
 namespace SretneSapice.Services.Migrations
 {
     [DbContext(typeof(_180148Context))]
-    [Migration("20240303000916_AddBreedColumnToServiceRequest")]
-    partial class AddBreedColumnToServiceRequest
+    [Migration("20240410031730_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -611,12 +611,19 @@ namespace SretneSapice.Services.Migrations
                     b.Property<DateTime?>("Date")
                         .HasColumnType("datetime");
 
+                    b.Property<string>("DogBreed")
+                        .IsRequired()
+                        .HasColumnType("string");
+
                     b.Property<int?>("DogWalkerId")
                         .HasColumnType("int")
                         .HasColumnName("DogWalkerID");
 
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time");
+
+                    b.Property<bool>("LiveLocationEnabled")
+                        .HasColumnType("bit");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time");
@@ -797,7 +804,7 @@ namespace SretneSapice.Services.Migrations
                         .HasColumnType("int")
                         .HasColumnName("DogWalkerID");
 
-                    b.Property<int?>("Rating")
+                    b.Property<int>("Rating")
                         .HasColumnType("int");
 
                     b.Property<string>("ReviewText")

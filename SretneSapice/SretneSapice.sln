@@ -3,11 +3,18 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SretneSapice", "SretneSapice\SretneSapice.csproj", "{A2C9374D-E7D8-4CBA-8D51-13DD530FC830}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SretneSapice", "SretneSapice\SretneSapice.csproj", "{A2C9374D-E7D8-4CBA-8D51-13DD530FC830}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SretneSapice.Model", "SretneSapice.Model\SretneSapice.Model.csproj", "{A5C2DCFD-63EC-4517-BEAF-8E3ABEA0173E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SretneSapice.Model", "SretneSapice.Model\SretneSapice.Model.csproj", "{A5C2DCFD-63EC-4517-BEAF-8E3ABEA0173E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SretneSapice.Services", "SretneSapice.Services\SretneSapice.Services.csproj", "{32A03BB9-0A9A-437D-8294-E1AF500ACA93}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SretneSapice.Services", "SretneSapice.Services\SretneSapice.Services.csproj", "{32A03BB9-0A9A-437D-8294-E1AF500ACA93}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{554ED0DC-382D-4A44-A36D-55D5766D61CF}"
+	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
+		docker-compose.yml = docker-compose.yml
+		SretneSapice\Dockerfile = SretneSapice\Dockerfile
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

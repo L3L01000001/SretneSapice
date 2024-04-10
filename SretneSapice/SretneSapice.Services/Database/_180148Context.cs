@@ -61,10 +61,6 @@ public partial class _180148Context : DbContext
 
     public virtual DbSet<WalkerReview> WalkerReviews { get; set; }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=localhost;Initial Catalog=180148;TrustServerCertificate=True;Trusted_Connection=true;");
-
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<ForumPostTag>().HasNoKey();
@@ -376,7 +372,7 @@ public partial class _180148Context : DbContext
             entity.Property(e => e.EndTime).HasColumnType("time");
             entity.Property(e => e.StartTime).HasColumnType("time");
             entity.Property(e => e.Date).HasColumnType("datetime");
-            entity.Property(e => e.DogBreed).HasColumnType("string");
+            entity.Property(e => e.DogBreed).HasMaxLength(50);
             entity.Property(e => e.Status).HasMaxLength(20);
             entity.Property(e => e.UserId).HasColumnName("UserID");
 
