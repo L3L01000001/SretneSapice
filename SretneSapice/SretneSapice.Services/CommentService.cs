@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
@@ -29,6 +30,22 @@ namespace SretneSapice.Services
             await _context.Comments.AddAsync(commentEntity);
             await _context.SaveChangesAsync();
 
+            var post = await _context.ForumPosts.FindAsync(insertRequest.PostId);
+            if (post != null)
+            {
+                var factory = new ConnectionFactory { HostName = "localhost" };
+                using var connection = factory.CreateConnection();
+                using var channel = connection.CreateModel();
+
+                string message = $"{post.User.Name} received a new comment on '{post.Title}' post";
+
+                var body = Encoding.UTF8.GetBytes(message);
+
+                channel.BasicPublish(exchange: string.Empty,
+                                     routingKey: "comments",
+                                     basicProperties: null,
+                                     body: body);
+            }
 
             return _mapper.Map<CommentDto>(commentEntity);
         }
