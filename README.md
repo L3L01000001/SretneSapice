@@ -1,2 +1,6 @@
 # SretneSapice
-Sretne Šapice - seminarski rad
+Credentials:
+
+Admin
+username: admin
+pass: test
