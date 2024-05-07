@@ -1,4 +1,5 @@
-﻿using SretneSapice.Model.Dtos;
+﻿using SretneSapice.Model;
+using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
 using System;
@@ -11,8 +12,8 @@ namespace SretneSapice.Services
 {
     public interface IForumPostService : ICRUDService<ForumPostDto, ForumPostSearchObject, ForumPostInsertRequest, ForumPostUpdateRequest>
     {
-        Task<List<ForumPostDto>> GetForumPostsByNewestAsync();
-        Task<List<ForumPostDto>> GetForumPostsByOldestAsync();
-        Task<List<ForumPostDto>> GetForumPostsByMostPopularAsync();
+        Task<PagedResult<ForumPostDto>> GetForumPostsByNewestAsync();
+        Task<PagedResult<ForumPostDto>> GetForumPostsByOldestAsync();
+        Task<PagedResult<ForumPostDto>> GetForumPostsByMostPopularAsync();
     }
 }

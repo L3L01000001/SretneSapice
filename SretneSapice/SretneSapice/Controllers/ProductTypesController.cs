@@ -8,7 +8,7 @@ namespace SretneSapice.Controllers
     [ApiController]
     public class ProductTypesController : BaseController<ProductTypeDto, BaseSearchObject>
     {
-        public ProductTypesController(IService<ProductTypeDto, BaseSearchObject> service, ILogger<BaseController<ProductTypeDto, BaseSearchObject>> logger): base(logger, service)
+        public ProductTypesController(ILogger<BaseController<ProductTypeDto, BaseSearchObject>> logger, IProductTypeService service ): base(logger, service)
         {
         }
     }

@@ -5,6 +5,7 @@ using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services.Database;
 using SretneSapice.Services;
 using Microsoft.AspNetCore.Authorization;
+using SretneSapice.Model;
 
 namespace SretneSapice.Controllers
 {
@@ -20,21 +21,21 @@ namespace SretneSapice.Controllers
         }
 
         [HttpGet("Newest")]
-        public async Task<ActionResult<List<ForumPostDto>>> GetForumPostsByNewest()
+        public async Task<ActionResult<PagedResult<ForumPostDto>>> GetForumPostsByNewest()
         {
             var posts = await _forumPostService.GetForumPostsByNewestAsync();
             return Ok(posts);
         }
 
         [HttpGet("Oldest")]
-        public async Task<ActionResult<List<ForumPostDto>>> GetForumPostsByOldest()
+        public async Task<ActionResult<PagedResult<ForumPostDto>>> GetForumPostsByOldest()
         {
             var posts = await _forumPostService.GetForumPostsByOldestAsync();
             return Ok(posts);
         }
 
         [HttpGet("Mostpopular")]
-        public async Task<ActionResult<List<ForumPostDto>>> GetForumPostsByMostPopular()
+        public async Task<ActionResult<PagedResult<ForumPostDto>>> GetForumPostsByMostPopular()
         {
             var posts = await _forumPostService.GetForumPostsByMostPopularAsync();
             return Ok(posts);

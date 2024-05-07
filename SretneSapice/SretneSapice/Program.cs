@@ -17,13 +17,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IUserService, UserService>();
-builder.Services.AddTransient<IProductService, ProductService>();
+builder.Services.AddTransient<IProductTypeService, ProductTypeService>();
 builder.Services.AddTransient<ICityService, CityService>();
 builder.Services.AddTransient<IForumPostService, ForumPostService>();
 builder.Services.AddTransient<ITagService, TagService>();
 builder.Services.AddTransient<ICommentService, CommentService>();
 builder.Services.AddTransient<ICommentLikeService, CommentLikeService>();
 builder.Services.AddTransient<ICountryService, CountryService>();
+builder.Services.AddTransient<IRoleService, RoleService>();
 builder.Services.AddTransient<IOrderService, OrderService>();
 builder.Services.AddTransient<IOrderItemService, OrderItemService>();
 builder.Services.AddTransient<IDogWalkerService, DogWalkerService>();
@@ -31,6 +32,7 @@ builder.Services.AddTransient<IServiceRequestService, ServiceRequestService>();
 builder.Services.AddTransient<IWalkerReviewService, WalkerReviewService>();
 builder.Services.AddTransient<IFavoriteWalkerService, FavoriteWalkerService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
+builder.Services.AddTransient<IUserShippingInformationService, UserShippingInformationService>();
 
 builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<PendingState>();
@@ -109,11 +111,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dataContext = scope.ServiceProvider.GetRequiredService<_180148Context>();
+//using (var scope = app.Services.CreateScope())
+//{
+//    var dataContext = scope.ServiceProvider.GetRequiredService<_180148Context>();
 
-    dataContext.Database.Migrate();
-}
+//    dataContext.Database.Migrate();
+//}
 
 app.Run();

@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
+using SretneSapice.Model;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
@@ -94,7 +95,7 @@ namespace SretneSapice.Services
 
         public override IQueryable<ForumPost> AddInclude(IQueryable<ForumPost> query, ForumPostSearchObject? search = null)
         {
-            query = query.Include(x => x.Tags).Include(x => x.Comments);
+            query = query.Include(x => x.Tags).Include(x => x.Comments).Include(x => x.User);
             return base.AddInclude(query, search);
         }
 
@@ -110,22 +111,49 @@ namespace SretneSapice.Services
             return filteredQuery;
         }
 
-        public async Task<List<ForumPostDto>> GetForumPostsByNewestAsync()
+        public async Task<PagedResult<ForumPostDto>> GetForumPostsByNewestAsync()
         {
-            var posts = await _context.ForumPosts.OrderByDescending(p => p.Timestamp).ToListAsync();
-            return _mapper.Map<List<ForumPostDto>>(posts);
+            var query = _context.ForumPosts.OrderByDescending(p => p.Timestamp).AsQueryable();
+
+            PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
+
+            result.Count = await query.CountAsync();
+
+            var forumPosts = await query.ToListAsync();
+
+            result.Result = _mapper.Map<List<ForumPostDto>>(forumPosts);
+
+            return result;
         }
 
-        public async Task<List<ForumPostDto>> GetForumPostsByOldestAsync()
+        public async Task<PagedResult<ForumPostDto>> GetForumPostsByOldestAsync()
         {
-            var posts = await _context.ForumPosts.OrderBy(p => p.Timestamp).ToListAsync();
-            return _mapper.Map<List<ForumPostDto>>(posts);
+            var query = _context.ForumPosts.OrderBy(p => p.Timestamp).AsQueryable();
+
+            PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
+
+            result.Count = await query.CountAsync();
+
+            var forumPosts = await query.ToListAsync();
+
+            result.Result = _mapper.Map<List<ForumPostDto>>(forumPosts);
+
+            return result;
         }
 
-        public async Task<List<ForumPostDto>> GetForumPostsByMostPopularAsync()
+        public async Task<PagedResult<ForumPostDto>> GetForumPostsByMostPopularAsync()
         {
-            var posts = await _context.ForumPosts.OrderByDescending(p => p.LikesCount).ToListAsync();
-            return _mapper.Map<List<ForumPostDto>>(posts);
+            var query = _context.ForumPosts.OrderByDescending(p => p.LikesCount).AsQueryable();
+
+            PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
+
+            result.Count = await query.CountAsync();
+
+            var forumPosts = await query.ToListAsync();
+
+            result.Result = _mapper.Map<List<ForumPostDto>>(forumPosts);
+
+            return result;
         }
     }
 }

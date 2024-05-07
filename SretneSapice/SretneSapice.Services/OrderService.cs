@@ -19,6 +19,12 @@ namespace SretneSapice.Services
         {
         }
 
+        public override IQueryable<Order> AddInclude(IQueryable<Order> query, OrderSearchObject? search = null)
+        {
+            query = query.Include(x => x.User);
+            return base.AddInclude(query, search);
+        }
+
         public async Task<string> GenerateUniqueOrderNumber()
         {
             string orderNumber;

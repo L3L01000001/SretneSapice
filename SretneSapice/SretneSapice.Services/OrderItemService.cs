@@ -34,6 +34,16 @@ namespace SretneSapice.Services
             return base.AddInclude(query, search);
         }
 
+        public override IQueryable<OrderItem> AddFilter(IQueryable<OrderItem> query, OrderItemSearchObject? search = null)
+        {
+            if (search.OrderId != null)
+            {
+                query = query.Where(x => x.OrderId == search.OrderId);
+            }
+
+            return base.AddFilter(query, search);
+        }
+
         public override async Task<OrderItemDto> Insert(OrderItemInsertRequest insertRequest)
         {
             var order = await _context.Orders.FirstOrDefaultAsync(o => o.UserId == LoggedInUserId && o.Status == OrderStatuses.InCart);

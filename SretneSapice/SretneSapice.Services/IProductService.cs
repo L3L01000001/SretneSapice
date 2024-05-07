@@ -1,4 +1,5 @@
-﻿using SretneSapice.Model.Dtos;
+﻿using SretneSapice.Model;
+using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
 using System;
@@ -11,8 +12,8 @@ namespace SretneSapice.Services
 {
     public interface IProductService : ICRUDService<ProductDto, ProductSearchObject, ProductInsertRequest, ProductUpdateRequest>
     {
-        Task<List<ProductDto>> GetProductsByPriceLowToHighAsync();
-        Task<List<ProductDto>> GetProductsByPriceHighToLowAsync();
-        Task<List<ProductDto>> GetNewestProductsAsync();
+        Task<PagedResult<ProductDto>> GetProductsByPriceLowToHighAsync();
+        Task<PagedResult<ProductDto>> GetProductsByPriceHighToLowAsync();
+        Task<PagedResult<ProductDto>> GetNewestProductsAsync();
     }
 }

@@ -66,14 +66,38 @@ namespace SretneSapice.Services
             {
                 query = query.Include("UserRoles.Role");
             }
+
+            query = query.Include(x => x.City);
             return base.AddInclude(query, search);
+        }
+
+        public override IQueryable<User> AddFilter(IQueryable<User> query, UserSearchObject? search = null)
+        {
+            if (!string.IsNullOrWhiteSpace(search?.Name))
+            {
+                query = query.Where(x => x.Name.Contains(search.Name));
+            }
+
+            if (!string.IsNullOrWhiteSpace(search?.Roles))
+            {
+                var roles = search.Roles.Split(','); 
+
+                query = query.Where(u => u.UserRoles.Any(ur => roles.Contains(ur.Role.Name)));
+            }
+
+            if (search?.isActive != null)
+            {
+                query = query.Where(x => x.Status == search.isActive);
+            }
+
+            return base.AddFilter(query, search);
         }
 
         public async Task<UserDto?> Login(string username, string password)
         {
             var entity = await _context.Users.Include("UserRoles.Role").FirstOrDefaultAsync(x => x.Username == username);
 
-            if (entity == null)
+            if (entity == null || entity.Status == false)
                 return null;
 
             var hash = GenerateHash(entity.PasswordSalt, password);
@@ -88,7 +112,7 @@ namespace SretneSapice.Services
 
         public async Task<UserDto> Register(UserInsertRequest newUser)
         {
-            var userRole = await _context.Roles.FirstOrDefaultAsync(x => x.Name == "User");
+            var userRole = await _context.Roles.FirstOrDefaultAsync(x => x.Name == "Administrator");
 
             if (await _context.Users.AnyAsync(x => x.Username.Equals(newUser.Username)))
             {
@@ -102,7 +126,8 @@ namespace SretneSapice.Services
                 Email = newUser.Email,
                 Phone = newUser.Phone,
                 Username = newUser.Username,
-                CityId = newUser.CityID
+                CityId = newUser.CityID,
+                Status = true
             };
 
             var salt = GenerateSalt();

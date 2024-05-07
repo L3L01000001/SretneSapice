@@ -23,6 +23,8 @@ namespace SretneSapice.Model.Dtos
 
         public string ConfirmPassword { get; set; }
         public int CityID { get; set; }
+        public byte[]? ProfilePhoto { get; set; }
+        public bool? Status { get; set; }
         public virtual ICollection<UserRoleDto> UserRoles { get; } = new List<UserRoleDto>();
 
         public RoleDto? Role { get; set; }

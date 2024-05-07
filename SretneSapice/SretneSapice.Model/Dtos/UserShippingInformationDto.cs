@@ -8,6 +8,9 @@ namespace SretneSapice.Model.Dtos
 {
     public class UserShippingInformationDto
     {
+        public int ShippingInfoId { get; set; }
+
+        public int? UserId { get; set; }
         public string? Address { get; set; }
 
         public string? City { get; set; }

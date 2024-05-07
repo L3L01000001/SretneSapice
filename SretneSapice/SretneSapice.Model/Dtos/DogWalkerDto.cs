@@ -9,6 +9,7 @@ namespace SretneSapice.Model.Dtos
     public class DogWalkerDto
     {
         public int DogWalkerId { get; set; }
+        public int UserId { get; set; }
         public string Name { get; set; }
         public string Surname { get; set; }
         public string? FullName => $"{Name} {Surname}";
