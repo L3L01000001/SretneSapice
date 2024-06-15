@@ -18,14 +18,14 @@ namespace SretneSapice.Services
         {
         }
 
-        public async Task<CommentLikeDto> LikeComment(int commentId, int userId)
+        public async Task LikeComment(int commentId, int userId)
         {
             var existingLike = await _context.CommentLikes
                 .FirstOrDefaultAsync(cl => cl.CommentId == commentId && cl.UserId == userId);
 
             if (existingLike != null)
             {
-                return null;
+                return;
             }
 
             var newLike = new CommentLike
@@ -38,7 +38,6 @@ namespace SretneSapice.Services
             _context.CommentLikes.Add(newLike);
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<CommentLikeDto>(newLike);
         }
 
         public async Task UnlikeComment(int commentId, int userId)

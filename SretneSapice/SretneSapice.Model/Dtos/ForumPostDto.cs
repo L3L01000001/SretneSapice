@@ -21,6 +21,7 @@ namespace SretneSapice.Model.Dtos
 
         public virtual UserDto? User { get; set; }
 
-        public virtual ICollection<TagDto> Tags { get; } = new List<TagDto>();
+        public virtual ICollection<ForumPostTagDto> ForumPostTags { get; } = new List<ForumPostTagDto>();
+        public TagDto? Tag { get; set; }
     }
 }

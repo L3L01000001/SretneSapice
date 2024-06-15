@@ -112,7 +112,7 @@ namespace SretneSapice.Services
 
         public async Task<UserDto> Register(UserInsertRequest newUser)
         {
-            var userRole = await _context.Roles.FirstOrDefaultAsync(x => x.Name == "Administrator");
+            var userRole = await _context.Roles.FirstOrDefaultAsync(x => x.Name == "DogWalkerVerifier");
 
             if (await _context.Users.AnyAsync(x => x.Username.Equals(newUser.Username)))
             {

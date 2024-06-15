@@ -33,3 +33,19 @@ String formatNumber(dynamic) {
 
   return f.format(dynamic);
 }
+
+String formatDate(dynamic) {
+  var d = DateFormat('dd.MM.yyyy');
+
+  if(dynamic == null){
+    return "";
+  }
+
+  return d.format(dynamic);
+}
+
+String formatDateTime(dynamic) {
+  var d = DateFormat('dd.MM.yyyy HH:mm');
+  
+  return d.format(dynamic);
+}

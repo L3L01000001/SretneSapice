@@ -11,7 +11,7 @@ namespace SretneSapice.Services
 {
     public interface ICommentLikeService : IService<CommentLikeDto, BaseSearchObject>
     {
-        Task<CommentLikeDto> LikeComment(int commentId, int userId);
+        Task LikeComment(int commentId, int userId);
         Task UnlikeComment(int commentId, int userId);
         Task<List<CommentLikeDto>> GetLikesForComment(int commentId);
     }

@@ -43,27 +43,26 @@ class _UserListScreenState extends State<UserListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-        title: "Korisnici",
-        initialIndex: 1,
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-              _buildSearch(),
-              UserListFilter(
-                onFilterChanged: (selectedRoles, isActive) {
-                  setState(() {
-                    _selectedRoles = selectedRoles;
-                    _isActive = isActive;
-                  });
-                  _loadData();
-                },
-              ),
-              _buildDataListView()
-            ]),
+      title: "Korisnici",
+      initialIndex: 1,
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+          _buildSearch(),
+          UserListFilter(
+            onFilterChanged: (selectedRoles, isActive) {
+              setState(() {
+                _selectedRoles = selectedRoles;
+                _isActive = isActive;
+              });
+              _loadData();
+            },
           ),
-        );
+          _buildDataListView()
+        ]),
+      ),
+    );
   }
 
   Widget _buildSearch() {
@@ -128,16 +127,16 @@ class _UserListScreenState extends State<UserListScreen> {
       child: SingleChildScrollView(
         child: result != null && result!.result.isNotEmpty
             ? ClipRRect(
-              borderRadius: BorderRadius.circular(35),
-              child: DataTable(
-                border: TableBorder.all(
-                      style: BorderStyle.solid,
-                      color: Color.fromARGB(255, 116, 57, 199),
-                      borderRadius: BorderRadius.all(Radius.circular(35)),
-                    ),
-                    headingRowHeight: 50,
-                    headingRowColor: MaterialStateColor.resolveWith(
-                        (states) => Color.fromARGB(255, 61, 6, 137)),
+                borderRadius: BorderRadius.circular(35),
+                child: DataTable(
+                  border: TableBorder.all(
+                    style: BorderStyle.solid,
+                    color: Color.fromARGB(255, 116, 57, 199),
+                    borderRadius: BorderRadius.all(Radius.circular(35)),
+                  ),
+                  headingRowHeight: 50,
+                  headingRowColor: MaterialStateColor.resolveWith(
+                      (states) => Color.fromARGB(255, 61, 6, 137)),
                   dataRowMaxHeight: 100,
                   dataRowMinHeight: 40,
                   columns: [
@@ -155,7 +154,7 @@ class _UserListScreenState extends State<UserListScreen> {
                         child: Text('Prezime',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                               color: Color.fromARGB(255, 242, 237, 247),
+                                color: Color.fromARGB(255, 242, 237, 247),
                                 fontSize: 18)),
                       ),
                     ),
@@ -182,7 +181,7 @@ class _UserListScreenState extends State<UserListScreen> {
                         child: Text('Korisničko ime',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                               color: Color.fromARGB(255, 242, 237, 247),
+                                color: Color.fromARGB(255, 242, 237, 247),
                                 fontSize: 18)),
                       ),
                     ),
@@ -218,7 +217,7 @@ class _UserListScreenState extends State<UserListScreen> {
                         child: Text('Status računa',
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
-                               color: Color.fromARGB(255, 242, 237, 247),
+                                color: Color.fromARGB(255, 242, 237, 247),
                                 fontSize: 18)),
                       ),
                     ),
@@ -238,22 +237,28 @@ class _UserListScreenState extends State<UserListScreen> {
                           cells: [
                             DataCell(Text(e.name ?? "",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14))),
                             DataCell(Text(e.surname ?? "",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14))),
                             DataCell(Text(e.email ?? "",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14))),
                             DataCell(Text(e.phone ?? "",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14))),
                             DataCell(Text(e.username ?? "",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14))),
                             DataCell(Text(e.city?.name ?? "",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 14))),
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 14))),
                             DataCell(
                               Text(
                                 e.status != null
@@ -287,7 +292,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                             onPressed: () async {
                                               await _userProvider
                                                   .delete(e.userId!);
-              
+
                                               showDialog(
                                                   context: context,
                                                   builder:
@@ -308,7 +313,8 @@ class _UserListScreenState extends State<UserListScreen> {
                                                                     ),
                                                                   );
                                                                 },
-                                                                child: Text("OK"),
+                                                                child:
+                                                                    Text("OK"),
                                                               )
                                                             ],
                                                           ));
@@ -346,8 +352,9 @@ class _UserListScreenState extends State<UserListScreen> {
                                                 'status': true,
                                               };
                                               await _userProvider.update(
-                                                  e.userId!, statusUpdateRequest);
-              
+                                                  e.userId!,
+                                                  statusUpdateRequest);
+
                                               showDialog(
                                                   context: context,
                                                   builder:
@@ -368,7 +375,8 @@ class _UserListScreenState extends State<UserListScreen> {
                                                                     ),
                                                                   );
                                                                 },
-                                                                child: Text("OK"),
+                                                                child:
+                                                                    Text("OK"),
                                                               )
                                                             ],
                                                           ));
@@ -401,7 +409,7 @@ class _UserListScreenState extends State<UserListScreen> {
                       )
                       .toList(),
                 ),
-            )
+              )
             : Center(
                 child: Text(
                   'Nema korisnika koji odgovaraju ovom zahtjevu!',

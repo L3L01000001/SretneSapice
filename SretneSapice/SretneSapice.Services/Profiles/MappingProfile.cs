@@ -42,7 +42,6 @@ namespace SretneSapice.Services.Profiles
             CreateMap<CommentLike, CommentLikeDto>();
 
             CreateMap<ForumPost, ForumPostDto>();
-            CreateMap<ForumPostInsertRequest, ForumPost>();
 
             CreateMap<OrderItem, OrderItemDto>();
             CreateMap<OrderItemInsertRequest, OrderItem>();
@@ -66,6 +65,8 @@ namespace SretneSapice.Services.Profiles
 
             CreateMap<Payment, PaymentDto>();
             CreateMap<PaymentInsertRequest, Payment>();
+
+            CreateMap<ForumPostTag, ForumPostTagDto>();
 
 
 

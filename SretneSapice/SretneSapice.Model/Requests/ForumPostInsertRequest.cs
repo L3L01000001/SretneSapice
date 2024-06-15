@@ -14,7 +14,7 @@ namespace SretneSapice.Model.Requests
         public string Title { get; set; } = null!;
 
         public string? PostContent { get; set; }
-        //public int? UserId { get; set; }
+        public int? UserId { get; set; }
 
         public byte[]? Photo { get; set; }
 

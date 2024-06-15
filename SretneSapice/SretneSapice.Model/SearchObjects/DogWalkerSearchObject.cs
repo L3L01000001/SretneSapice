@@ -9,6 +9,7 @@ namespace SretneSapice.Model.SearchObjects
     public class DogWalkerSearchObject : BaseSearchObject
     {
         public string? FullName { get; set; }
+        public bool? isApproved { get; set; }
         public int? Rating { get; set; }
         public bool? BestRating { get; set; }
         public int? CityId { get; set; }

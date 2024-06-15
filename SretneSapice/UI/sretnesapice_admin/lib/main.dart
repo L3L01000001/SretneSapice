@@ -10,6 +10,7 @@ import 'package:sretnesapice_admin/providers/role_provider.dart';
 import 'package:sretnesapice_admin/providers/tag_provider.dart';
 import 'package:sretnesapice_admin/providers/user_provider.dart';
 import 'package:sretnesapice_admin/providers/product_type_provider.dart';
+import 'package:sretnesapice_admin/screens/dog_walkers_list_screen.dart';
 import 'package:sretnesapice_admin/screens/product_list_screen.dart';
 import 'package:sretnesapice_admin/utils/util.dart';
 
@@ -96,23 +97,27 @@ class _LoginPageState extends State<LoginPage> {
     try {
       Authorization.user = await _userProvider.Authenticate();
 
-      if (Authorization.user?.userRoles
-                  .any((role) => role.role?.name == "Administrator") ==
-              true ||
-          Authorization.user?.userRoles
-                  .any((role) => role.role?.name == "DogWalkerVerifier") ==
-              true) {
+      if (Authorization.user?.userRoles.any((role) => role.role?.name == "Administrator") == true) {
+      setState(() {
+        loggedInUserID = Authorization.user?.userId;
+      });
 
-        setState(() {
-          loggedInUserID = Authorization.user?.userId;
-        });
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const ProductListScreen(),
+        ),
+      );
+    } else if (Authorization.user?.userRoles.any((role) => role.role?.name == "DogWalkerVerifier") == true) {
+      setState(() {
+        loggedInUserID = Authorization.user?.userId;
+      });
 
-        Navigator.of(context).push(
-          MaterialPageRoute(
-            builder: (context) => const ProductListScreen(),
-          ),
-        );
-      } else {
+      Navigator.of(context).push(
+        MaterialPageRoute(
+          builder: (context) => const DogWalkersListScreen(),
+        ),
+      );
+    } else {
         showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(

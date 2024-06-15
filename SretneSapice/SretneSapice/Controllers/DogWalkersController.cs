@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SretneSapice.Model;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
@@ -55,16 +56,34 @@ namespace SretneSapice.Controllers
         }
 
         [HttpGet("getDogWalkersWithMostReviewsFirst")]
-        public async Task<List<DogWalkerDto>> GetDogWalkersWithMostReviewsFirst()
+        public async Task<ActionResult<PagedResult<DogWalkerDto>>> GetDogWalkersWithMostReviewsFirst()
         {
-            return await _dogWalkerService.GetDogWalkersWithMostReviewsFirst();
+            var dogwalkers =  await _dogWalkerService.GetDogWalkersWithMostReviewsFirst();
+
+            return Ok(dogwalkers);
         }
 
 
         [HttpGet("getDogWalkersWithMostFinishedServicesFirst")]
-        public async Task<List<DogWalkerDto>> GetDogWalkersWithMostFinishedServicesFirst()
+        public async Task<ActionResult<PagedResult<DogWalkerDto>>> GetDogWalkersWithMostFinishedServicesFirst()
         {
-            return await _dogWalkerService.GetDogWalkersWithMostFinishedServicesFirst();
+            var dogwalkers = await _dogWalkerService.GetDogWalkersWithMostFinishedServicesFirst();
+            return Ok(dogwalkers);
+
+        }
+
+        [HttpGet("hasUserAppliedToBeDogWalker/{userId}")]
+        public async Task<IActionResult> CheckDogWalkerApplicationStatus(int userId)
+        {
+            var hasApplied = await _dogWalkerService.HasUserAppliedToBeDogWalker(userId);
+            return Ok(hasApplied);
+        }
+
+        [HttpGet("getDogWalkerStatusByUserId/{userId}")]
+        public IActionResult GetDogWalkerStatusByUserId(int userId)
+        {
+            var status = _dogWalkerService.GetDogWalkerStatusByUserId(userId);
+            return Ok(status);
         }
 
     }

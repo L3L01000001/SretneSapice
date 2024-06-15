@@ -1,6 +1,8 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:sretnesapice_admin/models/tag.dart';
 import 'package:sretnesapice_admin/models/user.dart';
+import 'package:sretnesapice_admin/models/forum_post_tag.dart';
+import 'package:sretnesapice_admin/models/comment.dart';
 
 part 'forum_post.g.dart';
 
@@ -12,11 +14,13 @@ class ForumPost {
   String? postContent;
   DateTime timestamp;
   String? photo;
-  List<Tag> tags;
+  List<Tag>? tags;
+  List<ForumPostTag>? forumPostTags;
   User? user;
+  List<Comment>? comments;
 
   ForumPost(this.postId, this.userId, this.title, this.postContent,
-      this.timestamp, this.photo, this.tags, this.user);
+      this.timestamp, this.photo, this.tags, this.forumPostTags, this.user, this.comments);
 
   factory ForumPost.fromJson(Map<String, dynamic> json) =>
       _$ForumPostFromJson(json);

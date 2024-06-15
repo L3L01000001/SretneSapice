@@ -63,7 +63,25 @@ public partial class _180148Context : DbContext
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        modelBuilder.Entity<ForumPostTag>().HasNoKey();
+        modelBuilder.Entity<ForumPostTag>(entity => {
+            entity.HasKey(e => new { e.PostsPostId, e.TagsTagId });
+
+            entity.ToTable("ForumPostTag");
+
+            entity.Property(e => e.PostsPostId).HasColumnName("PostsPostId");
+            entity.Property(e => e.TagsTagId).HasColumnName("TagsTagId");
+            entity.Property(e => e.PostId).HasColumnName("PostId");
+            entity.Property(e => e.TagId).HasColumnName("TagId");
+
+            entity.HasOne(pt => pt.ForumPost)
+            .WithMany(p => p.ForumPostTags)
+            .HasForeignKey(pt => pt.PostsPostId);
+
+            entity.HasOne(pt => pt.Tag)
+                .WithMany(t => t.ForumPostTags)
+                .HasForeignKey(pt => pt.TagsTagId);
+
+        });
 
         modelBuilder.Entity<City>(entity =>
         {
@@ -228,7 +246,10 @@ public partial class _180148Context : DbContext
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__ForumPost__UserI__40058253");
 
-            entity.HasMany(d => d.Tags).WithMany(p => p.Posts);
+            entity.HasMany(fp => fp.ForumPostTags)
+                .WithOne(fpt => fpt.ForumPost)
+                .HasForeignKey(fpt => fpt.PostsPostId);
+
         });
 
         modelBuilder.Entity<Order>(entity =>
@@ -393,6 +414,10 @@ public partial class _180148Context : DbContext
 
             entity.Property(e => e.TagId).HasColumnName("TagID");
             entity.Property(e => e.TagName).HasMaxLength(100);
+
+            entity.HasMany(fp => fp.ForumPostTags)
+                .WithOne(fpt => fpt.Tag)
+                .HasForeignKey(fpt => fpt.TagsTagId);
         });
 
         modelBuilder.Entity<User>(entity =>

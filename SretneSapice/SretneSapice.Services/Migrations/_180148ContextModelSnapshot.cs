@@ -22,21 +22,6 @@ namespace SretneSapice.Services.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("ForumPostTag", b =>
-                {
-                    b.Property<int>("PostsPostId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsTagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PostsPostId", "TagsTagId");
-
-                    b.HasIndex("TagsTagId");
-
-                    b.ToTable("ForumPostTag");
-                });
-
             modelBuilder.Entity("SretneSapice.Services.Database.City", b =>
                 {
                     b.Property<int>("CityId")
@@ -333,23 +318,27 @@ namespace SretneSapice.Services.Migrations
 
             modelBuilder.Entity("SretneSapice.Services.Database.ForumPostTag", b =>
                 {
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
+                    b.Property<int>("PostsPostId")
+                        .HasColumnType("int")
+                        .HasColumnName("PostsPostId");
 
-                    b.Property<int?>("PostsPostId")
-                        .HasColumnType("int");
+                    b.Property<int>("TagsTagId")
+                        .HasColumnType("int")
+                        .HasColumnName("TagsTagId");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("PostId");
 
                     b.Property<int?>("TagId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("TagId");
 
-                    b.Property<int?>("TagsTagId")
-                        .HasColumnType("int");
+                    b.HasKey("PostsPostId", "TagsTagId");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("TagsTagId");
 
-                    b.HasIndex("TagId");
-
-                    b.ToTable("ForumPostTags");
+                    b.ToTable("ForumPostTag", (string)null);
                 });
 
             modelBuilder.Entity("SretneSapice.Services.Database.Order", b =>
@@ -826,21 +815,6 @@ namespace SretneSapice.Services.Migrations
                     b.ToTable("WalkerReview", (string)null);
                 });
 
-            modelBuilder.Entity("ForumPostTag", b =>
-                {
-                    b.HasOne("SretneSapice.Services.Database.ForumPost", null)
-                        .WithMany()
-                        .HasForeignKey("PostsPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SretneSapice.Services.Database.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SretneSapice.Services.Database.City", b =>
                 {
                     b.HasOne("SretneSapice.Services.Database.Country", "Country")
@@ -954,15 +928,19 @@ namespace SretneSapice.Services.Migrations
 
             modelBuilder.Entity("SretneSapice.Services.Database.ForumPostTag", b =>
                 {
-                    b.HasOne("SretneSapice.Services.Database.ForumPost", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId");
+                    b.HasOne("SretneSapice.Services.Database.ForumPost", "ForumPost")
+                        .WithMany("ForumPostTags")
+                        .HasForeignKey("PostsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SretneSapice.Services.Database.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId");
+                        .WithMany("ForumPostTags")
+                        .HasForeignKey("TagsTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Post");
+                    b.Navigation("ForumPost");
 
                     b.Navigation("Tag");
                 });
@@ -1144,6 +1122,8 @@ namespace SretneSapice.Services.Migrations
             modelBuilder.Entity("SretneSapice.Services.Database.ForumPost", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("ForumPostTags");
                 });
 
             modelBuilder.Entity("SretneSapice.Services.Database.Order", b =>
@@ -1166,6 +1146,11 @@ namespace SretneSapice.Services.Migrations
             modelBuilder.Entity("SretneSapice.Services.Database.Role", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("SretneSapice.Services.Database.Tag", b =>
+                {
+                    b.Navigation("ForumPostTags");
                 });
 
             modelBuilder.Entity("SretneSapice.Services.Database.User", b =>

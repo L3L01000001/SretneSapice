@@ -8,6 +8,7 @@ class DogWalker {
   int? userId;
   String? name;
   String? surname;
+  String? fullName;
   int? age;
   int? cityId;
   String? phone;
@@ -22,6 +23,7 @@ class DogWalker {
       this.userId,
       this.name,
       this.surname,
+      this.fullName,
       this.age,
       this.cityId,
       this.phone,

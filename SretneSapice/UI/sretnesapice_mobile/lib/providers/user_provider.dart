@@ -26,4 +26,23 @@ class UserProvider extends BaseProvider<User> {
       throw Exception("Pogrešno korisničko ime ili lozinka");
     }
   }
+
+  Future<User?> register(dynamic request) async {
+    var url = "$totalUrl/Register";
+    var uri = Uri.parse(url);
+
+    var headers = {
+      "Content-Type": "application/json",
+      'Connection': 'keep-alive',
+    };
+    var jsonRequest = jsonEncode(request);
+    var response = await http!.post(uri, headers: headers, body: jsonRequest);
+
+    if (isValidResponseCode(response)) {
+      var data = jsonDecode(response.body);
+      return fromJson(data) as User;
+    } else {
+      return null;
+    }
+  }
 }

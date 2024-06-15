@@ -31,21 +31,21 @@ namespace SretneSapice.Services
             await _context.SaveChangesAsync();
 
             var post = await _context.ForumPosts.FindAsync(insertRequest.PostId);
-            if (post != null)
-            {
-                var factory = new ConnectionFactory { HostName = "localhost" };
-                using var connection = factory.CreateConnection();
-                using var channel = connection.CreateModel();
+            //if (post != null)
+            //{
+            //    var factory = new ConnectionFactory { HostName = "localhost" };
+            //    using var connection = factory.CreateConnection();
+            //    using var channel = connection.CreateModel();
 
-                string message = $"{post.User.Name} received a new comment on '{post.Title}' post";
+            //    string message = $"{post.User.Name} received a new comment on '{post.Title}' post";
 
-                var body = Encoding.UTF8.GetBytes(message);
+            //    var body = Encoding.UTF8.GetBytes(message);
 
-                channel.BasicPublish(exchange: string.Empty,
-                                     routingKey: "comments",
-                                     basicProperties: null,
-                                     body: body);
-            }
+            //    channel.BasicPublish(exchange: string.Empty,
+            //                         routingKey: "comments",
+            //                         basicProperties: null,
+            //                         body: body);
+            //}
 
             return _mapper.Map<CommentDto>(commentEntity);
         }

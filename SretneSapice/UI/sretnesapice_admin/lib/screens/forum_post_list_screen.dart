@@ -275,7 +275,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14))),
                             DataCell(
-                              Text(e.tags.map((tag) => tag?.tagName).join(', '),
+                              Text((e.tags?.map((tag) => tag?.tagName).join(', ') ?? 'No tags available'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14)),

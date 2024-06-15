@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:sretnesapice_admin/main.dart';
+import 'package:sretnesapice_admin/models/user.dart';
+import 'package:sretnesapice_admin/screens/dog_walkers_list_screen.dart';
 import 'package:sretnesapice_admin/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_admin/screens/order_list_screen.dart';
 import 'package:sretnesapice_admin/screens/product_list_screen.dart';
 import 'package:sretnesapice_admin/screens/product_details_screen.dart';
 import 'package:sretnesapice_admin/screens/reports_screen.dart';
 import 'package:sretnesapice_admin/screens/user_list_screen.dart';
+import 'package:sretnesapice_admin/utils/util.dart';
 
 class MasterScreenWidget extends StatefulWidget {
   Widget? child;
   String? title;
-  int initialIndex; // New field to store the initial index
+  int initialIndex; 
   MasterScreenWidget(
       {this.child, this.title, required this.initialIndex, super.key});
 
@@ -21,6 +24,8 @@ class MasterScreenWidget extends StatefulWidget {
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   int _selectedIndex = 0;
+
+  User? user = Authorization.user;
 
   @override
   void initState() {
@@ -65,47 +70,58 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               child: Image.asset("assets/images/circle_logo.png"),
             ),
             SizedBox(height: 20),
-            _buildListTile(0, 'Proizvodi', 'assets/icons/products.png', () {
-              _onItemTapped(0);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const ProductListScreen(),
-                ),
-              );
-            }),
-            _buildListTile(1, 'Korisnici', 'assets/icons/users.png', () {
-              _onItemTapped(1);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const UserListScreen(),
-                ),
-              );
-            }),
-            _buildListTile(2, 'Forum postovi', 'assets/icons/forum_posts.png',
-                () {
-              _onItemTapped(2);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const ForumPostListScreen(),
-                ),
-              );
-            }),
-            _buildListTile(3, 'Narudžbe', 'assets/icons/orders.png', () {
-              _onItemTapped(3);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const OrderListScreen(),
-                ),
-              );
-            }),
-            _buildListTile(4, 'Izvještaji', 'assets/icons/reports.png', () {
-              _onItemTapped(4);
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const ReportsScreen(),
-                ),
-              );
-            }),
+            if (!_isDogWalkerVerifier()) ...[
+              _buildListTile(0, 'Proizvodi', 'assets/icons/products.png', () {
+                _onItemTapped(0);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const ProductListScreen(),
+                  ),
+                );
+              }),
+              _buildListTile(1, 'Korisnici', 'assets/icons/users.png', () {
+                _onItemTapped(1);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const UserListScreen(),
+                  ),
+                );
+              }),
+              _buildListTile(2, 'Forum postovi', 'assets/icons/forum_posts.png',
+                  () {
+                _onItemTapped(2);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const ForumPostListScreen(),
+                  ),
+                );
+              }),
+              _buildListTile(3, 'Narudžbe', 'assets/icons/orders.png', () {
+                _onItemTapped(3);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const OrderListScreen(),
+                  ),
+                );
+              }),
+              _buildListTile(4, 'Izvještaji', 'assets/icons/reports.png', () {
+                _onItemTapped(4);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const ReportsScreen(),
+                  ),
+                );
+              }),
+            ] else ...[
+              _buildListTile(5, 'Šetači', 'assets/icons/reports.png', () {
+                _onItemTapped(5);
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(
+                    builder: (context) => const DogWalkersListScreen(),
+                  ),
+                );
+              }),
+            ],
             SizedBox(height: 70),
             Padding(
               padding: EdgeInsets.all(32),
@@ -197,5 +213,10 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
       _selectedIndex = index;
     });
     return _selectedIndex;
+  }
+
+   bool _isDogWalkerVerifier() {
+    return user?.userRoles?.any((role) => role.role?.name == "DogWalkerVerifier") ??
+        false;
   }
 }

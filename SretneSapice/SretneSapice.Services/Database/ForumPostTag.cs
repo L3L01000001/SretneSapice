@@ -11,11 +11,14 @@ namespace SretneSapice.Services.Database
     public partial class ForumPostTag
     {
         // Composite key properties
-        public int? PostsPostId { get; set; }
-        public int? TagsTagId { get; set; }
+        public int PostsPostId { get; set; }
+        public int TagsTagId { get; set; }
+
+        public int? PostId { get; set; }
+        public int? TagId { get; set; }
 
         // Navigation properties
-        public ForumPost? Post { get; set; }
-        public Tag? Tag { get; set; }
+        public virtual ForumPost? ForumPost { get; set; }
+        public virtual Tag? Tag { get; set; }
     }
 }

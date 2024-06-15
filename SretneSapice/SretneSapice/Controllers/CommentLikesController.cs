@@ -16,15 +16,14 @@ namespace SretneSapice.Controllers
             _commentService = commentService;
         }
 
-        [HttpPost]
-        public async Task<CommentLikeDto> LikeComment(int commentId, int userId)
+        [HttpPost("like")]
+        public async Task LikeComment(int commentId, int userId)
         {
-            var like = await _commentLikeService.LikeComment(commentId, userId);
+            await _commentLikeService.LikeComment(commentId, userId);
             await _commentService.UpdateCommentLikesCount(commentId);
-            return like;
         }
 
-        [HttpPut]
+        [HttpPut("unlike")]
         public async Task UnlikeComment(int commentId, int userId)
         {
             await _commentLikeService.UnlikeComment(commentId, userId);

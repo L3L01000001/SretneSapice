@@ -49,30 +49,38 @@ namespace SretneSapice.Services
 
             var forumPostEntity = _mapper.Map<ForumPost>(insertRequest);
 
-            forumPostEntity.UserId = (int?)LoggedInUserId;
-
             foreach (var existingTag in existingTags)
             {
-                forumPostEntity.Tags.Add(existingTag);
+                forumPostEntity.ForumPostTags.Add(new ForumPostTag { PostsPostId = forumPostEntity.PostId, Tag = existingTag });
             }
 
             foreach (var newTagName in newTags)
             {
                 var newTagEntity = new Tag { TagName = newTagName };
-                forumPostEntity.Tags.Add(newTagEntity);
+                _context.Tags.Add(newTagEntity);
+                forumPostEntity.ForumPostTags.Add(new ForumPostTag { PostsPostId = forumPostEntity.PostId, Tag = newTagEntity });
             }
+
 
             await _context.ForumPosts.AddAsync(forumPostEntity);
             await _context.SaveChangesAsync();
 
-            foreach (var tag in forumPostEntity.Tags)
-            {
-                _context.ForumPostTags.Add(new ForumPostTag { PostsPostId = forumPostEntity.PostId, TagsTagId = tag.TagId });
-            }
-
-            await _context.SaveChangesAsync();
 
             return _mapper.Map<ForumPostDto>(forumPostEntity);
+        }
+
+        public override async Task<ForumPostDto> GetById(int id)
+        {
+            var entity = await _context.Set<ForumPost>()
+                .Include(fp => fp.Comments)
+                .FirstOrDefaultAsync(fp => fp.PostId == id);
+
+            if (entity == null)
+            {
+                throw new Exception("ForumPost not found!");
+            }
+
+            return _mapper.Map<ForumPostDto>(entity);
         }
 
         public override async Task<ForumPostDto> HardDelete(int postId)
@@ -82,11 +90,12 @@ namespace SretneSapice.Services
             {
                 throw new Exception("Post with this ID does not exist!");
             }
-
-            _context.ForumPosts.Remove(postToDelete);
-
             var postTags = await _context.ForumPostTags.Where(pt => pt.PostsPostId == postId).ToListAsync();
             _context.ForumPostTags.RemoveRange(postTags);
+
+            
+            _context.ForumPosts.Remove(postToDelete);
+
 
             await _context.SaveChangesAsync();
 
@@ -95,7 +104,10 @@ namespace SretneSapice.Services
 
         public override IQueryable<ForumPost> AddInclude(IQueryable<ForumPost> query, ForumPostSearchObject? search = null)
         {
-            query = query.Include(x => x.Tags).Include(x => x.Comments).Include(x => x.User);
+            query = query
+                .Include("ForumPostTags.Tag") 
+                .Include(x => x.Comments)
+                .Include(x => x.User);
             return base.AddInclude(query, search);
         }
 

@@ -9,5 +9,5 @@ public partial class Tag
 
     public string? TagName { get; set; }
 
-    public virtual ICollection<ForumPost> Posts { get; } = new List<ForumPost>();
+    public virtual ICollection<ForumPostTag> ForumPostTags { get; } = new List<ForumPostTag>();
 }

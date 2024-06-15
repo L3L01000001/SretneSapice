@@ -1,4 +1,6 @@
-﻿using SretneSapice.Model.Dtos;
+﻿using Microsoft.EntityFrameworkCore;
+using SretneSapice.Model;
+using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services.Database;
@@ -19,7 +21,10 @@ namespace SretneSapice.Services
 
         Task<List<string>> AllowedActions(int dogWalkerId);
         int CalculateFinishedServiceRequests(int dogWalkerId);
-        Task<List<DogWalkerDto>> GetDogWalkersWithMostReviewsFirst();
-        Task<List<DogWalkerDto>> GetDogWalkersWithMostFinishedServicesFirst();
+        Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostReviewsFirst();
+        Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostFinishedServicesFirst();
+
+        Task<bool> HasUserAppliedToBeDogWalker(int userId);
+        Task<string> GetDogWalkerStatusByUserId(int userId);
     }
 }
