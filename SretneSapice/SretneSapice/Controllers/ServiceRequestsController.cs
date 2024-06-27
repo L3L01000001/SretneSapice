@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SretneSapice.Model;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
@@ -70,5 +71,22 @@ namespace SretneSapice.Controllers
             }
         }
 
+        [HttpGet("serviceRequests/{dogWalkerId}")]
+        public async Task<ActionResult<PagedResult<ServiceRequestDto>>> GetServiceRequestsByWalkerId(int dogWalkerId)
+        {
+            var serviceRequests = await _serviceRequestService.GetServiceRequestsByWalkerId(dogWalkerId);
+            return Ok(serviceRequests);
+        }
+
+        [HttpGet("serviceRequestsByLoggedInUser")]
+        public async Task<IActionResult> GetServiceRequestsByLoggedInUser()
+        {
+            var serviceRequests = await _serviceRequestService.GetServiceRequestsByLoggedInUser();
+            if (serviceRequests == null || serviceRequests.Result.Count == 0)
+            {
+                return NotFound();
+            }
+            return Ok(serviceRequests);
+        }
     }
 }

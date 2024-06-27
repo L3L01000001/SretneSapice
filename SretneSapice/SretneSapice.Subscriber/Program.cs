@@ -1,33 +1,49 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
+using SretneSapice.Subscriber;
 using System.Text;
 
-Console.WriteLine("Subscriber started.");
 
-var factory = new ConnectionFactory { HostName = "localhost" }; 
-using var connection = factory.CreateConnection();
-using var channel = connection.CreateModel();
 
-channel.QueueDeclare(queue: "comments",
-                     durable: false,
-                     exclusive: false,
-                     autoDelete: false,
-                     arguments: null);
+var factory = new ConnectionFactory
+{
+    HostName = "localhost",
+    Port = 5672,
+    UserName = "user",
+    Password = "password",
+};
 
-Console.WriteLine("Waiting for messages...");
+factory.ClientProvidedName = "Rabbit Test Consumer";
+IConnection connection = factory.CreateConnection();
+IModel channel = connection.CreateModel();
+
+string exchangeName = "EmailExchange";
+string routingKey = "email_queue";
+string queueName = "EmailQueue";
+
+channel.ExchangeDeclare(exchangeName, ExchangeType.Direct);
+channel.QueueDeclare(queueName, true, false, false, null);
+channel.QueueBind(queueName, exchangeName, routingKey, null);
 
 var consumer = new EventingBasicConsumer(channel);
-consumer.Received += (model, ea) =>
-{
-    var body = ea.Body.ToArray();
-    var message = Encoding.UTF8.GetString(body);
-    Console.WriteLine($"Received message: {message}");
-};
-channel.BasicConsume(queue: "comments",
-                     autoAck: true,
-                     consumer: consumer);
 
-Console.WriteLine("Press [enter] to exit.");
-Console.ReadLine();
-    
+consumer.Received += (sender, args) =>
+{
+    var body = args.Body.ToArray();
+    string message = Encoding.UTF8.GetString(body);
+
+    Console.WriteLine($"Message received: {message}");
+    EmailService emailService = new EmailService();
+    emailService.SendEmail(message);
+
+    channel.BasicAck(args.DeliveryTag, false);
+};
+
+channel.BasicConsume(queueName, false, consumer);
+
+Console.WriteLine("Waiting for messages. Press Q to quit.");
+
+Thread.Sleep(Timeout.Infinite);
+
+channel.Close();
+connection.Close();

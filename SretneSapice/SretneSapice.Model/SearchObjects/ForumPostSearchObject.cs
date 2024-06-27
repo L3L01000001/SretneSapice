@@ -9,5 +9,7 @@ namespace SretneSapice.Model.SearchObjects
     public class ForumPostSearchObject : BaseSearchObject
     {
         public string? PostContent { get; set; }
+        public int? UserId { get; set; }
+        public bool? Top5 { get; set; }
     }
 }

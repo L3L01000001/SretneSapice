@@ -180,12 +180,14 @@ public partial class _180148Context : DbContext
 
         modelBuilder.Entity<DogWalkerAvailability>(entity =>
         {
-            entity.HasKey(e => new { e.DogWalkerId, e.Date, e.Hour }).HasName("PK__DogWalke__A9F7DEBDFB5F1C93");
+            entity.HasKey(e => new { e.DogWalkerId, e.Date, e.StartTime, e.EndTime }).HasName("PK__DogWalke__A9F7DEBDFB5F1C93");
 
             entity.ToTable("DogWalkerAvailability");
 
             entity.Property(e => e.DogWalkerId).HasColumnName("DogWalkerID");
             entity.Property(e => e.Date).HasColumnType("date");
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
             entity.Property(e => e.AvailabilityStatus).HasMaxLength(20);
 
             entity.HasOne(d => d.DogWalker).WithMany(p => p.DogWalkerAvailabilities)
@@ -390,8 +392,8 @@ public partial class _180148Context : DbContext
 
             entity.Property(e => e.ServiceRequestId).HasColumnName("ServiceRequestID");
             entity.Property(e => e.DogWalkerId).HasColumnName("DogWalkerID");
-            entity.Property(e => e.EndTime).HasColumnType("time");
-            entity.Property(e => e.StartTime).HasColumnType("time");
+            entity.Property(e => e.EndTime).HasColumnType("datetime");
+            entity.Property(e => e.StartTime).HasColumnType("datetime");
             entity.Property(e => e.Date).HasColumnType("datetime");
             entity.Property(e => e.DogBreed).HasMaxLength(50);
             entity.Property(e => e.Status).HasMaxLength(20);

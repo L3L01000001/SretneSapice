@@ -2,11 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
+using SretneSapice.Model;
 using SretneSapice.Model.Constants;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services.Database;
+using SretneSapice.Services.RabbitMQ;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,11 +22,13 @@ namespace SretneSapice.Services
     {
         public int LoggedInUserId;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public ServiceRequestService(_180148Context context, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(context, mapper)
+        private readonly IMailProducer _mailProducer;
+        public ServiceRequestService(_180148Context context, IMapper mapper, IHttpContextAccessor httpContextAccessor, IMailProducer mailProducer) : base(context, mapper)
         {
             _httpContextAccessor = httpContextAccessor;
             ClaimsIdentity user = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
             LoggedInUserId = Convert.ToInt32(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
+            _mailProducer = mailProducer;
         }
 
         public override IQueryable<ServiceRequest> AddInclude(IQueryable<ServiceRequest> query, BaseSearchObject? search = null)
@@ -35,22 +39,16 @@ namespace SretneSapice.Services
 
         public override async Task<ServiceRequestDto> Insert(ServiceRequestInsertRequest insertRequest)
         {
-            var dogWalker = await _context.ServiceRequests.FirstOrDefaultAsync(s => s.DogWalkerId == insertRequest.DogWalkerId);
-
             if(insertRequest.DogWalkerId == LoggedInUserId)
             {
                 throw new Exception("You cannot request services from yourself.");
             }
 
-            if (dogWalker == null)
-            {
-                throw new Exception("Dog walker not found");
-            }
-
             insertRequest.UserId = LoggedInUserId;
-            insertRequest.Status = "Pending";
 
             var serviceRequestEntity = _mapper.Map<ServiceRequest>(insertRequest);
+
+            serviceRequestEntity.Status = "Pending";
 
             await _context.ServiceRequests.AddAsync(serviceRequestEntity);
 
@@ -110,7 +108,54 @@ namespace SretneSapice.Services
 
             serviceRequest.Status = "Accepted";
 
+            if (serviceRequest.Date == null || serviceRequest.StartTime == null || serviceRequest.EndTime == null)
+            {
+                throw new InvalidOperationException("Service request does not have valid date or time information");
+            }
+
+            if (serviceRequest.DogWalkerId == null)
+            {
+                throw new InvalidOperationException("DogWalkerId is null in the service request.");
+            }
+
+            var availability = await _context.DogWalkerAvailabilities
+                .FirstOrDefaultAsync(a => a.DogWalkerId == serviceRequest.DogWalkerId &&
+                                          a.Date == serviceRequest.Date &&
+                                          a.StartTime == serviceRequest.StartTime &&
+                                          a.EndTime == serviceRequest.EndTime);
+
+            if (availability == null)
+            {
+                availability = new DogWalkerAvailability
+                {
+                    DogWalkerId = serviceRequest.DogWalkerId ?? 0,
+                    Date = serviceRequest.Date.Value,
+                    StartTime = serviceRequest.StartTime,
+                    EndTime = serviceRequest.EndTime,
+                    AvailabilityStatus = "Scheduled"
+                };
+                await _context.DogWalkerAvailabilities.AddAsync(availability);
+            }
+            else
+            {
+                availability.AvailabilityStatus = "Scheduled";
+            }
+
             await _context.SaveChangesAsync();
+
+            var user = await _context.Users.FindAsync(serviceRequest.UserId);
+            if (user != null)
+            {
+                var emailMessage = new
+                {
+                    Sender = "sretnesapice@outlook.com",
+                    Recipient = user.Email,
+                    Subject = "Prihvaćen termin i usluga od šetača!",
+                    Content = $"Zakazani termin za {serviceRequest.Date.Value.ToShortDateString()} je prihvaćen od strane šetača za pasminu {serviceRequest.DogBreed}. Lokacija će Vam biti omogućena u trenutku obavljanja usluge."
+                };
+
+                _mailProducer.SendEmail(emailMessage);
+            }
         }
 
         public async Task RejectServiceRequest(int serviceRequestId)
@@ -137,6 +182,43 @@ namespace SretneSapice.Services
             serviceRequest.Status = "Finished";
 
             await _context.SaveChangesAsync();
+        }
+
+        public async Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByWalkerId(int dogWalkerId)
+        {
+            var allServiceRequests = _context.ServiceRequests
+                                            .Include(x => x.User).Include(x => x.DogWalker)
+                                            .AsQueryable();
+
+            var selected = allServiceRequests.Where(x => x.DogWalkerId == dogWalkerId);
+
+            PagedResult<ServiceRequestDto> result = new PagedResult<ServiceRequestDto>();
+
+            result.Count = await selected.CountAsync();
+
+            var serviceRequests = await selected.ToListAsync();
+
+            result.Result = _mapper.Map<List<ServiceRequestDto>>(serviceRequests);
+
+            return result;
+        }
+
+        public async Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByLoggedInUser()
+        {
+            var now = DateTime.Now;
+            var allServiceRequests = _context.ServiceRequests
+                .Include(x => x.User)
+                .Include(x => x.DogWalker)
+                .Where(x => x.UserId == LoggedInUserId && x.Status == "Accepted" && x.StartTime <= now && x.EndTime >= now)
+                .AsQueryable();
+
+            PagedResult<ServiceRequestDto> result = new PagedResult<ServiceRequestDto>
+            {
+                Count = await allServiceRequests.CountAsync(),
+                Result = _mapper.Map<List<ServiceRequestDto>>(await allServiceRequests.ToListAsync())
+            };
+
+            return result;
         }
     }
 }

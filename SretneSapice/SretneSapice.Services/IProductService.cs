@@ -15,5 +15,6 @@ namespace SretneSapice.Services
         Task<PagedResult<ProductDto>> GetProductsByPriceLowToHighAsync();
         Task<PagedResult<ProductDto>> GetProductsByPriceHighToLowAsync();
         Task<PagedResult<ProductDto>> GetNewestProductsAsync();
+        Task<List<ProductDto>> Recommend(int id);
     }
 }

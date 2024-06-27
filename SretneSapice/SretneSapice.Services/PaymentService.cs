@@ -58,5 +58,32 @@ namespace SretneSapice.Services
 
             return paypalOrderId;
         }
+
+        public async Task<PaymentDto> CompletePayPalOrderAsync(string token)
+        {
+            var paypalOrderId = token;
+
+            var payment = await _context.Payments
+                                        .Where(p => p.TransactionId == paypalOrderId)
+                                        .FirstOrDefaultAsync();
+
+            if (payment == null)
+            {
+                throw new Exception("Payment not found.");
+            }
+
+            var isPaymentSuccessful = await _paypalClient.VerifyOrderAsync(token);
+            if (isPaymentSuccessful)
+            {
+                payment.Status = "Completed";
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new Exception("Payment verification failed.");
+            }
+
+            return _mapper.Map<PaymentDto>(payment);
+        }
     }
 }

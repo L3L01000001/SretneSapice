@@ -1,35 +1,55 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/src/foundation/key.dart';
+import 'package:flutter/src/widgets/framework.dart';
+import 'package:sretnesapice_mobile/screens/cart_screen.dart';
 import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/product_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/settings_screen.dart';
 
 class MasterScreenWidget extends StatefulWidget {
-  Widget? child;
-  MasterScreenWidget({this.child, Key? key}) : super(key: key);
+  final Widget? child;
+  final int initialIndex;
+  MasterScreenWidget({this.child, this.initialIndex = 0, Key? key}) : super(key: key);
 
   @override
   State<MasterScreenWidget> createState() => _MasterScreenWidgetState();
 }
 
 class _MasterScreenWidgetState extends State<MasterScreenWidget> {
-  int _currentIndex = 0;
+  late int _currentIndex;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _currentIndex = index;
-    });
-    print(_currentIndex);
-    if (_currentIndex == 0) {
-      Navigator.pushNamed(context, ForumPostListScreen.routeName);
-    } else if (_currentIndex == 1) {
-      Navigator.pushNamed(context, DogWalkerListScreen.routeName);
-    } else if (_currentIndex == 2) {
-      Navigator.pushNamed(context, ProductListScreen.routeName);
-    } else if (_currentIndex == 3) {
-      Navigator.pushNamed(context, SettingsScreen.routeName);
-    }
+@override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
   }
+  
+  void _onItemTapped(int index) {
+  setState(() {
+    _currentIndex = index;
+  });
+  Navigator.pushNamed(
+    context,
+    _getRouteName(index),
+    arguments: index,
+  );
+}
+
+String _getRouteName(int index) {
+  switch (index) {
+    case 0:
+      return ForumPostListScreen.routeName;
+    case 1:
+      return DogWalkerListScreen.routeName;
+    case 2:
+      return ProductListScreen.routeName;
+    case 3:
+      return SettingsScreen.routeName;
+    default:
+      return ForumPostListScreen.routeName;
+  }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -58,18 +78,18 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             IconButton(
               padding: EdgeInsets.only(right: 20.0),
               icon: Image.asset('assets/icons/cart.png', width: 30, height: 30),
-              onPressed: () {
+              onPressed: () async {
+                Navigator.pushNamed(context, CartScreen.routeName);
               },
             )
           ],
         ),
       ),
-     body: Stack(
+      body: Stack(
         children: [
-          // Background image
           Positioned.fill(
             child: Image.asset(
-              'assets/images/background.jpg', 
+              'assets/images/background.jpg',
               fit: BoxFit.cover,
               height: double.infinity,
               width: double.infinity,
@@ -80,42 +100,40 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             child: Column(
               children: [
                 Expanded(
-                  child: widget.child ?? Container(),
+                   child: widget.child ?? Container(),
                 ),
               ],
             ),
           ),
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Color(0xff663399),
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/icons/dog-house.png',
-                width: 35, height: 35),
-            label: 'FORUM',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/icons/walking-the-dog.png',
-                width: 35, height: 35),
-            label: 'ŠETAČI',
-          ),
-          BottomNavigationBarItem(
-            icon:
-                Image.asset('assets/icons/shop.png', width: 35, height: 35),
-            label: 'SHOP',
-          ),
-          BottomNavigationBarItem(
-            icon:
-                Image.asset('assets/icons/settings.png', width: 35, height: 35),
-            label: 'POSTAVKE',
-          )
-        ],
-        selectedItemColor: Colors.white,
-        selectedLabelStyle: TextStyle(fontWeight: FontWeight.bold),
-        currentIndex: _currentIndex,
-        onTap: _onItemTapped,
-      ),
+      bottomNavigationBar: _buildBottomBar(),
+    );
+  }
+
+  NavigationBar _buildBottomBar() {
+    return NavigationBar(
+      onDestinationSelected: _onItemTapped,
+      destinations: <Widget>[
+        NavigationDestination(
+          icon: Image.asset('assets/icons/dog-house.png', width: 35, height: 35),
+          label: 'FORUM',
+        ),
+        NavigationDestination(
+          icon: Image.asset('assets/icons/walking-the-dog.png', width: 35, height: 35),
+          label: 'ŠETAČI',
+        ),
+        NavigationDestination(
+          icon: Image.asset('assets/icons/shop.png', width: 35, height: 35),
+          label: 'SHOP',
+        ),
+        NavigationDestination(
+          icon: Icon(Icons.person),
+          label: 'PROFIL',
+        ),
+      ],
+      indicatorColor: Colors.transparent,
+      selectedIndex: _currentIndex,
     );
   }
 }

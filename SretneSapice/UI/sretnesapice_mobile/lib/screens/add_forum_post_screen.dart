@@ -23,6 +23,8 @@ class AddForumPostScreen extends StatefulWidget {
 class _AddForumPostScreenState extends State<AddForumPostScreen> {
   ForumPostProvider? _forumPostProvider = null;
 
+  final int selectedIndex = 0;
+
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
   TextEditingController _contentController = TextEditingController();
@@ -97,30 +99,33 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+        initialIndex: selectedIndex,
         child: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Text("Novi post", style: Theme.of(context).textTheme.titleLarge),
-              SizedBox(height: 25),
-              _buildForm(),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    post();
-                  }
-                },
-                child: Text("Objavi",
-                    style: TextStyle(
-                        fontSize: 18,
-                        color: Color.fromARGB(255, 108, 21, 190))),
-              ),
-            ]),
-          )),
-    ));
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
+                child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Novi post",
+                          style: Theme.of(context).textTheme.titleLarge),
+                      SizedBox(height: 25),
+                      _buildForm(),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            post();
+                          }
+                        },
+                        child: Text("Objavi",
+                            style: TextStyle(
+                                fontSize: 18,
+                                color: Color.fromARGB(255, 108, 21, 190))),
+                      ),
+                    ]),
+              )),
+        ));
   }
 
   Widget _buildForm() {

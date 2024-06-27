@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/models/product.dart';
+import 'package:sretnesapice_mobile/providers/order_item_provider.dart';
 import 'package:sretnesapice_mobile/providers/product_provider.dart';
+import 'package:sretnesapice_mobile/requests/order_item_request.dart';
 import 'package:sretnesapice_mobile/screens/product_details_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
@@ -16,15 +18,21 @@ class ProductListScreen extends StatefulWidget {
 
 class _ProductListScreenState extends State<ProductListScreen> {
   ProductProvider? _productProvider = null;
+  OrderItemProvider? _orderItemProvider = null;
   List<Product> data = [];
   TextEditingController _searchController = TextEditingController();
   String? _selectedSortingOption;
+
+    final int selectedIndex = 2;
+
+  OrderItemRequest orderItemRequest = new OrderItemRequest();
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     _productProvider = context.read<ProductProvider>();
+    _orderItemProvider = context.read<OrderItemProvider>();
 
     loadData();
   }
@@ -39,6 +47,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      initialIndex: selectedIndex,
         child: SingleChildScrollView(
       child: Container(
         child: Column(
@@ -216,9 +225,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             width: 110,
                             child: imageFromBase64String(x.productPhoto!),
                           )
-                        : Icon(Icons.photo,
-                            size: 110,
-                            color: Colors.white),
+                        : Icon(Icons.photo, size: 110, color: Colors.white),
                   ),
                   SizedBox(height: 8),
                   Text(x.name ?? "",
@@ -266,7 +273,23 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             width: 30,
                             height: 30,
                           ),
-                          onPressed: () {
+                          onPressed: () async {
+                            try {
+                              orderItemRequest.productId = x.productID;
+                              orderItemRequest.quantity = 1;
+
+                              var orderedProduct = await _orderItemProvider
+                                  ?.insert(orderItemRequest);
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text('Uspješno dodano u korpu!'),
+                              ));
+                            } catch (e) {
+                              ScaffoldMessenger.of(context)
+                                  .showSnackBar(SnackBar(
+                                content: Text('Greška!'),
+                              ));
+                            }
                           },
                         ),
                       ),

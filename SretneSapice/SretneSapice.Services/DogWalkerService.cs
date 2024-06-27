@@ -76,6 +76,16 @@ namespace SretneSapice.Services
 
             await state.Reject();
 
+            var userRole = await _context.UserRoles
+                                         .FirstOrDefaultAsync(ur => ur.UserId == entity.UserId && ur.RoleId == 3); 
+
+            if (userRole != null)
+            {
+                _context.UserRoles.Remove(userRole);
+            }
+
+            await _context.SaveChangesAsync();
+
             return await GetById(dogWalkerId);
         }
 
@@ -128,6 +138,11 @@ namespace SretneSapice.Services
             if(search?.isApproved == true)
             {
                 filteredQuery = filteredQuery.Where(x => x.IsApproved == true);
+            }
+
+            if(search?.Top5 == true)
+            {
+                filteredQuery = filteredQuery.OrderByDescending(x => x.ServiceRequests.Count()).Take(5);
             }
 
             return filteredQuery;
@@ -197,6 +212,28 @@ namespace SretneSapice.Services
         {
             var dogWalker = _context.DogWalkers.FirstOrDefault(dw => dw.UserId == userId);
             return dogWalker?.Status ?? "Unknown";
+        }
+
+        public override async Task<DogWalkerDto> GetById(int id)
+        {
+            var entity = await _context.Set<DogWalker>()
+                .Include(x => x.WalkerReviews)
+                .Include(x => x.ServiceRequests)
+                .Include(x => x.City)
+                .FirstOrDefaultAsync(fp => fp.DogWalkerId == id);
+
+            if (entity == null)
+            {
+                throw new Exception("Dog walker not found!");
+            }
+
+            return _mapper.Map<DogWalkerDto>(entity);
+        }
+
+        public async Task<int> GetDogWalkerIdByUserId(int userId)
+        {
+            var dogWalker = await _context.DogWalkers.FirstOrDefaultAsync(dw => dw.UserId == userId);
+            return dogWalker?.DogWalkerId ?? 0;
         }
     }
 }

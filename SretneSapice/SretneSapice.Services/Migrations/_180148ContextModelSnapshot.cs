@@ -210,14 +210,17 @@ namespace SretneSapice.Services.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
-                    b.Property<TimeSpan>("Hour")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("AvailabilityStatus")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("DogWalkerId", "Date", "Hour")
+                    b.HasKey("DogWalkerId", "Date", "StartTime", "EndTime")
                         .HasName("PK__DogWalke__A9F7DEBDFB5F1C93");
 
                     b.ToTable("DogWalkerAvailability", (string)null);
@@ -606,14 +609,14 @@ namespace SretneSapice.Services.Migrations
                         .HasColumnType("int")
                         .HasColumnName("DogWalkerID");
 
-                    b.Property<TimeSpan?>("EndTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("LiveLocationEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<TimeSpan?>("StartTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Status")
                         .HasMaxLength(20)

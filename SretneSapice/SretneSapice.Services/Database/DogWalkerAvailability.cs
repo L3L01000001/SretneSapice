@@ -9,7 +9,9 @@ public partial class DogWalkerAvailability
 
     public DateTime Date { get; set; }
 
-    public TimeSpan Hour { get; set; }
+    public DateTime StartTime { get; set; }
+
+    public DateTime EndTime { get; set; }
 
     public string? AvailabilityStatus { get; set; }
 

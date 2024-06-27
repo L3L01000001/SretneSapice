@@ -4,19 +4,22 @@ import 'package:sretnesapice_mobile/main.dart';
 import 'package:sretnesapice_mobile/models/forum_post.dart';
 import 'package:sretnesapice_mobile/providers/forum_post_provider.dart';
 import 'package:sretnesapice_mobile/screens/add_forum_post_screen.dart';
+import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/forum_post_card.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 
 class ForumPostListScreen extends StatefulWidget {
   static const String routeName = "/forum";
-  const ForumPostListScreen({super.key});
+  final int? userId;
+  const ForumPostListScreen({super.key, this.userId});
 
   @override
   State<ForumPostListScreen> createState() => _ForumPostListScreenState();
 }
 
 class _ForumPostListScreenState extends State<ForumPostListScreen> {
+  final int selectedIndex = 0;
   ForumPostProvider? _forumPostProvider = null;
   List<ForumPost> data = [];
   TextEditingController _searchController = TextEditingController();
@@ -32,7 +35,8 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
   }
 
   Future loadData() async {
-    var fpData = await _forumPostProvider?.get(null);
+    var filters = widget.userId != null ? {'userId': widget.userId} : null;
+    var fpData = await _forumPostProvider?.get(filters);
 
     setState(() {
       data = fpData!;
@@ -42,6 +46,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      initialIndex: selectedIndex,
       child: Stack(
         children: [
           SingleChildScrollView(
@@ -54,6 +59,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                     padding: EdgeInsets.only(left: 10.0),
                     child: _buildSortingDropdown(),
                   ),
+                  
                   Padding(
                     padding: EdgeInsets.only(left: 10.0, right: 10.0),
                     child: Column(
@@ -195,9 +201,9 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
   }
 
   List<Widget> _buildForumPostCardList() {
-    if (data.length == 0) {
+/*     if (data.length == 0) {
       return []; 
-    }
+    } */
     return data.map((post) {
       return ForumPostCard(
         title: post.title,

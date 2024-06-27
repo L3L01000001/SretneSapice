@@ -26,5 +26,6 @@ namespace SretneSapice.Services
 
         Task<bool> HasUserAppliedToBeDogWalker(int userId);
         Task<string> GetDogWalkerStatusByUserId(int userId);
+        Task<int> GetDogWalkerIdByUserId(int userId);
     }
 }

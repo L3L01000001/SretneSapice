@@ -8,10 +8,10 @@ namespace SretneSapice.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class FavoriteWalkersController : BaseCRUDController<FavoriteWalkerDto, BaseSearchObject, FavoriteWalkerInsertRequest, FavoriteWalkerInsertRequest>
+    public class FavoriteWalkersController : BaseCRUDController<FavoriteWalkerDto, FavoriteDogWalkerSearchObject, FavoriteWalkerInsertRequest, FavoriteWalkerInsertRequest>
     {
         private readonly IFavoriteWalkerService _favoriteWalkerService;
-        public FavoriteWalkersController(IFavoriteWalkerService service, ILogger<BaseController<FavoriteWalkerDto, BaseSearchObject>> logger) : base(logger, service)
+        public FavoriteWalkersController(IFavoriteWalkerService service, ILogger<BaseController<FavoriteWalkerDto, FavoriteDogWalkerSearchObject>> logger) : base(logger, service)
         {
             _favoriteWalkerService = service;
         }

@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sretnesapice_mobile/models/order_item.dart';
 import 'package:sretnesapice_mobile/models/user.dart';
 
 part 'order.g.dart';
@@ -13,9 +14,10 @@ class Order {
   String? status;
   double? totalAmount;
   User? user;
+  List<OrderItem>? orderItems;
 
   Order(this.orderId, this.orderNumber, this.userId, this.shippingInfoId,
-      this.date, this.status, this.totalAmount, this.user);
+      this.date, this.status, this.totalAmount, this.user, this.orderItems);
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);
 

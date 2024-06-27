@@ -33,6 +33,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   TextEditingController _usernameController = new TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
+  final int selectedIndex = 3;
 
   @override
   void initState() {
@@ -62,6 +63,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     return Form(
       key: _formKey,
       child: MasterScreenWidget(
+        initialIndex: selectedIndex,
         child: SingleChildScrollView(
           child: Column(
             children: [

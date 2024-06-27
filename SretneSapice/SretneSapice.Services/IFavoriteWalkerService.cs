@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SretneSapice.Services
 {
-    public interface IFavoriteWalkerService : ICRUDService<FavoriteWalkerDto, BaseSearchObject, FavoriteWalkerInsertRequest, FavoriteWalkerInsertRequest>
+    public interface IFavoriteWalkerService : ICRUDService<FavoriteWalkerDto, FavoriteDogWalkerSearchObject, FavoriteWalkerInsertRequest, FavoriteWalkerInsertRequest>
     {
         int FavoriteWalkersTotalByUserId();
     }

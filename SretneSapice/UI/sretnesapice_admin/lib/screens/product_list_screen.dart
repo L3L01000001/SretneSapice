@@ -144,12 +144,13 @@ class _ProductListScreenState extends State<ProductListScreen> {
           border:
               Border.all(width: 2.0, color: Color.fromARGB(255, 6, 58, 137))),
       child: DropdownButton<String>(
+        underline: SizedBox(),
         hint: Container(
           alignment: Alignment.center,
           child: Row(
             children: [
               Text(
-                'Sortiraj po:',
+                'Sortiraj po',
                 style: TextStyle(
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.none,
@@ -192,7 +193,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
           }
         },
         items: <String>[
-          'Sortiraj po:',
+          'Sortiraj po',
           'Najjeftinije',
           'Najskuplje',
           'Najnovije'
@@ -389,7 +390,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         TextButton(
                                           onPressed: () {
                                             Navigator.of(context)
-                                                .pop(); // Close the dialog
+                                                .pop();
                                           },
                                           child: Text("Odustani"),
                                         ),

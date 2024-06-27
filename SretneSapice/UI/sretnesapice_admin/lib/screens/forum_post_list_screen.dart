@@ -118,6 +118,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
           border:
               Border.all(width: 2.0, color: Color.fromARGB(255, 61, 6, 137))),
       child: DropdownButton<String>(
+        underline: SizedBox(),
         hint: Container(
           alignment: Alignment.center,
           child: Row(

@@ -54,7 +54,8 @@ namespace SretneSapice.Services.Profiles
             CreateMap<DogWalker, DogWalkerDto>();
             CreateMap<DogWalkerInsertRequest, DogWalker>();
 
-            CreateMap<ServiceRequest, ServiceRequestDto>();
+            CreateMap<ServiceRequest, ServiceRequestDto>().ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.User.UserId))
+            .ForMember(dest => dest.DogWalkerId, opt => opt.MapFrom(src => src.DogWalker.DogWalkerId));
             CreateMap<ServiceRequestInsertRequest, ServiceRequest>();
 
             CreateMap<WalkerReview, WalkerReviewDto>();
@@ -68,7 +69,11 @@ namespace SretneSapice.Services.Profiles
 
             CreateMap<ForumPostTag, ForumPostTagDto>();
 
+            CreateMap<DogWalkerAvailability, DogWalkerAvailabilityDto>();
+            CreateMap<DogWalkerAvailabilityInsertRequest, DogWalkerAvailability>();
 
+            CreateMap<DogWalkerLocation, DogWalkerLocationDto>();
+            CreateMap<DogWalkerLocationInsertRequest, DogWalkerLocation>();
 
             CreateMap<List<string>, ICollection<Tag>>()
             .ConvertUsing<StringListToTagCollectionConverter>();

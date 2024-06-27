@@ -112,7 +112,7 @@ namespace SretneSapice.Services
 
         public async Task<UserDto> Register(UserInsertRequest newUser)
         {
-            var userRole = await _context.Roles.FirstOrDefaultAsync(x => x.Name == "DogWalkerVerifier");
+            var userRole = await _context.Roles.FirstOrDefaultAsync(x => x.Name == "User");
 
             if (await _context.Users.AnyAsync(x => x.Username.Equals(newUser.Username)))
             {
@@ -148,6 +148,20 @@ namespace SretneSapice.Services
             await _context.SaveChangesAsync();
 
             return _mapper.Map<User, UserDto>(user);
+        }
+
+        public override async Task<UserDto> GetById(int id)
+        {
+            var entity = await _context.Set<User>()
+                .Include(x => x.City)
+                .FirstOrDefaultAsync(fp => fp.UserId == id);
+
+            if (entity == null)
+            {
+                throw new Exception("User not found!");
+            }
+
+            return _mapper.Map<UserDto>(entity);
         }
     }
 }

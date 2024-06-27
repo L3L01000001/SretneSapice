@@ -12,5 +12,7 @@ namespace SretneSapice.Services
     public interface IPaymentService : ICRUDService<PaymentDto, BaseSearchObject, PaymentInsertRequest, PaymentUpdateRequest>
     {
         Task<string> CreatePayPalOrderAsync(int orderId, string returnUrl, string cancelUrl);
+
+        Task<PaymentDto> CompletePayPalOrderAsync(string token);
     }
 }

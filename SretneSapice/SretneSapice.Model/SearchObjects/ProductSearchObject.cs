@@ -9,5 +9,6 @@ namespace SretneSapice.Model.SearchObjects
     public class ProductSearchObject : BaseSearchObject
     {
         public string? Name { get; set; }
+        public bool? Top5 { get; set; }
     }
 }

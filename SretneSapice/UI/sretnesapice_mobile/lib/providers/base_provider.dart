@@ -100,6 +100,22 @@ abstract class BaseProvider<T> with ChangeNotifier {
     }
   }
 
+   Future<void> hardDelete(int id) async {
+    var url = "$_baseUrl$_endpoint/$id/HardDelete";
+    var uri = Uri.parse(url);
+
+    Map<String, String> headers = createHeaders();
+
+    var response =
+        await http!.put(uri, headers: headers);
+
+    if (isValidResponseCode(response)) {
+      print("Successfully deleted");
+    } else {
+       throw Exception("Failed to delete item");
+    }
+  }
+
   Map<String, String> createHeaders() {
     String? username = Authorization.username;
     String? password = Authorization.password;

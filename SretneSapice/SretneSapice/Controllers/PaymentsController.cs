@@ -30,7 +30,7 @@ namespace SretneSapice.Controllers
                 var order = await _paymentService.CreatePayPalOrderAsync(orderId, returnUrl, cancelUrl);
                 var paypalPaymentUrl = $"https://www.sandbox.paypal.com/checkoutnow?token={order}";
 
-                return Redirect(paypalPaymentUrl);
+                return Ok(new { paypalUrl = paypalPaymentUrl });
             }
             catch (Exception ex)
             {
@@ -39,9 +39,17 @@ namespace SretneSapice.Controllers
         }
 
         [HttpPost("success")]
-        public async Task<IActionResult> PaymentSuccess()
+        public async Task<IActionResult> PaymentSuccess([FromQuery] string token)
         {
-            return Ok(new { success = true, message = "Payment successful" });
+            try
+            {
+                var payment = await _paymentService.CompletePayPalOrderAsync(token);
+                return Ok(new { success = true, message = "Payment successful", payment });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Failed to complete payment: {ex.Message}");
+            }
         }
 
         [HttpPost("cancel")]

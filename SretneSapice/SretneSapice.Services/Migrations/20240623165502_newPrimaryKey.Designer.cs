@@ -12,8 +12,8 @@ using SretneSapice.Services.Database;
 namespace SretneSapice.Services.Migrations
 {
     [DbContext(typeof(_180148Context))]
-    [Migration("20240410031730_Init")]
-    partial class Init
+    [Migration("20240623165502_newPrimaryKey")]
+    partial class newPrimaryKey
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,21 +24,6 @@ namespace SretneSapice.Services.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ForumPostTag", b =>
-                {
-                    b.Property<int>("PostsPostId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TagsTagId")
-                        .HasColumnType("int");
-
-                    b.HasKey("PostsPostId", "TagsTagId");
-
-                    b.HasIndex("TagsTagId");
-
-                    b.ToTable("ForumPostTag");
-                });
 
             modelBuilder.Entity("SretneSapice.Services.Database.City", b =>
                 {
@@ -228,14 +213,17 @@ namespace SretneSapice.Services.Migrations
                     b.Property<DateTime>("Date")
                         .HasColumnType("date");
 
-                    b.Property<TimeSpan>("Hour")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("date");
 
                     b.Property<string>("AvailabilityStatus")
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.HasKey("DogWalkerId", "Date", "Hour")
+                    b.HasKey("DogWalkerId", "Date", "StartTime", "EndTime")
                         .HasName("PK__DogWalke__A9F7DEBDFB5F1C93");
 
                     b.ToTable("DogWalkerAvailability", (string)null);
@@ -336,23 +324,27 @@ namespace SretneSapice.Services.Migrations
 
             modelBuilder.Entity("SretneSapice.Services.Database.ForumPostTag", b =>
                 {
-                    b.Property<int?>("PostId")
-                        .HasColumnType("int");
+                    b.Property<int>("PostsPostId")
+                        .HasColumnType("int")
+                        .HasColumnName("PostsPostId");
 
-                    b.Property<int?>("PostsPostId")
-                        .HasColumnType("int");
+                    b.Property<int>("TagsTagId")
+                        .HasColumnType("int")
+                        .HasColumnName("TagsTagId");
+
+                    b.Property<int?>("PostId")
+                        .HasColumnType("int")
+                        .HasColumnName("PostId");
 
                     b.Property<int?>("TagId")
-                        .HasColumnType("int");
+                        .HasColumnType("int")
+                        .HasColumnName("TagId");
 
-                    b.Property<int?>("TagsTagId")
-                        .HasColumnType("int");
+                    b.HasKey("PostsPostId", "TagsTagId");
 
-                    b.HasIndex("PostId");
+                    b.HasIndex("TagsTagId");
 
-                    b.HasIndex("TagId");
-
-                    b.ToTable("ForumPostTags");
+                    b.ToTable("ForumPostTag", (string)null);
                 });
 
             modelBuilder.Entity("SretneSapice.Services.Database.Order", b =>
@@ -613,20 +605,21 @@ namespace SretneSapice.Services.Migrations
 
                     b.Property<string>("DogBreed")
                         .IsRequired()
-                        .HasColumnType("string");
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<int?>("DogWalkerId")
                         .HasColumnType("int")
                         .HasColumnName("DogWalkerID");
 
-                    b.Property<TimeSpan?>("EndTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("EndTime")
+                        .HasColumnType("datetime");
 
                     b.Property<bool>("LiveLocationEnabled")
                         .HasColumnType("bit");
 
-                    b.Property<TimeSpan?>("StartTime")
-                        .HasColumnType("time");
+                    b.Property<DateTime>("StartTime")
+                        .HasColumnType("datetime");
 
                     b.Property<string>("Status")
                         .HasMaxLength(20)
@@ -828,21 +821,6 @@ namespace SretneSapice.Services.Migrations
                     b.ToTable("WalkerReview", (string)null);
                 });
 
-            modelBuilder.Entity("ForumPostTag", b =>
-                {
-                    b.HasOne("SretneSapice.Services.Database.ForumPost", null)
-                        .WithMany()
-                        .HasForeignKey("PostsPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("SretneSapice.Services.Database.Tag", null)
-                        .WithMany()
-                        .HasForeignKey("TagsTagId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("SretneSapice.Services.Database.City", b =>
                 {
                     b.HasOne("SretneSapice.Services.Database.Country", "Country")
@@ -956,15 +934,19 @@ namespace SretneSapice.Services.Migrations
 
             modelBuilder.Entity("SretneSapice.Services.Database.ForumPostTag", b =>
                 {
-                    b.HasOne("SretneSapice.Services.Database.ForumPost", "Post")
-                        .WithMany()
-                        .HasForeignKey("PostId");
+                    b.HasOne("SretneSapice.Services.Database.ForumPost", "ForumPost")
+                        .WithMany("ForumPostTags")
+                        .HasForeignKey("PostsPostId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SretneSapice.Services.Database.Tag", "Tag")
-                        .WithMany()
-                        .HasForeignKey("TagId");
+                        .WithMany("ForumPostTags")
+                        .HasForeignKey("TagsTagId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.Navigation("Post");
+                    b.Navigation("ForumPost");
 
                     b.Navigation("Tag");
                 });
@@ -1146,6 +1128,8 @@ namespace SretneSapice.Services.Migrations
             modelBuilder.Entity("SretneSapice.Services.Database.ForumPost", b =>
                 {
                     b.Navigation("Comments");
+
+                    b.Navigation("ForumPostTags");
                 });
 
             modelBuilder.Entity("SretneSapice.Services.Database.Order", b =>
@@ -1168,6 +1152,11 @@ namespace SretneSapice.Services.Migrations
             modelBuilder.Entity("SretneSapice.Services.Database.Role", b =>
                 {
                     b.Navigation("UserRoles");
+                });
+
+            modelBuilder.Entity("SretneSapice.Services.Database.Tag", b =>
+                {
+                    b.Navigation("ForumPostTags");
                 });
 
             modelBuilder.Entity("SretneSapice.Services.Database.User", b =>

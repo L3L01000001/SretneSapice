@@ -9,11 +9,13 @@ namespace SretneSapice.Model.SearchObjects
     public class OrderSearchObject : BaseSearchObject
     {
         public int? OrderId { get; set; }
+        public int? UserId { get; set; }
 
         public string? OrderNumber { get; set; }
         public DateTime? Date { get; set; }
 
         public string? Status { get; set; }
+        public bool? Top5 { get; set; }
 
     }
 }

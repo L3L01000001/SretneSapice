@@ -120,6 +120,17 @@ namespace SretneSapice.Services
                 filteredQuery = filteredQuery.Where(x => x.PostContent.Contains(search.PostContent));
             }
 
+            if(search?.UserId != null)
+            {
+                filteredQuery = filteredQuery.Where(x => x.UserId == search.UserId);
+            }
+
+            if(search?.Top5 == true)
+            {
+                filteredQuery = filteredQuery.OrderByDescending(x => x.Comments.Count)
+                                     .Take(5);
+            }
+
             return filteredQuery;
         }
 

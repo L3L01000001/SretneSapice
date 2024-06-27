@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Http;
 using SretneSapice.Services.Database;
+using Newtonsoft.Json.Linq;
 
 namespace SretneSapice.Services.Clients
 {
@@ -96,6 +97,29 @@ namespace SretneSapice.Services.Clients
                 var errorContent = await response.Content.ReadAsStringAsync();
                 throw new Exception($"Failed to create PayPal order. Response: {errorContent}");
             }
+        }
+
+        public async Task<bool> VerifyOrderAsync(string token)
+        {
+            var requestUri = $"https://api.sandbox.paypal.com/v2/checkout/orders/{token}";
+            var accessToken = await GetAccessTokenAsync();
+
+            var request = new HttpRequestMessage(HttpMethod.Get, requestUri);
+
+            request.Headers.Add("Authorization", accessToken);
+
+            var response = await _httpClient.SendAsync(request);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseBody = await response.Content.ReadAsStringAsync();
+                var orderDetails = JObject.Parse(responseBody);
+
+                var status = orderDetails["status"].ToString();
+                return status == "COMPLETED";
+            }
+
+            return false;
         }
 
         public async Task<string> CaptureOrder(int orderId)

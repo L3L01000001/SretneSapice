@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/models/city.dart';
 import 'package:sretnesapice_mobile/models/dog_walker.dart';
+import 'package:sretnesapice_mobile/models/favorite_walker.dart';
 import 'package:sretnesapice_mobile/models/user.dart';
 import 'package:sretnesapice_mobile/providers/city_provider.dart';
 import 'package:sretnesapice_mobile/providers/dog_walker_provider.dart';
+import 'package:sretnesapice_mobile/providers/favorite_walker_provider.dart';
+import 'package:sretnesapice_mobile/requests/favorite_walker_request.dart';
 import 'package:sretnesapice_mobile/screens/dog_walker_application_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/dog_walker_card.dart';
@@ -12,15 +15,18 @@ import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 
 class DogWalkerListScreen extends StatefulWidget {
   static const String routeName = "/dogwalkers";
-  const DogWalkerListScreen({super.key});
+  final bool showOnlyFavorites;
+  const DogWalkerListScreen({super.key, this.showOnlyFavorites = false});
 
   @override
   State<DogWalkerListScreen> createState() => _DogWalkerListScreenState();
 }
 
 class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
+  final int selectedIndex = 1;
   DogWalkerProvider? _dogWalkerProvider = null;
   CityProvider? _cityProvider = null;
+  FavoriteWalkerProvider? _favoriteWalkerProvider = null;
 
   List<DogWalker> data = [];
   TextEditingController _searchController = TextEditingController();
@@ -28,8 +34,11 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
 
   City? selectedCity;
   List<City> cities = [];
+  List<FavoriteWalker> favoriteWalkerIds = [];
 
   User? user = Authorization.user;
+
+  FavoriteWalkerRequest favoriteWalkerRequest = new FavoriteWalkerRequest();
 
   @override
   void initState() {
@@ -37,6 +46,7 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
     super.initState();
     _dogWalkerProvider = context.read<DogWalkerProvider>();
     _cityProvider = context.read<CityProvider>();
+    _favoriteWalkerProvider = context.read<FavoriteWalkerProvider>();
 
     loadData();
   }
@@ -44,16 +54,39 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
   Future loadData() async {
     var dwData = await _dogWalkerProvider?.get({'isApproved': true});
     var citiesData = await _cityProvider?.get();
+    var fwData = await _favoriteWalkerProvider?.get({'userId': user!.userId});
 
     setState(() {
       data = dwData!;
       cities = citiesData!;
+      favoriteWalkerIds = fwData!;
     });
+  }
+
+  void toggleFavoriteStatus(int dogWalkerId) async {
+    try {
+      if (isFavoriteWalker(dogWalkerId)) {
+        final favoriteWalker = favoriteWalkerIds.firstWhere(
+            (favoriteWalker) => favoriteWalker.dogWalkerId == dogWalkerId);
+
+        if (favoriteWalker != null) {
+          await _favoriteWalkerProvider
+              ?.hardDelete(favoriteWalker.favoriteWalkerId!);
+        } else {
+          print('Nemoguće obaviti akciju!');
+        }
+      } else {
+        favoriteWalkerRequest.dogWalkerId = dogWalkerId;
+        await _favoriteWalkerProvider?.insert!(favoriteWalkerRequest);
+      }
+      loadData();
+    } catch (e) {}
   }
 
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      initialIndex: selectedIndex,
       child: Stack(
         alignment: Alignment.topCenter,
         children: [
@@ -64,17 +97,17 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
                 children: [
                   _buildDogWalkerSearch(),
                   Padding(
-                     padding: EdgeInsets.only(left: 20.0, right: 20.0),
+                    padding: EdgeInsets.only(left: 20.0, right: 20.0),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          _buildSortingDropdown(),
-                          SizedBox(
-                              width:
-                                  5.0), // Add some spacing between the dropdowns
-                          _buildLocationDropdown(),
-                        ],
-                      ),
+                      children: [
+                        _buildSortingDropdown(),
+                        SizedBox(
+                            width:
+                                5.0), // Add some spacing between the dropdowns
+                        _buildLocationDropdown(),
+                      ],
+                    ),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -292,12 +325,21 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
     if (data.length == 0) {
       return [];
     }
-    return data.map((dW) {
+
+    List<DogWalker> filteredData = widget!.showOnlyFavorites
+        ? data.where((dW) => isFavoriteWalker(dW.dogWalkerId)).toList()
+        : data;
+
+    return filteredData.map((dW) {
       return DogWalkerCard(
         fullName: dW.fullName,
         city: dW.city?.name,
         photo: dW.dogWalkerPhoto,
         dogWalkerId: dW.dogWalkerId,
+        isFavorite: isFavoriteWalker(dW.dogWalkerId),
+        onFavoriteToggled: (isFavorite) {
+          toggleFavoriteStatus(dW.dogWalkerId!);
+        },
       );
     }).toList();
   }
@@ -305,5 +347,10 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
   bool _isDogWalkerAlready() {
     return user?.userRoles?.any((role) => role.role?.name == "DogWalker") ??
         false;
+  }
+
+  bool isFavoriteWalker(int? dogWalkerId) {
+    return favoriteWalkerIds
+        .any((favoriteWalker) => favoriteWalker.dogWalkerId == dogWalkerId);
   }
 }

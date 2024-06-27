@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using SretneSapice.Model.Constants;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
@@ -21,8 +22,28 @@ namespace SretneSapice.Services
 
         public override IQueryable<Order> AddInclude(IQueryable<Order> query, OrderSearchObject? search = null)
         {
-            query = query.Include(x => x.User);
+            query = query.Include(x => x.User).Include(x => x.OrderItems).ThenInclude(orderItem => orderItem.Product);
             return base.AddInclude(query, search);
+        }
+
+        public override IQueryable<Order> AddFilter(IQueryable<Order> query, OrderSearchObject? search = null)
+        {
+            if (search.UserId != null)
+            {
+                query = query.Where(x => x.UserId == search.UserId && x.Status == "In Cart");
+            }
+
+            if(!string.IsNullOrWhiteSpace(search?.Status) && OrderStatuses.ListOfOrderStatuses.Contains(search.Status)) {
+                query = query.Where(x => x.Status == search.Status);
+            }
+
+            if(search?.Top5 == true)
+            {
+                query = query.OrderByDescending(x => x.TotalAmount)
+                    .Take(5);
+            }
+
+            return base.AddFilter(query, search);
         }
 
         public async Task<string> GenerateUniqueOrderNumber()

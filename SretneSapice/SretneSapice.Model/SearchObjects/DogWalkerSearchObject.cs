@@ -13,5 +13,6 @@ namespace SretneSapice.Model.SearchObjects
         public int? Rating { get; set; }
         public bool? BestRating { get; set; }
         public int? CityId { get; set; }
+        public bool? Top5 { get; set; }
     }
 }

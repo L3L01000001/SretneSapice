@@ -15,7 +15,7 @@ using System.Threading.Tasks;
 
 namespace SretneSapice.Services
 {
-    public class FavoriteWalkerService : BaseCRUDService<FavoriteWalkerDto, FavoriteWalker, BaseSearchObject, FavoriteWalkerInsertRequest, FavoriteWalkerInsertRequest>, IFavoriteWalkerService
+    public class FavoriteWalkerService : BaseCRUDService<FavoriteWalkerDto, FavoriteWalker, FavoriteDogWalkerSearchObject, FavoriteWalkerInsertRequest, FavoriteWalkerInsertRequest>, IFavoriteWalkerService
     {
         public int LoggedInUserId;
         private readonly IHttpContextAccessor _httpContextAccessor;
@@ -26,10 +26,24 @@ namespace SretneSapice.Services
             LoggedInUserId = Convert.ToInt32(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
 
-        public override IQueryable<FavoriteWalker> AddInclude(IQueryable<FavoriteWalker> query, BaseSearchObject? search = null)
+        public override IQueryable<FavoriteWalker> AddInclude(IQueryable<FavoriteWalker> query, FavoriteDogWalkerSearchObject? search = null)
         {
             query = query.Include(x => x.User).Include(x => x.DogWalker);
             return base.AddInclude(query, search);
+        }
+
+
+        public override IQueryable<FavoriteWalker> AddFilter(IQueryable<FavoriteWalker> query, FavoriteDogWalkerSearchObject? search = null)
+        {
+            var filteredQuery = base.AddFilter(query, search);
+
+
+            if (search?.UserId != null)
+            {
+                filteredQuery = filteredQuery.Where(x => x.UserId == search.UserId);
+            }
+
+            return filteredQuery;
         }
 
         public override async Task<FavoriteWalkerDto> Insert(FavoriteWalkerInsertRequest insertRequest)

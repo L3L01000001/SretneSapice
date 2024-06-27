@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
+using SretneSapice.Controllers;
 using SretneSapice.Filters;
 using SretneSapice.Handlers;
 using SretneSapice.Model.Dtos;
@@ -9,6 +10,7 @@ using SretneSapice.Services;
 using SretneSapice.Services.Clients;
 using SretneSapice.Services.Database;
 using SretneSapice.Services.DogWalkerStatusStateMachine;
+using SretneSapice.Services.RabbitMQ;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,6 +35,9 @@ builder.Services.AddTransient<IWalkerReviewService, WalkerReviewService>();
 builder.Services.AddTransient<IFavoriteWalkerService, FavoriteWalkerService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IUserShippingInformationService, UserShippingInformationService>();
+builder.Services.AddTransient<IDogWalkerAvailabilityService, DogWalkerAvailabilityService>();
+builder.Services.AddTransient<IDogWalkerLocationService, DogWalkerLocationService>();
+builder.Services.AddSingleton<IMailProducer, MailProducer>();
 
 builder.Services.AddTransient<BaseState>();
 builder.Services.AddTransient<PendingState>();

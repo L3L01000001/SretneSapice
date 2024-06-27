@@ -32,6 +32,8 @@ class _DogWalkerApplicationScreenState
   TextEditingController _experienceController = TextEditingController();
   TextEditingController _phoneController = TextEditingController();
 
+  final int selectedIndex = 1;
+  
   City? selectedCity;
   List<City> cities = [];
 
@@ -104,6 +106,7 @@ class _DogWalkerApplicationScreenState
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      initialIndex: selectedIndex,
         child: Padding(
       padding: EdgeInsets.all(16.0),
       child: Form(
@@ -162,7 +165,9 @@ class _DogWalkerApplicationScreenState
               ),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {}
+                  if (_formKey.currentState!.validate()) {
+                    apply();
+                  }
                 },
                 style: ButtonStyle(
                     backgroundColor:

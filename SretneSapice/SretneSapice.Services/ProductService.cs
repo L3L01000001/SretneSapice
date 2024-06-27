@@ -11,6 +11,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.ML;
+using Microsoft.ML.Data;
+using Microsoft.ML.Trainers;
 
 namespace SretneSapice.Services
 {
@@ -36,6 +39,20 @@ namespace SretneSapice.Services
             if (!string.IsNullOrWhiteSpace(search?.Name))
             {
                 query = query.Where(x => x.Name.Contains(search.Name));
+            }
+
+            if (search?.Top5 == true)
+            {
+                var topProductIds = _context.OrderItems
+                                    .GroupBy(oi => oi.ProductId)
+                                    .Select(g => new { ProductId = g.Key, OrderItemCount = g.Count() })
+                                    .OrderByDescending(g => g.OrderItemCount)
+                                    .Take(5)
+                                    .Select(g => g.ProductId)
+                                    .ToList();
+
+                query = query.Where(p => topProductIds.Contains(p.ProductId))
+                             .Include(p => p.ProductType);
             }
 
             return base.AddFilter(query, search);
@@ -87,5 +104,119 @@ namespace SretneSapice.Services
             return result;
         }
 
+        static object isLocked = new object();
+        static MLContext mlContext = null;
+        static ITransformer model = null;
+
+        public async Task<List<ProductDto>> Recommend(int id)
+        {
+            lock (isLocked)
+            {
+                if (mlContext == null)
+                {
+                    mlContext = new MLContext();
+
+                    var tmpData = _context.Orders.Include(o => o.OrderItems).ToList();
+
+                    var data = new List<ProductEntry>();
+
+
+                    foreach (var x in tmpData)
+                    {
+                        if (x.OrderItems.Count > 1)
+                        {
+                            var distinctItemId = x.OrderItems.Select(y => y.ProductId).Distinct().ToList();
+
+                            distinctItemId.ForEach(y =>
+                            {
+                                var relatedItems = x.OrderItems.Where(z => z.ProductId != y).Select(oi => oi.ProductId).Distinct();
+                                foreach (var z in relatedItems)
+                                {
+                                    data.Add(new ProductEntry()
+                                    {
+                                        ProductId = (uint)y,
+                                        CoPurchaseProductID = (uint)z,
+                                        Label = 1.0f
+                                    });
+                                }
+                            });
+                        }
+                    }
+
+                    if (data.Count == 0)
+                    {
+                        throw new InvalidOperationException("No valid data found for training.");
+                    }
+
+                    var traindata = mlContext.Data.LoadFromEnumerable(data);
+
+                    //STEP 3: Your data is already encoded so all you need to do is specify options for MatrxiFactorizationTrainer with a few extra hyperparameters
+                    //        LossFunction, Alpa, Lambda and a few others like K and C as shown below and call the trainer.
+                    MatrixFactorizationTrainer.Options options = new MatrixFactorizationTrainer.Options();
+                    options.MatrixColumnIndexColumnName = nameof(ProductEntry.ProductId);
+                    options.MatrixRowIndexColumnName = nameof(ProductEntry.CoPurchaseProductID);
+                    options.LabelColumnName = "Label";
+                    options.LossFunction = MatrixFactorizationTrainer.LossFunctionType.SquareLossOneClass;
+                    options.Alpha = 0.01;
+                    options.Lambda = 0.025;
+                    // For better results use the following parameters
+                    options.NumberOfIterations = 100;
+                    options.C = 0.00001;
+
+                    var est = mlContext.Recommendation().Trainers.MatrixFactorization(options);
+
+                    model = est.Fit(traindata);
+
+                }
+            }
+
+
+
+
+            //prediction
+
+            var products = await _context.Products.Where(x => x.ProductId != id).ToListAsync();
+
+            var predictionResult = new List<Tuple<Product, float>>();
+
+            var predictionEngine = mlContext.Model.CreatePredictionEngine<ProductEntry, Copurchase_prediction>(model);
+
+            foreach (var product in products)
+            {
+
+                var prediction = predictionEngine.Predict(
+                                         new ProductEntry()
+                                         {
+                                             ProductId = (uint)id,
+                                             CoPurchaseProductID = (uint)product.ProductId
+                                         });
+
+
+                predictionResult.Add(new Tuple<Product, float>(product, prediction.Score));
+            }
+
+
+            var finalResult = predictionResult.OrderByDescending(x => x.Item2).Select(x => x.Item1).Take(3).ToList();
+
+            return _mapper.Map<List<ProductDto>>(finalResult);
+
+        }
+
+
+    }
+    public class Copurchase_prediction
+    {
+        public float Score { get; set; }
+    }
+
+    public class ProductEntry
+    {
+        [KeyType(count: 10)]
+        public uint ProductId { get; set; }
+
+        [KeyType(count: 10)]
+        public uint CoPurchaseProductID { get; set; }
+
+        public float Label { get; set; }
     }
 }

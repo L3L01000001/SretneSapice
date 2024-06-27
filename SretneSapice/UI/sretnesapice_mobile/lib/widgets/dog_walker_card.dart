@@ -7,9 +7,17 @@ class DogWalkerCard extends StatelessWidget {
   final String? city;
   final String? photo;
   final int? dogWalkerId;
+  final bool isFavorite;
+  final Function(bool) onFavoriteToggled;
 
-  DogWalkerCard(
-      {required this.fullName, required this.city, required this.photo, required this.dogWalkerId});
+  DogWalkerCard({
+    required this.fullName,
+    required this.city,
+    required this.photo,
+    required this.dogWalkerId,
+    required this.isFavorite,
+    required this.onFavoriteToggled,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +78,16 @@ class DogWalkerCard extends StatelessWidget {
                   ],
                 ),
                 Spacer(),
-                Icon(Icons.favorite_border, size: 50, color: Colors.white)
+                IconButton(
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    size: 50,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                onFavoriteToggled(!isFavorite);
+              },
+                ),
               ],
             ),
           ),

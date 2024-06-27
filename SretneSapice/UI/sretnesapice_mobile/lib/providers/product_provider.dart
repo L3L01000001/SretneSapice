@@ -52,6 +52,21 @@ class ProductProvider extends BaseProvider<Product> {
     }
   }
 
+    Future<List<Product>> recommend(String id, [dynamic additionalData]) async {
+    var url = Uri.parse("$totalUrl/Recommend/$id");
+
+    Map<String, String> headers = createHeaders();
+
+    var response = await http!.get(url, headers: headers);
+
+    if (isValidResponseCode(response)) {
+      var data = jsonDecode(response.body);
+      return data.map((x) => fromJson(x)).cast<Product>().toList();
+    } else {
+      throw Exception("Exception... handle this gracefully");
+    }
+  }
+
   @override
   Product fromJson(data) {
     return Product.fromJson(data);

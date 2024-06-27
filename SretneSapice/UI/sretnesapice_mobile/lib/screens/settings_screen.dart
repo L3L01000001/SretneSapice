@@ -3,10 +3,19 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:background_location/background_location.dart';
 import 'package:sretnesapice_mobile/main.dart';
+import 'package:sretnesapice_mobile/models/service_request.dart';
 import 'package:sretnesapice_mobile/models/user.dart';
+import 'package:sretnesapice_mobile/providers/dog_walker_location_provider.dart';
 import 'package:sretnesapice_mobile/providers/dog_walker_provider.dart';
+import 'package:sretnesapice_mobile/providers/service_request_provider.dart';
+import 'package:sretnesapice_mobile/requests/dog_walker_location_request.dart';
+import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/edit_profile_screen.dart';
+import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
+import 'package:sretnesapice_mobile/screens/live_tracking_screen.dart';
+import 'package:sretnesapice_mobile/screens/service_request_list_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 
@@ -20,25 +29,96 @@ class SettingsScreen extends StatefulWidget {
 
 class _SettingsScreenState extends State<SettingsScreen> {
   DogWalkerProvider? _dogWalkerProvider = null;
+  ServiceRequestProvider? _serviceRequestProvider = null;
+  DogWalkerLocationProvider? _dogWalkerLocationProvider = null;
   User? user = Authorization.user;
   final String? profilePhotoBase64 = Authorization.user!.profilePhoto ?? null;
   bool hasAppliedToBeDogWalker = false;
   String dogWalkerStatus = "Unknown";
 
+  final int selectedIndex = 3;
+
+  int dogWalkerId = 0;
+  List<ServiceRequest> activeServiceRequests = [];
+
+  DogWalkerLocationRequest dogWalkerLocationRequest =
+      new DogWalkerLocationRequest();
+
   @override
   void initState() {
     super.initState();
     _dogWalkerProvider = context.read<DogWalkerProvider>();
-    _checkApplicationStatus();
+    _serviceRequestProvider = context.read<ServiceRequestProvider>();
+    _dogWalkerLocationProvider = context.read<DogWalkerLocationProvider>();
+
+    loadData();
+    initBackgroundLocationService();
     _getDogWalkerStatusByUserId();
   }
 
-  Future<void> _checkApplicationStatus() async {
+  Future<void> initBackgroundLocationService() async {
+    try {
+      await BackgroundLocation.startLocationService();
+
+      // Configure notification settings (optional)
+      await BackgroundLocation.setAndroidNotification(
+        title: 'Background Location',
+        message: 'Tracking location in the background',
+      );
+
+      BackgroundLocation.getLocationUpdates((location) {
+        _sendLocationToBackend(location.latitude, location.longitude);
+      });
+
+    } catch (e) {
+      print('Error initializing background location: $e');
+    }
+  }
+
+  Future<void> _sendLocationToBackend(
+      double? latitude, double? longitude) async {
+    if (dogWalkerId != 0) {
+    dogWalkerLocationRequest.dogWalkerId = dogWalkerId;
+    dogWalkerLocationRequest.latitude = latitude;
+    dogWalkerLocationRequest.longitude = longitude;
+    dogWalkerLocationRequest.timestamp = DateTime.now();
+  
+     try {
+      if (_dogWalkerLocationProvider != null) {
+        bool exists = await _dogWalkerLocationProvider!.dogWalkerExistsInTable(dogWalkerId);
+
+        if (exists) {
+          await _dogWalkerLocationProvider!.update(dogWalkerLocationRequest.dogWalkerId!, dogWalkerLocationRequest);
+          print('Location updated successfully');
+        } else {
+          await _dogWalkerLocationProvider!.insert(dogWalkerLocationRequest);
+          print('Location inserted successfully');
+        }
+      } else {
+        print('Error: _dogWalkerLocationProvider is null');
+      }
+    } catch (e) {
+      print('Error sending location: $e');
+    }
+  } else {
+    print('Invalid dogWalkerId: $dogWalkerId');
+  }
+  }
+
+  Future<void> loadData() async {
     try {
       final hasApplied = await _dogWalkerProvider!
           .checkDogWalkerApplicationStatus(user!.userId);
+
+      final id = await _dogWalkerProvider!.getDogWalkerIdByUserId(user!.userId);
+
+      final acceptedServices =
+          await _serviceRequestProvider!.getServiceRequestsByLoggedInUser();
+
       setState(() {
         hasAppliedToBeDogWalker = hasApplied;
+        dogWalkerId = id;
+        activeServiceRequests = acceptedServices;
       });
     } catch (e) {
       print('Error checking application status: $e');
@@ -51,66 +131,117 @@ class _SettingsScreenState extends State<SettingsScreen> {
           await _dogWalkerProvider!.getDogWalkerStatusByUserId(user!.userId);
       print(status);
       setState(() {
-        dogWalkerStatus = status;
+        dogWalkerStatus = _translateStatus(status);
       });
     } catch (e) {
       print('Error checking application status: $e');
     }
   }
 
+  String _translateStatus(String status) {
+    switch (status) {
+      case 'Approved':
+        return 'Odobren';
+      case 'Rejected':
+        return 'Odbijen';
+      case 'Pending':
+        return 'Na čekanju';
+      default:
+        return 'Nepoznat';
+    }
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Odobren':
+        return Colors.green;
+      case 'Odbijen':
+        return Colors.red;
+      case 'Na čekanju':
+        return Colors.blue;
+      default:
+        return Colors.black;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+        initialIndex: selectedIndex,
         child: SingleChildScrollView(
-      child: Container(
-        margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProfileCard(),
-            SizedBox(height: 30),
-            _buildListTile(
-              title: "Moji forum postovi",
-              icon: Icons.forum,
-              subtitle: null,
-              onTap: () {},
-            ),
-            if (hasAppliedToBeDogWalker)
-              _buildListTile(
-                title: "My application status",
-                icon: Icons.assignment_turned_in,
-                subtitle: dogWalkerStatus,
-                onTap: () {},
-              ),
-            if (_isDogWalker())
-              _buildListTile(
-                title: "Zahtjevi za usluge",
-                icon: Icons.assignment,
-                subtitle: null,
-                onTap: () {},
-              ),
-            _buildListTile(
-              title: "Omiljeni šetači",
-              icon: Icons.favorite,
-              subtitle: null,
-              onTap: () {},
-            ),
-            _buildListTile(
-              title: "Odjava",
-              icon: Icons.logout,
-              subtitle: null,
-              onTap: () {
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(
-                    builder: (context) => LoginPage(),
+          child: Container(
+            margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProfileCard(),
+                SizedBox(height: 30),
+                _buildListTile(
+                  title: "Moji forum postovi",
+                  icon: Icons.forum,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ForumPostListScreen(
+                          userId: user!.userId,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                if (hasAppliedToBeDogWalker)
+                  _buildListTile(
+                    title: "Status šetač prijave",
+                    icon: Icons.assignment_turned_in,
+                    subtitle: dogWalkerStatus,
+                    onTap: () {},
                   ),
-                );
-              },
+                if (_isDogWalker())
+                  _buildListTile(
+                    title: "Zahtjevi za usluge",
+                    icon: Icons.assignment,
+                    onTap: () {
+                      if (dogWalkerId != 0) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                ServiceRequestListScreen(id: dogWalkerId),
+                          ),
+                        );
+                      }
+                    },
+                  ),
+                _buildListTile(
+                  title: "Omiljeni šetači",
+                  icon: Icons.favorite,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DogWalkerListScreen(showOnlyFavorites: true),
+                      ),
+                    );
+                  },
+                ),
+                ..._buildActiveServiceListTiles(),
+                _buildListTile(
+                  title: "Odjava",
+                  icon: Icons.logout,
+                  onTap: () {
+                    Navigator.of(context).pushReplacement(
+                      MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    ));
+          ),
+        ));
   }
 
   Widget _buildProfileCard() {
@@ -171,7 +302,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Widget _buildListTile(
       {required String title,
       required IconData icon,
-      required String? subtitle,
+      String? subtitle,
       required VoidCallback onTap}) {
     return Container(
       margin: EdgeInsets.fromLTRB(0, 5, 0, 5),
@@ -189,17 +320,52 @@ class _SettingsScreenState extends State<SettingsScreen> {
       ),
       child: ListTile(
         leading: Icon(icon, color: Color(0xff52297a)),
-        title: Text(title,
-            style: TextStyle(color: Color(0xff52297a), fontSize: 18)),
-        subtitle:
-            Text(subtitle ?? '', style: TextStyle(color: Color(0xff52297a))),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                title,
+                style: TextStyle(color: Color(0xff52297a), fontSize: 18),
+              ),
+            ),
+            if (subtitle != null)
+              Text(
+                subtitle,
+                style: TextStyle(color: _getStatusColor(subtitle)),
+              ),
+          ],
+        ),
         onTap: onTap,
       ),
     );
   }
 
+  List<Widget> _buildActiveServiceListTiles() {
+    return activeServiceRequests.map((service) {
+      return _buildListTile(
+        title: "Provjeri lokaciju šetača (${service.dogWalker?.name})",
+        icon: Icons.location_on,
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) =>
+                  LiveTrackingScreen(dogWalker: service.dogWalkerId!),
+            ),
+          );
+        },
+      );
+    }).toList();
+  }
+
   bool _isDogWalker() {
     return user?.userRoles?.any((role) => role.role?.name == "DogWalker") ??
         false;
+  }
+
+  @override
+  void dispose() {
+    BackgroundLocation.stopLocationService();
+    super.dispose();
   }
 }

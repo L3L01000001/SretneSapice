@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sretnesapice_mobile/models/dog_walker.dart';
+import 'package:sretnesapice_mobile/models/user.dart';
 
 part 'service_request.g.dart';
 
@@ -9,10 +11,12 @@ class ServiceRequest {
   int? userId;
   DateTime? startTime;
   DateTime? endTime;
-  String? date;
+  DateTime? date;
   String? status;
   String? dogBreed;
   bool? liveLocationEnabled;
+  User? user;
+  DogWalker? dogWalker;
 
   ServiceRequest(
       this.serviceRequestId,
@@ -23,7 +27,9 @@ class ServiceRequest {
       this.date,
       this.status,
       this.dogBreed,
-      this.liveLocationEnabled);
+      this.liveLocationEnabled,
+      this.user,
+      this.dogWalker);
 
   factory ServiceRequest.fromJson(Map<String, dynamic> json) =>
       _$ServiceRequestFromJson(json);

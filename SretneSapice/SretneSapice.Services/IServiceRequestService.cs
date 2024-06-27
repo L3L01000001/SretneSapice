@@ -1,4 +1,5 @@
-﻿using SretneSapice.Model.Dtos;
+﻿using SretneSapice.Model;
+using SretneSapice.Model.Dtos;
 using SretneSapice.Model.Requests;
 using SretneSapice.Model.SearchObjects;
 using System;
@@ -16,5 +17,7 @@ namespace SretneSapice.Services
         Task FinishServiceRequest(int serviceRequestId);
         Task<bool> IsScheduledServiceTime(int serviceId);
         Task UpdateLiveLocationEnabled(int serviceId, bool enableLiveLocation);
+        Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByWalkerId(int dogWalkerId);
+        Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByLoggedInUser();
     }
 }

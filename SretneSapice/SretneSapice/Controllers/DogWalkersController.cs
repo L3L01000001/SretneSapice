@@ -86,5 +86,12 @@ namespace SretneSapice.Controllers
             return Ok(status);
         }
 
+        [HttpGet("getDogWalkerIdByUserId/{userId}")]
+        public async Task<IActionResult> GetDogWalkerIdByUserId(int userId)
+        {
+            var id = await _dogWalkerService.GetDogWalkerIdByUserId(userId);
+            return Ok(id);
+        }
+
     }
 }

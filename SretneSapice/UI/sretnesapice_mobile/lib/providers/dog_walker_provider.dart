@@ -70,6 +70,23 @@ class DogWalkerProvider extends BaseProvider<DogWalker> {
     }
   }
 
+  Future<int> getDogWalkerIdByUserId(int userId) async {
+    var url = "$totalUrl/getDogWalkerIdByUserId/$userId";
+
+    var uri = Uri.parse(url);
+
+    var headers = createHeaders();
+    var response = await http!.get(uri, headers: headers);
+
+    if (isValidResponseCode(response)) {
+      var data = json.decode(response.body);
+
+      return data as int;
+    } else {
+      throw Exception('Failed to load dog walker id');
+    }
+  }
+
   @override
   DogWalker fromJson(data) {
     return DogWalker.fromJson(data);

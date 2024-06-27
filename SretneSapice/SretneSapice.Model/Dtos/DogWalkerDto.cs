@@ -27,5 +27,6 @@ namespace SretneSapice.Model.Dtos
         public UserDto? User { get; set; }
         public virtual CityDto? City { get; set; }
         public virtual ICollection<ServiceRequestDto> ServiceRequests { get; } = new List<ServiceRequestDto>();
+        public virtual ICollection<WalkerReviewDto> WalkerReviews { get; } = new List<WalkerReviewDto>();
     }
 }

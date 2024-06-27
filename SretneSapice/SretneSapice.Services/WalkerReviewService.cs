@@ -56,7 +56,13 @@ namespace SretneSapice.Services
 
         public override async Task<WalkerReviewDto> Insert(WalkerReviewInsertRequest insertRequest)
         {
-            if (insertRequest.DogWalkerId == LoggedInUserId)
+            var dogWalker = await _context.DogWalkers.FindAsync(insertRequest.DogWalkerId);
+            if (dogWalker == null)
+            {
+                throw new Exception("Dog Walker not found.");
+            }
+
+            if (dogWalker.UserId == LoggedInUserId)
             {
                 throw new Exception("You cannot give yourself a review.");
             }
