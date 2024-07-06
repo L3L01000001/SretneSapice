@@ -9,6 +9,10 @@ User
 username: mobile
 pass: test
 
+DogWalker
+username: dogwalker
+pass: test
+
 Dog Walker Verifier
 username: dogwalkerverifier
 pass: test
