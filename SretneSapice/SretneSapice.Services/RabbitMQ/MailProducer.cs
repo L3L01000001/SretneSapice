@@ -14,10 +14,10 @@ namespace SretneSapice.Services.RabbitMQ
         public void SendEmail<T>(T message) { 
                 var factory = new ConnectionFactory
                 {
-                    HostName = "localhost",
-                    Port = 5672,
-                    UserName = "user",
-                    Password = "password",
+                    HostName = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost",
+                    Port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672"),
+                    UserName = Environment.GetEnvironmentVariable("RABBITMQ_USERNAME") ?? "user",
+                    Password = Environment.GetEnvironmentVariable("RABBITMQ_PASSWORD") ?? "password",
                 };
                 factory.ClientProvidedName = "Rabbit Test";
 

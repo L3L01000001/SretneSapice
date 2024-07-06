@@ -67,7 +67,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Text("Uredi Profil"),
+              Text("Uredi profil",
+                  style: Theme.of(context).textTheme.titleLarge),
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
@@ -80,7 +81,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               ? CircleAvatar(
                                   radius: 50,
                                   backgroundImage: user!.profilePhoto != null
-                                      ? MemoryImage(base64Decode(user!.profilePhoto!))
+                                      ? MemoryImage(
+                                          base64Decode(user!.profilePhoto!))
                                       : null,
                                   child: user!.profilePhoto == null
                                       ? Icon(Icons.person, size: 50)
@@ -92,7 +94,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                                 ),
                           TextButton(
                             onPressed: getImageFromGallery,
-                            child: Text('Izaberi Sliku'),
+                            child: Text('Izaberi novu sliku',
+                                style: TextStyle(
+                                  decoration: TextDecoration.underline,
+                                )),
                           ),
                         ],
                       ),
@@ -114,19 +119,39 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       userUpdateRequest.email = _emailController.text;
                       userUpdateRequest.phone = _phoneController.text;
                       userUpdateRequest.username = _usernameController.text;
-                       if (_base64Image != null) {
-                        userUpdateRequest.profilePhoto = _base64Image;
+                      if (_imageFile != null) {
+                        List<int> imageBytes = await _imageFile!.readAsBytes();
+                        String base64Image = base64Encode(imageBytes);
+                        userUpdateRequest.profilePhoto = base64Image;
                       }
 
                       await _userProvider?.update(
                           user!.userId, userUpdateRequest);
                       Navigator.pushNamed(context, SettingsScreen.routeName);
                     } catch (e) {
-                      print("greska");
+                      errorDialog(context, e);
                     }
                   }
                 },
-                child: Text('Sačuvaj'),
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                      Color.fromARGB(255, 121, 26, 222)), 
+                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.fromLTRB(
+                          15, 0, 15, 0)),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30.0),
+                    ),
+                  ),
+                ),
+                child: Text(
+                  'Sačuvaj',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.white, 
+                  ),
+                ),
               )
             ],
           ),
@@ -147,17 +172,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(10, 5, 0, 0),
-            child: Text(label, style: Theme.of(context).textTheme.bodyText2),
-          ),
           TextInputWidget(
-              labelText: label,
-              controller: controller,
-              minLength: minLength,
-              isEmail: email,
-              isPhoneNumber: phoneNumber,
-              color: Color.fromARGB(255, 121, 26, 222),),
+            labelText: label,
+            controller: controller,
+            minLength: minLength,
+            isEmail: email,
+            isPhoneNumber: phoneNumber,
+            color: Color.fromARGB(255, 121, 26, 222),
+          ),
         ],
       ),
     );
@@ -169,8 +191,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Future getImageFromGallery() async {
     var image = await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      _imageFile = image != null ? File(image.path) : null;
-    });
+    if (image != null) {
+      setState(() {
+        _imageFile = File(image.path);
+      });
+    }
   }
 }

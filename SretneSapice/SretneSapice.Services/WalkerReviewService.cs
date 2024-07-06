@@ -67,6 +67,16 @@ namespace SretneSapice.Services
                 throw new Exception("You cannot give yourself a review.");
             }
 
+            var serviceRequest = await _context.ServiceRequests.FirstOrDefaultAsync(sr =>
+                        sr.UserId == LoggedInUserId &&
+                        sr.DogWalkerId == insertRequest.DogWalkerId &&
+                        sr.Status == "Finished");
+
+            if (serviceRequest == null)
+            {
+                throw new Exception("You can only review dog walkers you have received services from.");
+            }
+
             insertRequest.UserId = LoggedInUserId;
             insertRequest.Timestamp = DateTime.Now;
 

@@ -68,7 +68,7 @@ namespace SretneSapice.Services
 
         public async Task<bool> IsScheduledServiceTime(int serviceId)
         {
-            var service = await _context.ScheduledServices.FindAsync(serviceId);
+            var service = await _context.ServiceRequests.FindAsync(serviceId);
             if (service == null)
             {
                 return false;
@@ -187,7 +187,7 @@ namespace SretneSapice.Services
         public async Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByWalkerId(int dogWalkerId)
         {
             var allServiceRequests = _context.ServiceRequests
-                                            .Include(x => x.User).Include(x => x.DogWalker)
+                                            .Include(x => x.User)
                                             .AsQueryable();
 
             var selected = allServiceRequests.Where(x => x.DogWalkerId == dogWalkerId);

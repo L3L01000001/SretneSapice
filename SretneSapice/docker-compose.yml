@@ -1,5 +1,20 @@
 version: '3'
 services:
+  # RabbitMQ Docker
+  rabbitmq:
+    image: rabbitmq:management
+    container_name: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - sretnesapicenet  
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
 #mssql docker
   sretnesapice-sql:
     image: mcr.microsoft.com/mssql/server:2019-latest
@@ -22,6 +37,14 @@ services:
     environment:
       - ConnectionStrings:DefaultConnection=Server=sretnesapice-sql,1433;Database=IB180148_docker;User=sa;Password=SretneSapice123;ConnectRetryCount=0; TrustServerCertificate=True
       - ASPNETCORE_ENVIRONMENT=Development
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=password
+      - SMTP_SERVER=smtp.outlook.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=sretnesapice@outlook.com
+      - SMTP_PASSWORD=sapice123
     ports:
       - 7094:7094
     networks:
@@ -30,6 +53,29 @@ services:
       - sretnesapice-sql
     depends_on:
       - sretnesapice-sql
+
+        # RabbitMQ Service Docker
+  rabbitmq-service:
+    restart: unless-stopped
+    build:
+      context: .
+      dockerfile: ./eSpaCenter.Subscriber/Dockerfile
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USERNAME=user
+      - RABBITMQ_PASSWORD=password
+      - SMTP_SERVER=smtp.outlook.com
+      - SMTP_PORT=587
+      - SMTP_USERNAME=sretnesapice@outlook.com
+      - SMTP_PASSWORD=sapice123
+    depends_on:
+      - rabbitmq
+    networks:
+      - sretnesapicenet
+
+volumes:
+  rabbitmq_data:
       
 networks:
   sretnesapicenet:

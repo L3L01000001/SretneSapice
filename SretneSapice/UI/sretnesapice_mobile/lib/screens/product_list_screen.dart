@@ -23,7 +23,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
   TextEditingController _searchController = TextEditingController();
   String? _selectedSortingOption;
 
-    final int selectedIndex = 2;
+  final int selectedIndex = 2;
 
   OrderItemRequest orderItemRequest = new OrderItemRequest();
 
@@ -47,66 +47,71 @@ class _ProductListScreenState extends State<ProductListScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      initialIndex: selectedIndex,
+        initialIndex: selectedIndex,
         child: SingleChildScrollView(
-      child: Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProductSearch(),
-            Padding(
-                padding: EdgeInsets.only(left: 10.0),
-                child: _buildSortingDropdown()),
-            Container(
-              height: 700,
-              padding: EdgeInsets.all(26.0),
-              child: data.isEmpty
-                  ? _buildLoadingIndicator()
-                  : GridView(
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 2,
-                          childAspectRatio: 0.75,
-                          crossAxisSpacing: 10,
-                          mainAxisSpacing: 30),
-                      scrollDirection: Axis.vertical,
-                      children: _buildProductCardList(),
-                    ),
-            )
-          ],
-        ),
-      ),
-    ));
-  }
-
-  Widget _buildLoadingIndicator() {
-    return Scaffold(
-      body: Center(
-        child: CircularProgressIndicator(),
-      ),
-    );
+          child: Container(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProductSearch(),
+                SizedBox(height: 5),
+                Padding(
+                    padding: EdgeInsets.only(left: 20.0),
+                    child: _buildSortingDropdown()),
+                Container(
+                  height: 700,
+                  padding: EdgeInsets.all(26.0),
+                  child: data.isEmpty
+                      ? Container(
+                          height: 200,
+                          alignment: Alignment.center,
+                          child: Center(child: CircularProgressIndicator()))
+                      : GridView(
+                          gridDelegate:
+                              SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  childAspectRatio: 0.75,
+                                  crossAxisSpacing: 10,
+                                  mainAxisSpacing: 30),
+                          scrollDirection: Axis.vertical,
+                          children: _buildProductCardList(),
+                        ),
+                )
+              ],
+            ),
+          ),
+        ));
   }
 
   Widget _buildSortingDropdown() {
     return Container(
-      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18.0),
+        color: Colors.blue[900],
+      ),
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
       height: 50,
       child: DropdownButton<String>(
+        underline: SizedBox(),
         hint: Container(
           alignment: Alignment.center,
           child: Row(
             children: [
               Text(
-                'Sortiraj po:',
+                'Sortiraj po',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.none,
-                    color: Color.fromARGB(255, 6, 58, 137)),
+                    color: Colors.white),
               ),
             ],
           ),
         ),
-        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue[900]),
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        dropdownColor: Colors.blue[900],
+        iconDisabledColor: Colors.white,
+        iconEnabledColor: Colors.white,
         borderRadius: BorderRadius.circular(10),
         value: _selectedSortingOption,
         onChanged: (String? newValue) async {
@@ -133,7 +138,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 data = tmpdata;
               });
             } else {
-              print('Invalid sorting option');
+              print('Sort opcija ne postoji.');
             }
           } catch (error) {
             print('Error fetching products: $error');
@@ -282,12 +287,17 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                   ?.insert(orderItemRequest);
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
-                                content: Text('Uspješno dodano u korpu!'),
+                                backgroundColor: Colors.blue[900],
+                                content: Text('Uspješno dodano u korpu!',
+                                    style: TextStyle(color: Colors.white)),
                               ));
                             } catch (e) {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
-                                content: Text('Greška!'),
+                                backgroundColor:
+                                    const Color.fromARGB(255, 73, 14, 10),
+                                content: Text('Greška!',
+                                    style: TextStyle(color: Colors.white)),
                               ));
                             }
                           },

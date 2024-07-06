@@ -2,16 +2,16 @@ import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 
 class TextInputWidget extends StatelessWidget {
-  const TextInputWidget(
-      {Key? key,
-      required this.controller,
-      required this.labelText,
-      required this.minLength,
-      required this.isEmail,
-      required this.isPhoneNumber,
-      required this.color,
-      this.maxLines = 1,})
-      : super(key: key);
+  const TextInputWidget({
+    Key? key,
+    required this.controller,
+    required this.labelText,
+    required this.minLength,
+    required this.isEmail,
+    required this.isPhoneNumber,
+    required this.color,
+    this.maxLines = 1,
+  }) : super(key: key);
 
   final TextEditingController controller;
   final String? labelText;
@@ -51,13 +51,17 @@ class TextInputWidget extends StatelessWidget {
               }
               return null;
             },
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: color),
+            style:
+                Theme.of(context).textTheme.bodySmall?.copyWith(color: color),
             obscureText: password,
             controller: controller,
             maxLines: maxLines,
             decoration: InputDecoration(
                 border: InputBorder.none,
                 hintText: this.labelText ?? "",
-                hintStyle: Theme.of(context).textTheme.bodySmall?.copyWith(color: color))));
+                hintStyle: Theme.of(context)
+                    .textTheme
+                    .bodySmall
+                    ?.copyWith(color: color))));
   }
 }

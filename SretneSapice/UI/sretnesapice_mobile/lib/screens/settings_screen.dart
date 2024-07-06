@@ -10,11 +10,13 @@ import 'package:sretnesapice_mobile/models/user.dart';
 import 'package:sretnesapice_mobile/providers/dog_walker_location_provider.dart';
 import 'package:sretnesapice_mobile/providers/dog_walker_provider.dart';
 import 'package:sretnesapice_mobile/providers/service_request_provider.dart';
+import 'package:sretnesapice_mobile/providers/user_provider.dart';
 import 'package:sretnesapice_mobile/requests/dog_walker_location_request.dart';
 import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/edit_profile_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/live_tracking_screen.dart';
+import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/screens/service_request_list_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
@@ -31,7 +33,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
   DogWalkerProvider? _dogWalkerProvider = null;
   ServiceRequestProvider? _serviceRequestProvider = null;
   DogWalkerLocationProvider? _dogWalkerLocationProvider = null;
-  User? user = Authorization.user;
+  UserProvider? _userProvider;
+  int userId = Authorization.user!.userId;
+  User? loggedInUser;
+
   final String? profilePhotoBase64 = Authorization.user!.profilePhoto ?? null;
   bool hasAppliedToBeDogWalker = false;
   String dogWalkerStatus = "Unknown";
@@ -48,9 +53,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
   void initState() {
     super.initState();
     _dogWalkerProvider = context.read<DogWalkerProvider>();
+    _userProvider = context.read<UserProvider>();
     _serviceRequestProvider = context.read<ServiceRequestProvider>();
     _dogWalkerLocationProvider = context.read<DogWalkerLocationProvider>();
 
+    getUser();
     loadData();
     initBackgroundLocationService();
     _getDogWalkerStatusByUserId();
@@ -60,16 +67,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
     try {
       await BackgroundLocation.startLocationService();
 
-      // Configure notification settings (optional)
       await BackgroundLocation.setAndroidNotification(
         title: 'Background Location',
         message: 'Tracking location in the background',
       );
 
       BackgroundLocation.getLocationUpdates((location) {
-        _sendLocationToBackend(location.latitude, location.longitude);
+         _sendLocationToBackend(location.latitude, location.longitude); 
       });
-
     } catch (e) {
       print('Error initializing background location: $e');
     }
@@ -78,47 +83,65 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _sendLocationToBackend(
       double? latitude, double? longitude) async {
     if (dogWalkerId != 0) {
-    dogWalkerLocationRequest.dogWalkerId = dogWalkerId;
-    dogWalkerLocationRequest.latitude = latitude;
-    dogWalkerLocationRequest.longitude = longitude;
-    dogWalkerLocationRequest.timestamp = DateTime.now();
-  
-     try {
-      if (_dogWalkerLocationProvider != null) {
-        bool exists = await _dogWalkerLocationProvider!.dogWalkerExistsInTable(dogWalkerId);
+      dogWalkerLocationRequest.dogWalkerId = dogWalkerId;
+      dogWalkerLocationRequest.latitude = latitude;
+      dogWalkerLocationRequest.longitude = longitude;
+      dogWalkerLocationRequest.timestamp = DateTime.now();
 
-        if (exists) {
-          await _dogWalkerLocationProvider!.update(dogWalkerLocationRequest.dogWalkerId!, dogWalkerLocationRequest);
-          print('Location updated successfully');
+      try {
+        if (_dogWalkerLocationProvider != null) {
+          bool exists = await _dogWalkerLocationProvider!
+              .dogWalkerExistsInTable(dogWalkerId);
+
+          if (exists) {
+            await _dogWalkerLocationProvider!.update(
+                dogWalkerLocationRequest.dogWalkerId!,
+                dogWalkerLocationRequest);
+            print('Location updated successfully');
+          } else {
+            await _dogWalkerLocationProvider!.insert(dogWalkerLocationRequest);
+            print('Location inserted successfully');
+          }
         } else {
-          await _dogWalkerLocationProvider!.insert(dogWalkerLocationRequest);
-          print('Location inserted successfully');
+          print('Error: _dogWalkerLocationProvider is null');
         }
-      } else {
-        print('Error: _dogWalkerLocationProvider is null');
+      } catch (e) {
+        print('Error sending location: $e');
       }
-    } catch (e) {
-      print('Error sending location: $e');
+    } else {
+      print('Invalid dogWalkerId: $dogWalkerId');
     }
-  } else {
-    print('Invalid dogWalkerId: $dogWalkerId');
-  }
   }
 
-  Future<void> loadData() async {
+  Future getUser() async {
+    var userData = await _userProvider?.getById(userId);
+
+    setState(() {
+      this.loggedInUser = userData;
+    });
+  }
+
+  Future loadData() async {
     try {
-      final hasApplied = await _dogWalkerProvider!
-          .checkDogWalkerApplicationStatus(user!.userId);
+      final hasApplied =
+          await _dogWalkerProvider!.checkDogWalkerApplicationStatus(userId);
 
-      final id = await _dogWalkerProvider!.getDogWalkerIdByUserId(user!.userId);
+      var id = await _dogWalkerProvider!.getDogWalkerIdByUserId(userId);
 
-      final acceptedServices =
-          await _serviceRequestProvider!.getServiceRequestsByLoggedInUser();
+      List<ServiceRequest> acceptedServices = [];
+      try {
+        acceptedServices =
+            await _serviceRequestProvider!.getServiceRequestsByLoggedInUser();
+      } catch (e) {
+        print('No active service requests found: $e');
+      }
+
+      acceptedServices ??= [];
 
       setState(() {
         hasAppliedToBeDogWalker = hasApplied;
-        dogWalkerId = id;
-        activeServiceRequests = acceptedServices;
+        this.dogWalkerId = id;
+        this.activeServiceRequests = acceptedServices;
       });
     } catch (e) {
       print('Error checking application status: $e');
@@ -128,8 +151,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
   Future<void> _getDogWalkerStatusByUserId() async {
     try {
       final status =
-          await _dogWalkerProvider!.getDogWalkerStatusByUserId(user!.userId);
-      print(status);
+          await _dogWalkerProvider!.getDogWalkerStatusByUserId(userId);
       setState(() {
         dogWalkerStatus = _translateStatus(status);
       });
@@ -184,7 +206,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => ForumPostListScreen(
-                          userId: user!.userId,
+                          userId: Authorization.user!.userId,
                         ),
                       ),
                     );
@@ -251,51 +273,60 @@ class _SettingsScreenState extends State<SettingsScreen> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Row(
-          children: [
-            CircleAvatar(
-                radius: 40,
-                child: profilePhotoBase64 != ""
-                    ? imageFromBase64String(profilePhotoBase64!)
-                    : Icon(Icons.person, size: 40)),
-            SizedBox(width: 26),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  user!.fullName!,
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold),
-                ),
-                SizedBox(height: 8),
-                Text(
-                  user!.city?.name ?? "Nema",
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-                SizedBox(height: 16),
-                ElevatedButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditProfileScreen(),
+      child: loggedInUser == null
+          ? Container(
+              height: 150,
+              child:
+                  Center(child: CircularProgressIndicator(color: Colors.white)))
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                      radius: 40,
+                      backgroundImage: loggedInUser!.profilePhoto != ""
+                          ? MemoryImage(
+                              base64Decode(loggedInUser!.profilePhoto!))
+                          : null,
+                      child: loggedInUser?.profilePhoto == ""
+                          ? Icon(Icons.person, size: 40)
+                          : null),
+                  SizedBox(width: 26),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        loggedInUser?.fullName ?? "",
+                        style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold),
                       ),
-                    );
-                  },
-                  child: Text("Uredi profil"),
-                ),
-              ],
+                      SizedBox(height: 8),
+                      Text(
+                        loggedInUser?.city?.name ?? "Nema",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => EditProfileScreen(),
+                            ),
+                          );
+                        },
+                        child: Text("Uredi profil"),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -359,7 +390,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   bool _isDogWalker() {
-    return user?.userRoles?.any((role) => role.role?.name == "DogWalker") ??
+    return Authorization.user?.userRoles
+            ?.any((role) => role.role?.name == "DogWalker") ??
         false;
   }
 

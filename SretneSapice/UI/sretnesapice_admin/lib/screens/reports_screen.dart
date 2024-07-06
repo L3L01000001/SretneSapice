@@ -711,7 +711,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                           DataCell(Text(e.user?.fullName ?? "",
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16))),
-                          DataCell(Text(e.date ?? "",
+                          DataCell(Text(formatDate(e.date),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 16))),
                           DataCell(Text(e.status ?? "",

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/models/product.dart';
+import 'package:sretnesapice_mobile/providers/order_item_provider.dart';
 import 'package:sretnesapice_mobile/providers/product_provider.dart';
 import 'package:sretnesapice_mobile/providers/product_type_provider.dart';
+import 'package:sretnesapice_mobile/requests/order_item_request.dart';
 import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
@@ -19,16 +21,19 @@ class ProductDetailsScreen extends StatefulWidget {
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   ProductProvider? _productProvider;
   ProductTypeProvider? _productTypeProvider;
+  OrderItemProvider? _orderItemProvider = null;
   final int selectedIndex = 2;
 
   Product? product;
-  List<Product>? _recommendList = null;
+  List<Product> _recommendList = [];
+  OrderItemRequest orderItemRequest = new OrderItemRequest();
 
   @override
   void initState() {
     super.initState();
     _productProvider = context.read<ProductProvider>();
     _productTypeProvider = context.read<ProductTypeProvider>();
+    _orderItemProvider = context.read<OrderItemProvider>();
 
     loadData();
     loadRecommendedList(this.widget.id);
@@ -43,9 +48,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   }
 
   Future loadRecommendedList(String id) async {
-    var tempRecommendList = await _productProvider?.recommend(id);
+    List<Product>? tempRecommendList =
+        await _productProvider?.recommend(int.parse(id));
     setState(() {
-      _recommendList = tempRecommendList;
+      _recommendList = tempRecommendList ?? [];
     });
   }
 
@@ -157,7 +163,27 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       width: 50,
                       height: 50,
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      try {
+                        orderItemRequest.productId = product!.productID;
+                        orderItemRequest.quantity = 1;
+
+                        var orderedProduct =
+                            await _orderItemProvider?.insert(orderItemRequest);
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor: Colors.blue[900],
+                          content: Text('Uspješno dodano u korpu!',
+                              style: TextStyle(color: Colors.white)),
+                        ));
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          backgroundColor:
+                              const Color.fromARGB(255, 73, 14, 10),
+                          content: Text('Greška!',
+                              style: TextStyle(color: Colors.white)),
+                        ));
+                      }
+                    },
                   ),
                 ),
               ],
@@ -184,12 +210,10 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
         .map((x) => Container(
               child: InkWell(
                 onTap: () {
-                  Navigator.pushNamed(
-                      context, "${ProductDetailsScreen.routeName}/${x.productID}");
+                  Navigator.pushNamed(context,
+                      "${ProductDetailsScreen.routeName}/${x.productID}");
                 },
                 child: Container(
-                  // height: 100,
-                  // width: 100,
                   child: imageFromBase64String(x.productPhoto!),
                 ),
               ),

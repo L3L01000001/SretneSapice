@@ -46,6 +46,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       'stockQuantity': widget.product?.stockQuantity?.toString(),
       'productTypeID': widget.product?.productTypeID?.toString(),
       'brand': widget.product?.brand,
+      'productPhoto': widget.product?.productPhoto
     };
 
     _productTypeProvider = context.read<ProductTypeProvider>();
@@ -70,7 +71,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-        initialIndex: 0,
+      initialIndex: 0,
+      title: this.widget.product?.name ?? "Novi proizvod",
+      child: SingleChildScrollView(
         child: Padding(
           padding: EdgeInsets.all(32.0),
           child: Column(
@@ -97,9 +100,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             var request =
                                 new Map.from(_formKey.currentState!.value);
 
-                            request['productPhoto'] = _base64Image;
-
-                            print(request['productPhoto']);
+                            if (_base64Image != null &&
+                                _base64Image!.isNotEmpty) {
+                              request['productPhoto'] = _base64Image;
+                            } else if (widget.product != null) {
+                              request['productPhoto'] =
+                                  widget.product!.productPhoto;
+                            }
 
                             try {
                               if (widget.product == null) {
@@ -167,7 +174,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             }
                           },
                           child: Text("Sačuvaj",
-                        style: TextStyle(fontSize: 18, color: Colors.white)),
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white)),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.transparent,
                             shadowColor: Colors.transparent,
@@ -180,7 +188,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
             ],
           ),
         ),
-        title: this.widget.product?.name ?? "Novi proizvod");
+      ),
+    );
   }
 
   FormBuilder _buildForm() {
@@ -277,6 +286,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 ],
               ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                       child: FormBuilderDropdown<String>(
@@ -287,7 +297,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     decoration: InputDecoration(
                         labelText: 'Vrsta proizvoda',
                         labelStyle: TextStyle(
-                          fontSize: 18,
+                          fontSize: 14,
                           color: Color.fromARGB(255, 61, 6, 137),
                           fontWeight: FontWeight.bold,
                         ),
@@ -339,7 +349,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                 children: [
                   Expanded(
                     child: FormBuilderTextField(
-                      maxLines: null,
+                      maxLines: 2,
                       decoration: InputDecoration(
                         labelText: "Opis",
                         labelStyle: TextStyle(
@@ -357,8 +367,13 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                 ],
               ),
-              SizedBox(
-                height: 20,
+              FormBuilderTextField(
+                name: 'productPhoto',
+                initialValue: _initialValue['productPhoto'],
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                ),
+                style: TextStyle(height: 0),
               ),
               Row(
                 children: [

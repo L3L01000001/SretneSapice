@@ -72,6 +72,7 @@ namespace SretneSapice.Services
         public override async Task<ForumPostDto> GetById(int id)
         {
             var entity = await _context.Set<ForumPost>()
+                .Include(fp => fp.ForumPostTags).ThenInclude(fpt => fpt.Tag)
                 .Include(fp => fp.Comments)
                 .FirstOrDefaultAsync(fp => fp.PostId == id);
 
@@ -105,7 +106,7 @@ namespace SretneSapice.Services
         public override IQueryable<ForumPost> AddInclude(IQueryable<ForumPost> query, ForumPostSearchObject? search = null)
         {
             query = query
-                .Include("ForumPostTags.Tag") 
+                .Include(x => x.ForumPostTags).ThenInclude(fpt => fpt.Tag)
                 .Include(x => x.Comments)
                 .Include(x => x.User);
             return base.AddInclude(query, search);
@@ -136,7 +137,7 @@ namespace SretneSapice.Services
 
         public async Task<PagedResult<ForumPostDto>> GetForumPostsByNewestAsync()
         {
-            var query = _context.ForumPosts.OrderByDescending(p => p.Timestamp).AsQueryable();
+            var query = _context.ForumPosts.Include(x => x.Comments).OrderByDescending(p => p.Timestamp).AsQueryable();
 
             PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
 
@@ -151,7 +152,7 @@ namespace SretneSapice.Services
 
         public async Task<PagedResult<ForumPostDto>> GetForumPostsByOldestAsync()
         {
-            var query = _context.ForumPosts.OrderBy(p => p.Timestamp).AsQueryable();
+            var query = _context.ForumPosts.Include(x => x.Comments).OrderBy(p => p.Timestamp).AsQueryable();
 
             PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
 
@@ -166,7 +167,7 @@ namespace SretneSapice.Services
 
         public async Task<PagedResult<ForumPostDto>> GetForumPostsByMostPopularAsync()
         {
-            var query = _context.ForumPosts.OrderByDescending(p => p.LikesCount).AsQueryable();
+            var query = _context.ForumPosts.Include(x => x.Comments).OrderByDescending(p => p.LikesCount).AsQueryable();
 
             PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
 

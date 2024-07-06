@@ -39,6 +39,8 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
   bool addWalkerReview = false;
   bool showCalendar = false;
 
+  bool loading = false;
+
   WalkerReviewRequest walkerReviewRequest = new WalkerReviewRequest();
   ServiceInsertRequest serviceRequest = new ServiceInsertRequest();
 
@@ -56,7 +58,7 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
     _walkerReviewProvider = context.read<WalkerReviewProvider>();
     _availabilityProvider = context.read<AvailabilityProvider>();
     _serviceRequestProvider = context.read<ServiceRequestProvider>();
-    
+
     loadData();
   }
 
@@ -127,8 +129,6 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
                       setState(() {
                         showCalendar = true;
                       });
-
-                      print(showCalendar);
 
                       setState(() {
                         showReviews = false;
@@ -473,11 +473,14 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
                             await loadData();
                           }
                         } catch (e) {
+                          setState(() {
+                            addWalkerReview = false;
+                          });
                           showDialog(
                             context: context,
                             builder: (BuildContext context) => AlertDialog(
                               content: Text(
-                                  "Nemoguće dodati dojam. Pokušajte kasnije!"),
+                                  "Nemoguće dodati dojam ukoliko Vam ovaj šetač nije pružio usluge!"),
                               actions: [
                                 TextButton(
                                   onPressed: () {
@@ -525,58 +528,72 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
   Widget _buildWalkerReviews() {
     List<Widget> reviewCards = [];
 
-    if (dogWalker!.walkerReviews != null &&
-        dogWalker!.walkerReviews!.isNotEmpty) {
-      for (var review in dogWalker!.walkerReviews!) {
+    if (dogWalker!.walkerReviews.isNotEmpty) {
+      for (var review in dogWalker!.walkerReviews) {
         reviewCards.add(
           Card(
             elevation: 2,
+            color: Colors.transparent,
             margin: EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      CircleAvatar(
-                        radius: 30,
-                        child: review!.user?.profilePhoto != ""
-                            ? imageFromBase64String(review.user!.profilePhoto!)
-                            : Icon(Icons.person, size: 30),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        review!.user?.fullName ?? "",
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [Color(0xff1590a1), Color(0xff006371)],
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(15.0),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          review.reviewText ?? "",
-                          style: TextStyle(fontSize: 16),
+                        CircleAvatar(
+                          radius: 30,
+                          child: review.user!.profilePhoto != ""
+                              ? imageFromBase64String(
+                                  review.user!.profilePhoto!)
+                              : Icon(Icons.person, size: 30),
                         ),
                         SizedBox(height: 8),
-                        Row(
-                          children: [
-                            ..._buildRatingStars(review.rating ?? 0),
-                            SizedBox(width: 8),
-                            Text(
-                              review.rating?.toString() ?? "",
-                              style: TextStyle(fontWeight: FontWeight.bold),
-                            ),
-                          ],
+                        Text(
+                          review.user!.fullName ?? "",
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, color: Colors.white),
                         ),
                       ],
                     ),
-                  ),
-                ],
+                    SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            review.reviewText ?? "",
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          SizedBox(height: 8),
+                          Row(
+                            children: [
+                              ..._buildRatingStars(review.rating ?? 0),
+                              SizedBox(width: 8),
+                              Text(
+                                review.rating?.toString() ?? "",
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -676,7 +693,7 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
                     child: Text(
                       serviceRequest.startTime != null
                           ? "Od: ${_timeFormat.format(serviceRequest.startTime!)}"
-                          : "Odaberi početno vrijeme",
+                          : "Odaberi od:",
                       style: TextStyle(color: Colors.white),
                     ),
                   ),
@@ -694,7 +711,7 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
                     child: Text(
                         serviceRequest.endTime != null
                             ? "Do: ${_timeFormat.format(serviceRequest.endTime!)}"
-                            : "Odaberi kraj vremena",
+                            : "Odaberi do:",
                         style: TextStyle(color: Colors.white)),
                   ),
                 ],
@@ -713,44 +730,70 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
               ElevatedButton(
                 onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    try {
-                      serviceRequest.dogWalkerId = int.parse(widget.id);
-                      serviceRequest.dogBreed = _breedController.text;
-
-                      var serviceReq =
-                          await _serviceRequestProvider?.insert(serviceRequest);
-
-                      if (serviceReq != null) {
-                        showDialog(
-                            context: context,
-                            builder: (BuildContext context) => AlertDialog(
-                                  title: Text(
-                                      "Uspješno ste poslali šetaču zahtjev za uslugu!"),
-                                  actions: [
-                                    TextButton(
-                                        onPressed: () =>
-                                            Navigator.popAndPushNamed(context,
-                                                DogWalkerListScreen.routeName),
-                                        child: Text("Ok"))
-                                  ],
-                                ));
-                      }
-                    } catch (e) {
+                    if (serviceRequest.startTime != null &&
+                        serviceRequest.endTime != null &&
+                        serviceRequest.startTime!
+                            .isAfter(serviceRequest.endTime!)) {
                       showDialog(
                         context: context,
                         builder: (BuildContext context) => AlertDialog(
+                          title: Text("Greška"),
                           content: Text(
-                              "Nešto je pošlo po zlu. Provjerite vrijeme za početak i kraj usluge!"),
+                              "Vrijeme početka ne može biti nakon vremena završetka."),
                           actions: [
                             TextButton(
-                              onPressed: () {
-                                Navigator.of(context).pop();
-                              },
-                              child: Text('OK'),
-                            )
+                              onPressed: () => Navigator.pop(context),
+                              child: Text("OK"),
+                            ),
                           ],
                         ),
                       );
+                    } else {
+                      loading = true;
+                      try {
+                        serviceRequest.dogWalkerId = int.parse(widget.id);
+                        serviceRequest.dogBreed = _breedController.text;
+
+                        var serviceReq = await _serviceRequestProvider
+                            ?.insert(serviceRequest);
+
+                        loading = false;
+
+                        if (serviceReq != null) {
+                          showDialog(
+                            context: context,
+                            builder: (BuildContext context) => AlertDialog(
+                              title: Text(
+                                  "Uspješno ste poslali šetaču zahtjev za uslugu!",
+                                  style: TextStyle(color: Color(0xff1590a1))),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.popAndPushNamed(
+                                      context, DogWalkerListScreen.routeName),
+                                  child: Text("Ok"),
+                                )
+                              ],
+                            ),
+                          );
+                        }
+                      } catch (e) {
+                        loading = false;
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) => AlertDialog(
+                            content: Text(
+                                "Nešto je pošlo po zlu. Provjerite vrijeme za početak i kraj usluge!"),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                                child: Text('OK'),
+                              )
+                            ],
+                          ),
+                        );
+                      }
                     }
                   }
                 },

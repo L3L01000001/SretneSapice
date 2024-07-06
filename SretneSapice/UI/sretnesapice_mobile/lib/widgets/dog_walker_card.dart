@@ -85,8 +85,8 @@ class DogWalkerCard extends StatelessWidget {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                onFavoriteToggled(!isFavorite);
-              },
+                    onFavoriteToggled(!isFavorite);
+                  },
                 ),
               ],
             ),

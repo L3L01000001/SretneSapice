@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/main.dart';
 import 'package:sretnesapice_mobile/models/city.dart';
-import 'package:sretnesapice_mobile/models/search_result.dart';
 import 'package:sretnesapice_mobile/providers/city_provider.dart';
 import 'package:sretnesapice_mobile/providers/user_provider.dart';
 import 'package:sretnesapice_mobile/requests/registration_request.dart';
@@ -32,6 +31,8 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   City? selectedCity;
   List<City> cities = [];
 
+  bool _isLoading = false;
+
   RegistrationRequest registrationRequest = new RegistrationRequest();
 
   final _formKey = GlobalKey<FormState>();
@@ -55,6 +56,10 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
   }
 
   void register() async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       registrationRequest.name = _nameController.text;
       registrationRequest.surname = _surnameController.text;
@@ -77,8 +82,13 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                       "Registriran korisnik ${registeredUser.name}"),
                   actions: [
                     TextButton(
-                        onPressed: () => Navigator.popAndPushNamed(
-                            context, ForumPostListScreen.routeName),
+                        onPressed: () {
+                          Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(
+                              builder: (context) => LoginPage(),
+                            ),
+                          );
+                        },
                         child: Text("Ok"))
                   ],
                 ));
@@ -87,7 +97,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
-          content: Text("Nemoguće obaviti registraciju!"),
+          content: Text("Nemoguće obaviti registraciju! Provjerite polja!"),
           actions: [
             TextButton(
               onPressed: () {
@@ -98,6 +108,10 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
           ],
         ),
       );
+    } finally {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -198,10 +212,16 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                         backgroundColor:
                             MaterialStateProperty.all<Color>(Color(0xFF8031CC)),
                       ),
-                      child: Text(
-                        "Kreiraj račun",
-                        style: TextStyle(fontSize: 20, color: Colors.white),
-                      ),
+                      child: _isLoading
+                          ? CircularProgressIndicator(
+                              valueColor:
+                                  AlwaysStoppedAnimation<Color>(Colors.white),
+                            )
+                          : Text(
+                              "Kreiraj račun",
+                              style:
+                                  TextStyle(fontSize: 20, color: Colors.white),
+                            ),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -246,34 +266,39 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
                   ),
                 ),
               ),
-              child: DropdownButton<City>(
+              child: DropdownButtonFormField<City>(
                 isExpanded: true,
-                underline: Container(),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Grad',
+                  hintStyle: TextStyle(
+                    color: Color.fromARGB(255, 121, 26, 222),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
                 value: selectedCity,
                 icon: const Icon(Icons.arrow_drop_down),
-                hint: const Text(
-                  'Grad',
-                  style: TextStyle(
-                      color: Color.fromARGB(255, 108, 21, 190),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
-                ),
-                elevation: 16,
-                borderRadius: BorderRadius.circular(5),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Morate odabrati grad!';
+                  }
+                  return null;
+                },
                 onChanged: (City? value) {
                   setState(() {
                     selectedCity = value;
                   });
                 },
                 items: cities
-                        .map((city) => DropdownMenuItem<City>(
-                              alignment: AlignmentDirectional.center,
-                              value: city,
-                              child: Text(city.name ?? "",
-                                  style: Theme.of(context).textTheme.bodySmall),
-                            ))
-                        .toList() ??
-                    [],
+                    .map((city) => DropdownMenuItem<City>(
+                          value: city,
+                          child: Text(
+                            city.name ?? "",
+                            style: Theme.of(context).textTheme.bodySmall,
+                          ),
+                        ))
+                    .toList(),
               ),
             )
           : Container(),

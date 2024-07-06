@@ -55,7 +55,6 @@ class _OrderDetailsScreenState extends State<OrderDetailsScreen> {
 
       setState(() {
         this.orderItemsResult = orderItemsResult;
-        print(orderItemsResult);
       });
     }
   }

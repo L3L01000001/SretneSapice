@@ -225,6 +225,10 @@ class _UserListScreenState extends State<UserListScreen> {
                   rows: result!.result
                       .map(
                         (User e) => DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            return Colors.white; //
+                          }),
                           onLongPress: () => {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -335,7 +339,7 @@ class _UserListScreenState extends State<UserListScreen> {
                                       );
                                     },
                                   );
-                                } else if (e.status != null &&
+                                } else if (e.status == null ||
                                     e.status == false) {
                                   showDialog(
                                     context: context,
@@ -349,6 +353,10 @@ class _UserListScreenState extends State<UserListScreen> {
                                             onPressed: () async {
                                               Map<String, dynamic>
                                                   statusUpdateRequest = {
+                                                'name': e.name,
+                                                'surname': e.surname,
+                                                'phone': e.phone,
+                                                'profilePhoto': e.profilePhoto,
                                                 'status': true,
                                               };
                                               await _userProvider.update(

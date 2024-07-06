@@ -1,11 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dart:convert';
 import 'package:geolocator/geolocator.dart';
 import 'package:provider/provider.dart';
-import 'package:sretnesapice_mobile/models/dog_walker.dart';
 import 'package:sretnesapice_mobile/models/dog_walker_location.dart';
 import 'package:sretnesapice_mobile/providers/dog_walker_location_provider.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 
 class LiveTrackingScreen extends StatefulWidget {
   static const String routeName = "/live-tracking";
@@ -20,6 +20,8 @@ class LiveTrackingScreen extends StatefulWidget {
 class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
   late Position _userPosition;
   late Position _dogWalkerPosition;
+
+  final int selectedIndex = 3;
 
   DogWalkerLocationProvider? _dogWalkerLocationProvider = null;
   DogWalkerLocation? walkerLocation;
@@ -58,7 +60,7 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
 
       setState(() {});
     } catch (e) {
-      print('Error fetching positions: $e');
+      print('Greška: $e');
     }
   }
 
@@ -84,44 +86,64 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Live Tracking'),
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: Center(
-              child: Stack(
-                children: [
-                  /* GoogleMap(
-                    initialCameraPosition: CameraPosition(
-                      target: LatLng(
-                          _userPosition.latitude, _userPosition.longitude),
-                      zoom: 14,
-                    ),
-                    markers: {
-                      Marker(
-                        markerId: MarkerId('user'),
-                        position: LatLng(
-                            _userPosition.latitude, _userPosition.longitude),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(
-                            BitmapDescriptor.hueBlue),
-                        infoWindow: InfoWindow(title: 'Your Location'),
-                      ),
-                      Marker(
-                        markerId: MarkerId('dogWalker'),
-                        position: LatLng(_dogWalkerPosition.latitude, _dogWalkerPosition.longitude),
-                        icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-                        infoWindow: InfoWindow(title: 'Dog Walker\'s Location'),
-                      ), 
-                    },
-                  ), */
-                ],
+    return MasterScreenWidget(
+      initialIndex: selectedIndex,
+      child: Container(
+        margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
+        child: Column(
+          children: [
+            Expanded(
+              child: Center(
+                child: walkerLocation != null
+                    ? FlutterMap(
+                        options: MapOptions(
+                          initialCenter: LatLng(
+                              _userPosition.latitude, _userPosition.longitude),
+                          initialZoom: 14,
+                        ),
+                        children: [
+                          TileLayer(
+                            urlTemplate:
+                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            subdomains: ['a', 'b', 'c'],
+                          ),
+                          MarkerLayer(
+                            markers: [
+                              Marker(
+                                width: 80,
+                                height: 80,
+                                point: LatLng(_userPosition.latitude,
+                                    _userPosition.longitude),
+                                child: Container(
+                                  child: Icon(
+                                    Icons.location_pin,
+                                    color: Colors.blue,
+                                    size: 40,
+                                  ),
+                                ),
+                              ),
+                              Marker(
+                                width: 80.0,
+                                height: 80.0,
+                                point: LatLng(_dogWalkerPosition.latitude,
+                                    _dogWalkerPosition.longitude),
+                                child: Container(
+                                  child: Icon(
+                                    Icons.location_pin,
+                                    color: Colors.green,
+                                    size: 40,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      )
+                    : CircularProgressIndicator(),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

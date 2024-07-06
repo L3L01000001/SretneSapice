@@ -52,7 +52,7 @@ class ProductProvider extends BaseProvider<Product> {
     }
   }
 
-    Future<List<Product>> recommend(String id, [dynamic additionalData]) async {
+  Future<List<Product>> recommend(int id, [dynamic additionalData]) async {
     var url = Uri.parse("$totalUrl/Recommend/$id");
 
     Map<String, String> headers = createHeaders();
@@ -61,9 +61,10 @@ class ProductProvider extends BaseProvider<Product> {
 
     if (isValidResponseCode(response)) {
       var data = jsonDecode(response.body);
+
       return data.map((x) => fromJson(x)).cast<Product>().toList();
     } else {
-      throw Exception("Exception... handle this gracefully");
+      throw Exception("Greška!");
     }
   }
 

@@ -46,6 +46,7 @@ class _CartScreenState extends State<CartScreen> {
   TextEditingController _phoneController = TextEditingController();
 
   bool showShippingInfoForm = false;
+  final int selectedIndex = 2;
   final _formKey = GlobalKey<FormState>();
 
   PaymentMethod _paymentMethod = PaymentMethod.paypal;
@@ -79,20 +80,20 @@ class _CartScreenState extends State<CartScreen> {
     try {
       orderItemUpdate.quantity = newQuantity;
       await _orderItemProvider!.update(orderItemId, orderItemUpdate);
-      print("Uspjesno");
+
       await loadData();
     } catch (e) {
-      print('Greška!');
+      errorDialog(context, e);
     }
   }
 
   void deleteOrderItem(int orderItemId) async {
     try {
       await _orderProvider!.hardDelete(orderItemId);
-      print("Uspjesno");
+
       await loadData();
     } catch (e) {
-      print("Greška!");
+      errorDialog(context, e);
     }
   }
 
@@ -114,13 +115,59 @@ class _CartScreenState extends State<CartScreen> {
             if (await canLaunchUrl(paypalUri)) {
               await launchUrl(paypalUri);
 
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                  builder: (context) =>
-                      ProductListScreen()
-                ),
-              );
+              const pollingInterval =
+                  Duration(seconds: 5); 
+              const maxAttempts =
+                  12; 
+
+              bool paymentSuccessful = false;
+              String token = paypalUri.queryParameters['token'] ?? '';
+
+              for (int attempt = 0; attempt < maxAttempts; attempt++) {
+                await Future.delayed(pollingInterval);
+                var paymentStatus =
+                    await _paymentProvider!.verifyPayment(token);
+                if (paymentStatus['success']) {
+                  paymentSuccessful = true;
+                  break;
+                }
+              }
+
+              if (paymentSuccessful) {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Uspješna obrada'),
+                    content: Text('Vaša narudžba je uspješno obrađena.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              } else {
+                // Payment failed after max attempts
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: Text('Neuspješna obrada plaćanja!'),
+                    content: Text(
+                        'Vaša obrada plaćanja nije prošla, pokušajte ponovo.'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                        child: Text('OK'),
+                      ),
+                    ],
+                  ),
+                );
+              }
             } else {
               throw 'Could not launch $paypalUrl';
             }
@@ -136,8 +183,8 @@ class _CartScreenState extends State<CartScreen> {
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
-              title: Text('Order Successful'),
-              content: Text('Your order has been placed successfully.'),
+              title: Text('Narudžba obrađena'),
+              content: Text('Uspješno ste napravili narudžbu!'),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
@@ -148,7 +195,7 @@ class _CartScreenState extends State<CartScreen> {
           );
         }
       } catch (e) {
-        print('Error submitting order: $e');
+        errorDialog(context, e);
       }
     }
   }
@@ -156,6 +203,7 @@ class _CartScreenState extends State<CartScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
+      initialIndex: selectedIndex,
       child: SingleChildScrollView(
         child: Container(
           child: Padding(
@@ -163,21 +211,32 @@ class _CartScreenState extends State<CartScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Center(
-                    child: Text(
-                  showShippingInfoForm ? "PODACI ZA DOSTAVU" : "CHECKOUT",
-                  style: TextStyle(fontSize: 30, color: Color(0xff315ccc)),
-                )),
+                Container(
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15)),
+                  child: Center(
+                      child: Text(
+                    showShippingInfoForm ? "PODACI ZA DOSTAVU" : "CHECKOUT",
+                    style: TextStyle(fontSize: 30, color: Color(0xff315ccc)),
+                  )),
+                ),
                 if (cart == null ||
                     cart!.orderItems == null ||
                     cart!.orderItems!.isEmpty)
-                  Center(
-                    child: Padding(
-                      padding: const EdgeInsets.only(top: 20.0),
-                      child: Text(
-                        "Korpa je prazna!",
-                        style:
-                            TextStyle(fontSize: 24, color: Color(0xff315ccc)),
+                  Container(
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(15)),
+                    height: 200,
+                    child: Center(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 20.0),
+                        child: Text(
+                          "Korpa je prazna!",
+                          style:
+                              TextStyle(fontSize: 24, color: Color(0xff315ccc)),
+                        ),
                       ),
                     ),
                   )

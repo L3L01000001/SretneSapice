@@ -21,7 +21,6 @@ class OrderItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       elevation: 2,
-      /* margin: EdgeInsets.symmetric(horizontal: 10, vertical: 5), */
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(10),
       ),

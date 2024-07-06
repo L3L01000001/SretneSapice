@@ -299,6 +299,10 @@ class _ProductListScreenState extends State<ProductListScreen> {
                   rows: result!.result
                       .map(
                         (Product e) => DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            return Colors.white; //
+                          }),
                           onLongPress: () => {
                             Navigator.of(context).push(
                               MaterialPageRoute(

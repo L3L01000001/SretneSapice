@@ -38,6 +38,8 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
 
   User? user = Authorization.user;
 
+  bool loading = false;
+
   FavoriteWalkerRequest favoriteWalkerRequest = new FavoriteWalkerRequest();
 
   @override
@@ -52,15 +54,21 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
   }
 
   Future loadData() async {
-    var dwData = await _dogWalkerProvider?.get({'isApproved': true});
-    var citiesData = await _cityProvider?.get();
-    var fwData = await _favoriteWalkerProvider?.get({'userId': user!.userId});
+    loading = true;
+    try {
+      var dwData = await _dogWalkerProvider?.get({'isApproved': true});
+      var citiesData = await _cityProvider?.get();
+      var fwData = await _favoriteWalkerProvider?.get({'userId': user!.userId});
 
-    setState(() {
-      data = dwData!;
-      cities = citiesData!;
-      favoriteWalkerIds = fwData!;
-    });
+      setState(() {
+        data = dwData!;
+        cities = citiesData!;
+        favoriteWalkerIds = fwData!;
+      });
+      loading = false;
+    } on Exception catch (e) {
+      errorDialog(context, e);
+    }
   }
 
   void toggleFavoriteStatus(int dogWalkerId) async {
@@ -102,19 +110,22 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         _buildSortingDropdown(),
-                        SizedBox(
-                            width:
-                                5.0), // Add some spacing between the dropdowns
+                        SizedBox(width: 5.0),
                         _buildLocationDropdown(),
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                    child: Column(
-                      children: _buildDogWalkerCardList(),
-                    ),
-                  ),
+                  loading
+                      ? Container(
+                          height: 300,
+                          alignment: Alignment.center,
+                          child: Center(child: CircularProgressIndicator()))
+                      : Padding(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          child: Column(
+                            children: _buildDogWalkerCardList(),
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -193,14 +204,15 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
         color: Color(0xff1590a1),
       ),
       padding: EdgeInsets.only(left: 10.0, right: 10.0),
-      height: 50,
+      height: 40,
       child: DropdownButton<String>(
+        underline: SizedBox(),
         hint: Container(
           alignment: Alignment.center,
           child: Row(
             children: [
               Text(
-                'Sortiraj po:',
+                'Sortiraj po',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -210,7 +222,10 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
             ],
           ),
         ),
-        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xff09424a)),
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        dropdownColor: Color(0xff09424a),
+        iconDisabledColor: Colors.white,
+        iconEnabledColor: Colors.white,
         borderRadius: BorderRadius.circular(10),
         value: _selectedSortingOption,
         onChanged: (String? newValue) async {
@@ -271,14 +286,14 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
               margin: EdgeInsets.all(8),
               padding: EdgeInsets.fromLTRB(15, 8, 8, 8),
               decoration: BoxDecoration(
-                color: Colors.transparent,
-                //borderRadius: BorderRadius.circular(20),
-                border: Border(
-                  bottom: BorderSide(
-                    color: Color(0xff09424a),
+                  color: Colors.white,
+                  //borderRadius: BorderRadius.circular(20),
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Color(0xff09424a),
+                    ),
                   ),
-                ),
-              ),
+                  borderRadius: BorderRadius.circular(15)),
               child: DropdownButton<City>(
                 isExpanded: true,
                 underline: Container(),

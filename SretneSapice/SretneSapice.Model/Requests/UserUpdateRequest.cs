@@ -17,5 +17,6 @@ namespace SretneSapice.Model.Requests
         public string? ConfirmPassword { get; set; }
 
         public bool? Status { get; set; }
+        public byte[]? ProfilePhoto { get; set; }
     }
 }

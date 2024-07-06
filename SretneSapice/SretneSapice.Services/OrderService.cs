@@ -43,6 +43,11 @@ namespace SretneSapice.Services
                     .Take(5);
             }
 
+            if (!string.IsNullOrWhiteSpace(search?.OrderNumber))
+            {
+                query = query.Where(x => x.OrderNumber.Contains(search.OrderNumber));
+            }
+
             return base.AddFilter(query, search);
         }
 

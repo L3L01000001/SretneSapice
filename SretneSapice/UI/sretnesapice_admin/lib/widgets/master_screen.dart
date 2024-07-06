@@ -166,7 +166,22 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
           ],
         ),
       ),
-      body: widget.child!,
+      body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset(
+                'assets/images/background.jpg',
+                fit: BoxFit.cover,
+                height: double.infinity,
+                width: double.infinity,
+                opacity: AlwaysStoppedAnimation(.3),
+              ),
+            ),
+            SafeArea(
+              child: widget.child!
+            ),
+          ],
+        ),
     );
   }
 

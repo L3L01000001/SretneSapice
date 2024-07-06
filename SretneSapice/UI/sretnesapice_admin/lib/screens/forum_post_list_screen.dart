@@ -158,11 +158,9 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                 result = data;
               });
             } else {
-              // Handle case when selected sorting option doesn't match any predefined option
               print('Invalid sorting option');
             }
           } catch (error) {
-            // Handle error when fetching data fails
             print('Error fetching products: $error');
           }
         },
@@ -257,6 +255,10 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                   rows: result!.result
                       .map(
                         (ForumPost e) => DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            return Colors.white; //
+                          }),
                           onLongPress: () => {},
                           cells: [
                             DataCell(Text(e.user?.fullName ?? "",
@@ -276,7 +278,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14))),
                             DataCell(
-                              Text((e.tags?.map((tag) => tag?.tagName).join(', ') ?? 'No tags available'),
+                              Text((e.forumPostTags?.map((t) => t?.tag?.tagName).join(', ') ?? 'Nema tagova'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14)),

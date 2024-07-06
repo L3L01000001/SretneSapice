@@ -164,6 +164,10 @@ class _OrderListScreenState extends State<OrderListScreen> {
                   rows: result!.result
                       .map(
                         (Order e) => DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            return Colors.white; //
+                          }),
                           onLongPress: () => {
                             Navigator.of(context).push(
                               MaterialPageRoute(
@@ -182,7 +186,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16))),
-                            DataCell(Text(e.date ?? "",
+                            DataCell(Text(formatDate(e.date),
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16))),

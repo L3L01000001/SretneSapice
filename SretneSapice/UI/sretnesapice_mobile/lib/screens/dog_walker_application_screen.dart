@@ -33,9 +33,11 @@ class _DogWalkerApplicationScreenState
   TextEditingController _phoneController = TextEditingController();
 
   final int selectedIndex = 1;
-  
+
   City? selectedCity;
   List<City> cities = [];
+  bool loading = false;
+  bool _isImageSelected = false;
 
   DogWalkerRequest dogWalkerRequest = new DogWalkerRequest();
 
@@ -56,21 +58,28 @@ class _DogWalkerApplicationScreenState
 
     setState(() {
       cities = citiesData!;
-      print(cities);
     });
   }
 
   void apply() async {
+    loading = true;
     try {
       dogWalkerRequest.name = _nameController.text;
       dogWalkerRequest.surname = _surnameController.text;
       dogWalkerRequest.age = int.parse(_ageController.text);
       dogWalkerRequest.phone = _phoneController.text;
       dogWalkerRequest.cityID = selectedCity!.cityID;
-      dogWalkerRequest.profilePhoto =
-          base64Encode(_imageFile!.readAsBytesSync());
+/*       dogWalkerRequest.profilePhoto =
+          base64Encode(_imageFile!.readAsBytesSync()); */
+      if (_imageFile != null) {
+        List<int> imageBytes = await _imageFile!.readAsBytes();
+        String base64Image = base64Encode(imageBytes);
+        dogWalkerRequest.profilePhoto = base64Image;
+      }
 
       var applicant = await _dogWalkerProvider?.insert(dogWalkerRequest);
+
+      loading = false;
 
       if (applicant != null) {
         showDialog(
@@ -106,78 +115,105 @@ class _DogWalkerApplicationScreenState
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      initialIndex: selectedIndex,
+        initialIndex: selectedIndex,
         child: Padding(
-      padding: EdgeInsets.all(16.0),
-      child: Form(
-          key: _formKey,
-          child: SingleChildScrollView(
-            child:
-                Column(mainAxisAlignment: MainAxisAlignment.start, children: [
-              Text("Prijava za šetača",
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleLarge
-                      ?.copyWith(color: Color(0xff1590a1))),
-              SizedBox(height: 25),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
+          padding: EdgeInsets.all(16.0),
+          child: Form(
+              key: _formKey,
+              child: SingleChildScrollView(
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    setInput(context, "Ime", _nameController, 2, 1),
-                    setInput(context, "Prezime", _surnameController, 2, 1),
-                    setInput(context, "Godine", _ageController, 2, 1),
-                    setInput(context, "Broj telefona", _phoneController, 9, 1),
-                    _buildLocationDropdown(),
-                    setInput(
-                        context, "Iskustvo", _experienceController, 10, 10),
-                    Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Text("Fotografija (obavezno)",
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .labelMedium
-                                  ?.copyWith(
-                                      fontSize: 18, color: Color(0xff1590a1))),
-                          Column(
-                            children: [
-                              GestureDetector(
-                                onTap: getImageFromGallery,
-                                child: CircleAvatar(
-                                  radius: 50,
-                                  backgroundColor: Color(0xff1590a1),
-                                  child: _imageFile == null
-                                      ? Icon(Icons.add,
-                                          size: 50, color: Colors.white)
-                                      : null,
-                                  backgroundImage: _imageFile != null
-                                      ? FileImage(_imageFile!)
-                                      : null,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ]),
-                  ],
-                ),
-              ),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    apply();
-                  }
-                },
-                style: ButtonStyle(
-                    backgroundColor:
-                        MaterialStateProperty.all(Color(0xff1590a1))),
-                child: Text("Apliciraj",
-                    style: TextStyle(fontSize: 18, color: Colors.white)),
-              ),
-            ]),
-          )),
-    ));
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text("Prijava za šetača",
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleLarge
+                              ?.copyWith(color: Color(0xff1590a1))),
+                      SizedBox(height: 25),
+                      Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            setInput(context, "Ime", _nameController, 2, 1),
+                            setInput(
+                                context, "Prezime", _surnameController, 2, 1),
+                            setInput(context, "Godine", _ageController, 2, 1),
+                            setInput(context, "Broj telefona", _phoneController,
+                                9, 1),
+                            _buildLocationDropdown(),
+                            setInput(context, "Iskustvo", _experienceController,
+                                10, 10),
+                            Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Text("Fotografija (obavezno)",
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .labelMedium
+                                          ?.copyWith(
+                                              fontSize: 18,
+                                              color: Color(0xff1590a1))),
+                                  Column(
+                                    children: [
+                                      GestureDetector(
+                                        onTap: getImageFromGallery,
+                                        child: CircleAvatar(
+                                          radius: 50,
+                                          backgroundColor: Color(0xff1590a1),
+                                          child: _imageFile == null
+                                              ? Icon(Icons.add,
+                                                  size: 50, color: Colors.white)
+                                              : null,
+                                          backgroundImage: _imageFile != null
+                                              ? FileImage(_imageFile!)
+                                              : null,
+                                        ),
+                                      ),
+                                      if (!_isImageSelected)
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(top: 8.0),
+                                          child: Text(
+                                            "Slika je obavezna!",
+                                            style: TextStyle(
+                                                color: Color.fromARGB(
+                                                    255, 145, 29, 20),
+                                                fontWeight: FontWeight.bold,
+                                                fontSize: 14),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
+                                ]),
+                          ],
+                        ),
+                      ),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate() &&
+                              _isImageSelected) {
+                            apply();
+                          } else if (!_isImageSelected) {
+                            setState(() {});
+                          }
+                        },
+                        style: ButtonStyle(
+                            backgroundColor:
+                                MaterialStateProperty.all(Color(0xff1590a1))),
+                        child: loading
+                            ? CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : Text("Apliciraj",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
+                      ),
+                    ]),
+              )),
+        ));
   }
 
   Widget _buildLocationDropdown() {
@@ -195,18 +231,25 @@ class _DogWalkerApplicationScreenState
                   ),
                 ),
               ),
-              child: DropdownButton<City>(
+              child: DropdownButtonFormField<City>(
                 isExpanded: true,
-                underline: Container(),
+                decoration: InputDecoration(
+                  border: InputBorder.none,
+                  hintText: 'Grad',
+                  hintStyle: TextStyle(
+                    color: Color(0xff1590a1),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                  ),
+                ),
                 value: selectedCity,
                 icon: const Icon(Icons.arrow_drop_down),
-                hint: const Text(
-                  'Grad',
-                  style: TextStyle(
-                      color: Color(0xff1590a1),
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14),
-                ),
+                validator: (value) {
+                  if (value == null) {
+                    return 'Morate odabrati grad!';
+                  }
+                  return null;
+                },
                 elevation: 16,
                 borderRadius: BorderRadius.circular(5),
                 onChanged: (City? value) {
@@ -257,10 +300,14 @@ class _DogWalkerApplicationScreenState
   String? _base64Image;
 
   Future getImageFromGallery() async {
-    var image = await ImagePicker().pickImage(source: ImageSource.gallery);
+    final pickedFile =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
-    setState(() {
-      _imageFile = image != null ? File(image.path) : null;
-    });
+    if (pickedFile != null) {
+      setState(() {
+        _imageFile = File(pickedFile.path);
+        _isImageSelected = true;
+      });
+    }
   }
 }

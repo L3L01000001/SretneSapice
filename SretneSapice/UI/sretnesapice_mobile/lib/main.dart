@@ -28,6 +28,7 @@ import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/edit_profile_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_details_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
+import 'package:sretnesapice_mobile/screens/live_tracking_screen.dart';
 import 'package:sretnesapice_mobile/screens/product_details_screen.dart';
 import 'package:sretnesapice_mobile/screens/product_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/service_request_list_screen.dart';
@@ -114,6 +115,9 @@ void main() => runApp(MultiProvider(
                 id: 0,
               ),
             );
+          } else if (settings.name == LiveTrackingScreen.routeName) {
+            return MaterialPageRoute(
+                builder: ((context) => LiveTrackingScreen(dogWalker: 0)));
           }
 
           var uri = Uri.parse(settings.name!);
@@ -299,6 +303,8 @@ class _LoginPageState extends State<LoginPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
+                                Text("Nemate račun?"),
+                                SizedBox(width: 18),
                                 ElevatedButton(
                                   onPressed: () async {
                                     try {
@@ -334,8 +340,6 @@ class _LoginPageState extends State<LoginPage> {
                                         fontSize: 18, color: Colors.white),
                                   ),
                                 ),
-                                SizedBox(width: 18),
-                                Text("Zaboravljen password?"),
                               ],
                             ),
                           ],

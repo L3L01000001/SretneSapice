@@ -17,7 +17,7 @@ class DogWalkersListScreen extends StatefulWidget {
 class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
   late DogWalkerProvider _dogWalkerProvider;
   SearchResult<DogWalker>? result;
-  TextEditingController _nameSurnameController = TextEditingController();
+  final TextEditingController _nameSurnameController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -235,6 +235,10 @@ class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
                   rows: result!.result
                       .map(
                         (DogWalker e) => DataRow(
+                          color: MaterialStateProperty.resolveWith<Color?>(
+                              (Set<MaterialState> states) {
+                            return Colors.white; //
+                          }),
                           onLongPress: () => {
                             Navigator.of(context).push(
                               MaterialPageRoute(

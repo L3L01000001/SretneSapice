@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:typed_data';
+import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:sretnesapice_mobile/models/role.dart';
@@ -37,7 +38,7 @@ String formatNumber(dynamic) {
 String formatDate(dynamic) {
   var d = DateFormat('dd.MM.yyyy');
 
-  if(dynamic == null){
+  if (dynamic == null) {
     return "";
   }
 
@@ -46,6 +47,25 @@ String formatDate(dynamic) {
 
 String formatDateTime(dynamic) {
   var d = DateFormat('dd.MM.yyyy HH:mm');
-  
+
   return d.format(dynamic);
+}
+
+String formatTime(dynamic) {
+  return DateFormat('HH:mm').format(dynamic);
+}
+
+Future<dynamic> errorDialog(BuildContext context, Object e) {
+  return showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+            title: Text("Error"),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                child: Text("Ok"),
+                onPressed: () => Navigator.pop(context),
+              )
+            ],
+          ));
 }

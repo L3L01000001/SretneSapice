@@ -45,8 +45,6 @@ public partial class _180148Context : DbContext
 
     public virtual DbSet<Role> Roles { get; set; }
 
-    public virtual DbSet<ScheduledService> ScheduledServices { get; set; }
-
     public virtual DbSet<ServiceRequest> ServiceRequests { get; set; }
 
     public virtual DbSet<Tag> Tags { get; set; }
@@ -362,27 +360,6 @@ public partial class _180148Context : DbContext
             entity.Property(e => e.Name).HasMaxLength(50);
         });
 
-        modelBuilder.Entity<ScheduledService>(entity =>
-        {
-            entity.HasKey(e => e.ServiceId).HasName("PK__Schedule__C51BB0EAED6F0B2E");
-
-            entity.ToTable("ScheduledService");
-
-            entity.Property(e => e.ServiceId).HasColumnName("ServiceID");
-            entity.Property(e => e.DogWalkerId).HasColumnName("DogWalkerID");
-            entity.Property(e => e.EndTime).HasColumnType("datetime");
-            entity.Property(e => e.StartTime).HasColumnType("datetime");
-            entity.Property(e => e.Status).HasMaxLength(20);
-            entity.Property(e => e.UserId).HasColumnName("UserID");
-
-            entity.HasOne(d => d.DogWalker).WithMany(p => p.ScheduledServices)
-                .HasForeignKey(d => d.DogWalkerId)
-                .HasConstraintName("FK__Scheduled__DogWa__69FBBC1F");
-
-            entity.HasOne(d => d.User).WithMany(p => p.ScheduledServices)
-                .HasForeignKey(d => d.UserId)
-                .HasConstraintName("FK__Scheduled__UserI__6AEFE058");
-        });
 
         modelBuilder.Entity<ServiceRequest>(entity =>
         {

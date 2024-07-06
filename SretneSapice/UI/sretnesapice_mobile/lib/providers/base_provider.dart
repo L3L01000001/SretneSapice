@@ -54,9 +54,9 @@ abstract class BaseProvider<T> with ChangeNotifier {
     var uri = Uri.parse(url);
 
     Map<String, String> headers = createHeaders();
-    print("get me");
+
     var response = await http!.get(uri, headers: headers);
-    print("done $response");
+
     if (isValidResponseCode(response)) {
       var data = jsonDecode(response.body);
       return data['result'].map((x) => fromJson(x)).cast<T>().toList();
@@ -75,8 +75,7 @@ abstract class BaseProvider<T> with ChangeNotifier {
 
     if (isValidResponseCode(response)) {
       var data = jsonDecode(response.body);
-      print(data);
-      print(response);
+
       return fromJson(data) as T;
     } else {
       return null;

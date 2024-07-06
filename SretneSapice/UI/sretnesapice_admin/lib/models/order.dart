@@ -9,7 +9,7 @@ class Order {
   String? orderNumber;
   int? userId;
   int? shippingInfoId;
-  String? date;
+  DateTime date;
   String? status;
   double? totalAmount;
   User? user;

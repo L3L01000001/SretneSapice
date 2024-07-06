@@ -43,8 +43,6 @@ public partial class User
 
     public virtual ICollection<Order> Orders { get; } = new List<Order>();
 
-    public virtual ICollection<ScheduledService> ScheduledServices { get; } = new List<ScheduledService>();
-
     public virtual ICollection<ServiceRequest> ServiceRequests { get; } = new List<ServiceRequest>();
 
     public virtual ICollection<UserRole> UserRoles { get; } = new List<UserRole>();

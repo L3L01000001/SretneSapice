@@ -6,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
-import 'package:sretnesapice_mobile/models/forum_post.dart';
 import 'package:sretnesapice_mobile/providers/forum_post_provider.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
@@ -24,6 +23,7 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
   ForumPostProvider? _forumPostProvider = null;
 
   final int selectedIndex = 0;
+  bool loading = false;
 
   final _formKey = GlobalKey<FormState>();
   TextEditingController _titleController = TextEditingController();
@@ -44,41 +44,46 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
   }
 
   void post() async {
-    String title = _titleController.text;
-    String postContent = _contentController.text;
-    List<String?> tags = _tagsController.text
-        .split(',')
-        .map((tag) => tag.trim())
-        .where((tag) => tag.isNotEmpty)
-        .toList();
-    int userId = Authorization.user!.userId;
+    loading = true;
+    try {
+      String title = _titleController.text;
+      String postContent = _contentController.text;
+      List<String?> tags = _tagsController.text
+          .split(',')
+          .map((tag) => tag.trim())
+          .where((tag) => tag.isNotEmpty)
+          .toList();
+      int userId = Authorization.user!.userId;
 
-    String base64Image =
-        _imageFile != null ? base64Encode(_imageFile!.readAsBytesSync()) : '';
+      String base64Image =
+          _imageFile != null ? base64Encode(_imageFile!.readAsBytesSync()) : '';
 
-    if (_validateFields(title, postContent)) {
-      Map forumPost = {
-        "userId": userId,
-        "title": title,
-        "postContent": postContent,
-        "tags": tags.isEmpty ? null : tags,
-        "photo": base64Image
-      };
+      if (_validateFields(title, postContent)) {
+        Map forumPost = {
+          "userId": userId,
+          "title": title,
+          "postContent": postContent,
+          "tags": tags.isEmpty ? null : tags,
+          "photo": base64Image
+        };
 
-      await _forumPostProvider!.insert(forumPost);
+        await _forumPostProvider!.insert(forumPost);
 
-      showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) => AlertDialog(
-          content: Text("Post objavljen!"),
-        ),
-      );
+        loading = false;
 
-      Future.delayed(Duration(seconds: 3), () {
-        Navigator.popAndPushNamed(context, ForumPostListScreen.routeName);
-      });
-    } else {
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (BuildContext context) => AlertDialog(
+            content: Text("Post objavljen!"),
+          ),
+        );
+
+        Future.delayed(Duration(seconds: 3), () {
+          Navigator.popAndPushNamed(context, ForumPostListScreen.routeName);
+        });
+      }
+    } catch (e) {
       showDialog(
         context: context,
         builder: (BuildContext context) => AlertDialog(
@@ -118,10 +123,17 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
                             post();
                           }
                         },
-                        child: Text("Objavi",
-                            style: TextStyle(
-                                fontSize: 18,
-                                color: Color.fromARGB(255, 108, 21, 190))),
+                        style: ButtonStyle(
+                            backgroundColor: MaterialStateProperty.all(
+                                Color.fromARGB(255, 108, 21, 190))),
+                        child: loading
+                            ? CircularProgressIndicator(
+                                valueColor:
+                                    AlwaysStoppedAnimation<Color>(Colors.white),
+                              )
+                            : Text("Objavi",
+                                style: TextStyle(
+                                    fontSize: 18, color: Colors.white)),
                       ),
                     ]),
               )),
@@ -134,7 +146,7 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
         padding: EdgeInsets.fromLTRB(15, 4, 8, 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(255, 218, 205, 236),
+          color: Color.fromARGB(255, 238, 235, 241),
           border: Border(
             bottom: BorderSide(
               color: Color.fromARGB(255, 121, 26, 222),
@@ -162,7 +174,7 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
         padding: EdgeInsets.fromLTRB(15, 4, 8, 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(255, 218, 205, 236),
+          color: Color.fromARGB(255, 238, 235, 241),
           border: Border(
             bottom: BorderSide(
               color: Color.fromARGB(255, 121, 26, 222),
@@ -191,7 +203,7 @@ class _AddForumPostScreenState extends State<AddForumPostScreen> {
         padding: EdgeInsets.fromLTRB(15, 4, 8, 4),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          color: Color.fromARGB(255, 218, 205, 236),
+          color: Color.fromARGB(255, 238, 235, 241),
           border: Border(
             bottom: BorderSide(
               color: Color.fromARGB(255, 121, 26, 222),

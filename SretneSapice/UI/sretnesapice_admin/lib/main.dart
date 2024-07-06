@@ -64,7 +64,6 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late TextEditingController _usernameController;
   late TextEditingController _passwordController;
-  late ProductProvider _productProvider;
   late UserProvider _userProvider;
   int? loggedInUserID;
   bool _isLoading = false;
@@ -155,7 +154,6 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    _productProvider = context.read<ProductProvider>();
     _userProvider = context.read<UserProvider>();
 
     return Scaffold(

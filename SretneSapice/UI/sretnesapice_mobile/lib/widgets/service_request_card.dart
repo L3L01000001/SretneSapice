@@ -1,17 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/models/service_request.dart';
+import 'package:sretnesapice_mobile/providers/service_request_provider.dart';
+import 'package:sretnesapice_mobile/utils/util.dart';
 
 class ServiceRequestCard extends StatelessWidget {
   final ServiceRequest serviceRequest;
+  final VoidCallback onAccept;
+  final VoidCallback onReject;
+  final VoidCallback onFinish;
 
-  const ServiceRequestCard({Key? key, required this.serviceRequest}) : super(key: key);
+  const ServiceRequestCard({
+    Key? key,
+    required this.serviceRequest,
+    required this.onAccept,
+    required this.onReject,
+    required this.onFinish,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
+      shadowColor: Colors.black,
       color: _getCardColor(serviceRequest.status ?? "Pending"),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(15.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -19,30 +32,41 @@ class ServiceRequestCard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('${serviceRequest.date}'),
-                  Text('Od: ${serviceRequest.startTime}'),
-                  Text('Do: ${serviceRequest.endTime}'),
-                  Text('Pasmina: ${serviceRequest.dogBreed}'),
+                  Text('Korisnik: ${serviceRequest.user?.fullName}',
+                      style: TextStyle(color: Colors.white)),
+                  Text(
+                      '${formatDate(serviceRequest.date)} od ${formatTime(serviceRequest.startTime)} do ${formatTime(serviceRequest.endTime)}',
+                      style: TextStyle(color: Colors.white)),
+                  Text('Pasmina: ${serviceRequest.dogBreed}',
+                      style: TextStyle(color: Colors.white)),
                 ],
               ),
             ),
-            Row(
-              children: [
-                ElevatedButton(
-                  onPressed: () {
-                    // Implement accept logic
-                  },
-                  child: Text('Accept'),
-                ),
-                SizedBox(width: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    // Implement reject logic
-                  },
-                  child: Text('Reject'),
-                ),
-              ],
-            ),
+            serviceRequest.status == "Pending"
+                ? Column(
+                    children: [
+                      ElevatedButton(
+                        onPressed: onAccept,
+                        child: Text('Accept'),
+                      ),
+                      SizedBox(width: 10),
+                      ElevatedButton(
+                        onPressed: onReject,
+                        child: Text('Reject'),
+                      ),
+                    ],
+                  )
+                : Container(),
+            serviceRequest.status == "Accepted"
+                ? Row(
+                    children: [
+                      ElevatedButton(
+                        onPressed: onFinish,
+                        child: Text('Završi'),
+                      ),
+                    ],
+                  )
+                : Container(),
           ],
         ),
       ),
@@ -57,8 +81,10 @@ class ServiceRequestCard extends StatelessWidget {
         return Colors.green;
       case 'Rejected':
         return Colors.red;
+      case 'Finished':
+        return Colors.grey;
       default:
-        return Colors.grey; // Default color if status is unknown
+        return Colors.grey;
     }
   }
 }

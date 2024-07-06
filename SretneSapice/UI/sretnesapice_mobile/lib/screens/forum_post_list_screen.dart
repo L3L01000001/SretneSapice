@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:sretnesapice_mobile/main.dart';
 import 'package:sretnesapice_mobile/models/forum_post.dart';
 import 'package:sretnesapice_mobile/providers/forum_post_provider.dart';
 import 'package:sretnesapice_mobile/screens/add_forum_post_screen.dart';
-import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/forum_post_card.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
@@ -24,6 +22,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
   List<ForumPost> data = [];
   TextEditingController _searchController = TextEditingController();
   String? _selectedSortingOption;
+  bool loading = false;
 
   @override
   void initState() {
@@ -35,12 +34,19 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
   }
 
   Future loadData() async {
-    var filters = widget.userId != null ? {'userId': widget.userId} : null;
-    var fpData = await _forumPostProvider?.get(filters);
+    loading = true;
+    try {
+      var filters = widget.userId != null ? {'userId': widget.userId} : null;
+      var fpData = await _forumPostProvider?.get(filters);
 
-    setState(() {
-      data = fpData!;
-    });
+      setState(() {
+        data = fpData!;
+      });
+
+      loading = false;
+    } on Exception catch (e) {
+      errorDialog(context, e);
+    }
   }
 
   @override
@@ -55,17 +61,22 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildPostSearch(),
+                  SizedBox(height: 5),
                   Padding(
-                    padding: EdgeInsets.only(left: 10.0),
+                    padding: EdgeInsets.only(left: 20.0),
                     child: _buildSortingDropdown(),
                   ),
-                  
-                  Padding(
-                    padding: EdgeInsets.only(left: 10.0, right: 10.0),
-                    child: Column(
-                      children: _buildForumPostCardList(),
-                    ),
-                  ),
+                  loading
+                      ? Container(
+                          height: 300,
+                          alignment: Alignment.center,
+                          child: Center(child: CircularProgressIndicator()))
+                      : Padding(
+                          padding: EdgeInsets.only(left: 10.0, right: 10.0),
+                          child: Column(
+                            children: _buildForumPostCardList(),
+                          ),
+                        ),
                 ],
               ),
             ),
@@ -84,6 +95,14 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildLoadingIndicator() {
+    return Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(),
       ),
     );
   }
@@ -131,26 +150,34 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
 
   Widget _buildSortingDropdown() {
     return Container(
-      padding: EdgeInsets.only(left: 20.0, right: 20.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(18.0),
+        color: Colors.deepPurple,
+      ),
+      padding: EdgeInsets.only(left: 10.0, right: 10.0),
       height: 50,
       child: DropdownButton<String>(
+        underline: SizedBox(),
         hint: Container(
           alignment: Alignment.center,
           child: Row(
             children: [
               Text(
-                'Sortiraj po:',
+                'Sortiraj po',
                 style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
                     decoration: TextDecoration.none,
-                    color: Color(0xFF4A148C)),
+                    color: Colors.white),
               ),
             ],
           ),
         ),
-        style: TextStyle(fontWeight: FontWeight.bold, color: Color(0xFF4A148C)),
+        dropdownColor: Color(0xFF4A148C),
+        style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
         borderRadius: BorderRadius.circular(10),
+        iconDisabledColor: Colors.white,
+        iconEnabledColor: Colors.white,
         value: _selectedSortingOption,
         onChanged: (String? newValue) async {
           setState(() {
@@ -175,10 +202,10 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                 data = tmpdata;
               });
             } else {
-              print('Invalid sorting option');
+              print('Sort opcija ne postoji.');
             }
           } catch (error) {
-            print('Error fetching products: $error');
+            print('Greška: $error');
           }
         },
         items: <String>[
@@ -201,9 +228,6 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
   }
 
   List<Widget> _buildForumPostCardList() {
-/*     if (data.length == 0) {
-      return []; 
-    } */
     return data.map((post) {
       return ForumPostCard(
         title: post.title,
@@ -211,7 +235,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
         author: post.user?.fullName,
         date: post.timestamp,
         numberOfComments: post.comments?.length ?? 0,
-        postId: post.postId, 
+        postId: post.postId,
       );
     }).toList();
   }

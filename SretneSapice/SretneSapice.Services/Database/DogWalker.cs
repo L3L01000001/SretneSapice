@@ -22,8 +22,7 @@ public partial class DogWalker
     public string Experience { get; set; } = null!;
 
     public byte[] DogWalkerPhoto { get; set; } = null!;
-
-    public byte[] DogWalkerPhotoThumb { get; set; } = null!;
+    public byte[]? DogWalkerPhotoThumb { get; set; } = null!;
 
     public int? Rating { get; set; }
 
@@ -38,8 +37,6 @@ public partial class DogWalker
     public virtual ICollection<DogWalkerLocation> DogWalkerLocations { get; } = new List<DogWalkerLocation>();
 
     public virtual ICollection<FavoriteWalker> FavoriteWalkers { get; } = new List<FavoriteWalker>();
-
-    public virtual ICollection<ScheduledService> ScheduledServices { get; } = new List<ScheduledService>();
 
     public virtual ICollection<ServiceRequest> ServiceRequests { get; } = new List<ServiceRequest>();
 

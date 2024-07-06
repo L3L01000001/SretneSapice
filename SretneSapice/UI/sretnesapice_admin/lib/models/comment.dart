@@ -9,7 +9,7 @@ class Comment {
   int? postId;
   int? userId;
   String? commentContent;
-  String? timestamp;
+  DateTime? timestamp;
   int? likesCount;
   User? user;
 

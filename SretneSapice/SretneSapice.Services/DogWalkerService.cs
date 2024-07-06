@@ -169,6 +169,7 @@ namespace SretneSapice.Services
         public async Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostReviewsFirst()
         {
             var dogWalkersWithReviews = _context.DogWalkers
+                                            .Include(x => x.City)
                                             .Include(dw => dw.WalkerReviews).AsQueryable();
 
             var mostReviewsFirst = dogWalkersWithReviews.OrderByDescending(dw => dw.WalkerReviews.Count);
@@ -186,7 +187,7 @@ namespace SretneSapice.Services
 
         public async Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostFinishedServicesFirst()
         {
-            var dogWalkersWithReviews =  _context.DogWalkers
+            var dogWalkersWithReviews =  _context.DogWalkers.Include(x => x.City)
                                             .Include(dw => dw.ServiceRequests)
                                             .AsQueryable();
 
@@ -220,6 +221,7 @@ namespace SretneSapice.Services
                 .Include(x => x.WalkerReviews)
                 .Include(x => x.ServiceRequests)
                 .Include(x => x.City)
+                .Include(x => x.User)
                 .FirstOrDefaultAsync(fp => fp.DogWalkerId == id);
 
             if (entity == null)

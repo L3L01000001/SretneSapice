@@ -38,10 +38,7 @@ class ForumPostCard extends StatelessWidget {
             gradient: LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                Colors.purple,
-                Colors.deepPurple
-              ], 
+              colors: [Colors.purple, Colors.deepPurple],
             ),
           ),
           child: Padding(

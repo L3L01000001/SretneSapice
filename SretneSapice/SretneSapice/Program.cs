@@ -116,11 +116,11 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//using (var scope = app.Services.CreateScope())
-//{
-//    var dataContext = scope.ServiceProvider.GetRequiredService<_180148Context>();
-
-//    dataContext.Database.Migrate();
-//}
+using (var scope = app.Services.CreateScope())
+{
+    var dataContext = scope.ServiceProvider.GetRequiredService<_180148Context>();
+    dataContext.Database.EnsureCreated();
+    dataContext.Database.Migrate();
+}
 
 app.Run();

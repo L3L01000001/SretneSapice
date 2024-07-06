@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/models/comment.dart';
-import 'package:sretnesapice_mobile/models/comment_like.dart';
 import 'package:sretnesapice_mobile/models/forum_post.dart';
 import 'package:sretnesapice_mobile/providers/comment_like_provider.dart';
 import 'package:sretnesapice_mobile/providers/comment_provider.dart';
@@ -9,7 +8,6 @@ import 'package:sretnesapice_mobile/providers/forum_post_provider.dart';
 import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
-import 'package:sretnesapice_mobile/widgets/text_input_widget.dart';
 
 class ForumPostDetailsScreen extends StatefulWidget {
   static const String routeName = '/forum_post';
@@ -28,6 +26,8 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
   final _formKey = GlobalKey<FormState>();
 
   ForumPost? forumPost;
+
+  final int selectedIndex = 0;
 
   @override
   void initState() {
@@ -55,7 +55,6 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
     String commentContent = _commentController.text;
     int userId = Authorization.user!.userId;
     int postId = int.parse(widget.id);
-    print(commentContent);
 
     if (_validateFields(commentContent)) {
       Map comment = {
@@ -97,6 +96,7 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
       return LoadingScreen();
     } else {
       return MasterScreenWidget(
+        initialIndex: selectedIndex,
         child: Stack(
           children: [
             SingleChildScrollView(
@@ -180,7 +180,7 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
             SizedBox(height: 10),
             // Tags
             Text(
-              'Tags: ${forumPost!.tags?.join(", ")}',
+              'Tags: ${forumPost!.forumPostTags?.map((t) => t.tag?.tagName).join(", ")}',
               style:
                   TextStyle(fontStyle: FontStyle.italic, color: Colors.white),
             ),

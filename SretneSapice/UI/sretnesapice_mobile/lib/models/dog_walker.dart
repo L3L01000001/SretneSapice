@@ -21,8 +21,8 @@ class DogWalker {
   bool? isApproved;
   String? status;
   City? city;
-  List<WalkerReview>? walkerReviews;
-  List<ServiceRequest>? serviceRequests;
+  List<WalkerReview> walkerReviews;
+  List<ServiceRequest> serviceRequests;
 
   DogWalker(
       this.dogWalkerId,

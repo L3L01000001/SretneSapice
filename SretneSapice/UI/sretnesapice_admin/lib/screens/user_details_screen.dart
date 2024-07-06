@@ -68,30 +68,29 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-      initialIndex: 1,
-        child: Padding(
-          padding: EdgeInsets.all(32.0),
-          child: Column(
-            children: [
-              isLoading ? Container() : _buildForm(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Padding(
-                      padding: EdgeInsets.all(10),
-                      child: Container(
-                        
-                      ))
-                ],
-              )
-            ],
+        initialIndex: 1,
+        title: widget.user?.name ?? "Novi korisnik?",
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(32.0),
+            child: Column(
+              children: [
+                isLoading ? Container() : _buildForm(),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Padding(padding: EdgeInsets.all(10), child: Container())
+                  ],
+                )
+              ],
+            ),
           ),
         ),
-        title: this.widget.user?.name ?? "Novi korisnik?");
+        );
   }
 
   FormBuilder _buildForm() {
-     return FormBuilder(
+    return FormBuilder(
       key: _formKey,
       initialValue: _initialValue,
       child: Container(
@@ -139,6 +138,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 ],
               ),
               Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Expanded(
                       child: FormBuilderDropdown<String>(
@@ -151,8 +151,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                         suffix: IconButton(
                           icon: const Icon(Icons.close),
                           onPressed: () {
-                            _formKey.currentState!.fields['cityID']
-                                ?.reset();
+                            _formKey.currentState!.fields['cityID']?.reset();
                           },
                         ),
                         hintText: 'Grad'),
@@ -254,9 +253,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
         ),
       ),
     );
-}
+  }
 
-File? _image;
+  File? _image;
   String? _base64Image;
 
   Future getImage() async {
@@ -270,5 +269,3 @@ File? _image;
     }
   }
 }
-
-

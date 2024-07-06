@@ -23,11 +23,11 @@ DogWalker _$DogWalkerFromJson(Map<String, dynamic> json) => DogWalker(
       json['city'] == null
           ? null
           : City.fromJson(json['city'] as Map<String, dynamic>),
-      (json['walkerReviews'] as List<dynamic>?)
-          ?.map((e) => WalkerReview.fromJson(e as Map<String, dynamic>))
+      (json['walkerReviews'] as List<dynamic>)
+          .map((e) => WalkerReview.fromJson(e as Map<String, dynamic>))
           .toList(),
-      (json['serviceRequests'] as List<dynamic>?)
-          ?.map((e) => ServiceRequest.fromJson(e as Map<String, dynamic>))
+      (json['serviceRequests'] as List<dynamic>)
+          .map((e) => ServiceRequest.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
