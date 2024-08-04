@@ -2,8 +2,9 @@ version: '3'
 services:
   # RabbitMQ Docker
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:3-management
     container_name: rabbitmq
+    restart: unless-stopped
     environment:
       - RABBITMQ_DEFAULT_USER=user
       - RABBITMQ_DEFAULT_PASS=password
@@ -11,9 +12,7 @@ services:
       - "5672:5672"
       - "15672:15672"
     networks:
-      - sretnesapicenet  
-    volumes:
-      - rabbitmq_data:/var/lib/rabbitmq
+      - sretnesapicenet
 
 #mssql docker
   sretnesapice-sql:
@@ -53,13 +52,14 @@ services:
       - sretnesapice-sql
     depends_on:
       - sretnesapice-sql
+      - rabbitmq
 
         # RabbitMQ Service Docker
   rabbitmq-service:
     restart: unless-stopped
     build:
       context: .
-      dockerfile: ./eSpaCenter.Subscriber/Dockerfile
+      dockerfile: ./SretneSapice.Subscriber/Dockerfile
     environment:
       - RABBITMQ_HOST=rabbitmq
       - RABBITMQ_PORT=5672
@@ -73,9 +73,6 @@ services:
       - rabbitmq
     networks:
       - sretnesapicenet
-
-volumes:
-  rabbitmq_data:
       
 networks:
   sretnesapicenet:

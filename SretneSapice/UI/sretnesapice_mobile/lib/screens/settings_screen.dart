@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -16,7 +15,6 @@ import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/edit_profile_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/live_tracking_screen.dart';
-import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/screens/service_request_list_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
@@ -73,7 +71,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       );
 
       BackgroundLocation.getLocationUpdates((location) {
-         _sendLocationToBackend(location.latitude, location.longitude); 
+        _sendLocationToBackend(location.latitude, location.longitude);
       });
     } catch (e) {
       print('Error initializing background location: $e');
@@ -108,8 +106,6 @@ class _SettingsScreenState extends State<SettingsScreen> {
       } catch (e) {
         print('Error sending location: $e');
       }
-    } else {
-      print('Invalid dogWalkerId: $dogWalkerId');
     }
   }
 

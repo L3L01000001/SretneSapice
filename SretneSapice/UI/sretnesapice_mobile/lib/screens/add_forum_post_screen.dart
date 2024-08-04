@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/providers/forum_post_provider.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';

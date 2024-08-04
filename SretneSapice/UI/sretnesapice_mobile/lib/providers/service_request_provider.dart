@@ -40,10 +40,8 @@ class ServiceRequestProvider extends BaseProvider<ServiceRequest> {
     var response = await http!.get(uri, headers: headers);
     if (isValidResponseCode(response)) {
       var data = jsonDecode(response.body);
-      return data['result']
-          .map((x) => fromJson(x))
-          .cast<ServiceRequest>()
-          .toList();
+
+      return data['result'].map((x) => fromJson(x)).cast<ServiceRequest>().toList();
     } else {
       throw Exception("Greška!");
     }

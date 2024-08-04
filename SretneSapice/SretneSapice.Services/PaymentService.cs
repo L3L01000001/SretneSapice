@@ -17,54 +17,19 @@ namespace SretneSapice.Services
 {
     public class PaymentService : BaseCRUDService<PaymentDto, Payment, BaseSearchObject, PaymentInsertRequest, PaymentUpdateRequest>, IPaymentService
     {
-        private readonly PaypalClient _paypalClient;
         public int LoggedInUserId;
         private readonly IHttpContextAccessor _httpContextAccessor;
         public PaymentService(_180148Context context, IMapper mapper, PaypalClient paypalClient, IHttpContextAccessor httpContextAccessor) : base(context, mapper)
         {
-            _paypalClient = paypalClient;
             _httpContextAccessor = httpContextAccessor;
             ClaimsIdentity user = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
             LoggedInUserId = Convert.ToInt32(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
 
-        public async Task<string> CreatePayPalOrderAsync(int orderId, string returnUrl, string cancelUrl)
+        public async Task<PaymentDto> CompletePaymentAsync(int orderId)
         {
-            var userOrder = await _context.Orders
-                                    .Where(o => o.UserId == LoggedInUserId && o.OrderId == orderId)
-                                    .FirstOrDefaultAsync();
-
-            if (userOrder == null)
-            {
-                throw new Exception("User's pending order not found.");
-            }
-
-            decimal total = userOrder.TotalAmount ?? 0;
-
-            var paypalOrderId = await _paypalClient.CreateOrderAsync(total, returnUrl, cancelUrl);
-
-            var payment = new Payment
-            {
-                OrderId = userOrder.OrderId,
-                PaymentMethod = "Paypal",
-                Status = "Pending", 
-                Amount = total,
-                TransactionId = paypalOrderId
-            };
-
-            _context.Payments.Add(payment);
-
-            await _context.SaveChangesAsync();
-
-            return paypalOrderId;
-        }
-
-        public async Task<PaymentDto> CompletePayPalOrderAsync(string token)
-        {
-            var paypalOrderId = token;
-
             var payment = await _context.Payments
-                                        .Where(p => p.TransactionId == paypalOrderId)
+                                        .Where(p => p.OrderId == orderId)
                                         .FirstOrDefaultAsync();
 
             if (payment == null)
@@ -72,16 +37,27 @@ namespace SretneSapice.Services
                 throw new Exception("Payment not found.");
             }
 
-            var isPaymentSuccessful = await _paypalClient.VerifyOrderAsync(token);
-            if (isPaymentSuccessful)
+            payment.Status = "Completed";
+            
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<PaymentDto>(payment);
+        }
+
+        public async Task<PaymentDto> CancelPayment(int orderId)
+        {
+            var payment = await _context.Payments
+                                        .Where(p => p.OrderId == orderId)
+                                        .FirstOrDefaultAsync();
+
+            if (payment == null)
             {
-                payment.Status = "Completed";
-                await _context.SaveChangesAsync();
+                throw new Exception("Payment not found.");
             }
-            else
-            {
-                throw new Exception("Payment verification failed.");
-            }
+
+            payment.Status = "Cancelled";
+
+            await _context.SaveChangesAsync();
 
             return _mapper.Map<PaymentDto>(payment);
         }

@@ -5,6 +5,7 @@ import 'package:sretnesapice_mobile/models/dog_walker_location.dart';
 import 'package:sretnesapice_mobile/providers/dog_walker_location_provider.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 
 class LiveTrackingScreen extends StatefulWidget {
@@ -18,8 +19,8 @@ class LiveTrackingScreen extends StatefulWidget {
 }
 
 class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
-  late Position _userPosition;
-  late Position _dogWalkerPosition;
+  Position? _userPosition;
+  Position? _dogWalkerPosition;
 
   final int selectedIndex = 3;
 
@@ -32,22 +33,24 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
     _dogWalkerLocationProvider = context.read<DogWalkerLocationProvider>();
 
     _fetchPositions();
+
+    print(_userPosition);
   }
 
   Future<void> _fetchPositions() async {
     try {
-      _userPosition = await _fetchUserPosition();
+      Position user = await _fetchUserPosition();
 
-      walkerLocation =
+      DogWalkerLocation? walkerLocation =
           await _dogWalkerLocationProvider!.getById(widget.dogWalker);
 
       if (walkerLocation != null &&
-          walkerLocation!.latitude != null &&
-          walkerLocation!.longitude != null) {
+          walkerLocation.latitude != null &&
+          walkerLocation.longitude != null) {
         _dogWalkerPosition = Position(
-          timestamp: walkerLocation!.timestamp!,
-          latitude: walkerLocation!.latitude!,
-          longitude: walkerLocation!.longitude!,
+          timestamp: walkerLocation.timestamp!,
+          latitude: walkerLocation.latitude!,
+          longitude: walkerLocation.longitude!,
           accuracy: 0.0,
           altitude: 0.0,
           altitudeAccuracy: 0.0,
@@ -58,7 +61,11 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
         );
       }
 
-      setState(() {});
+      setState(() {
+         this._userPosition = user;
+        this._dogWalkerPosition = _dogWalkerPosition;
+        this.walkerLocation = walkerLocation;
+      });
     } catch (e) {
       print('Greška: $e');
     }
@@ -81,7 +88,10 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
       }
     }
 
-    return await Geolocator.getCurrentPosition();
+    Position user = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+
+    return user;
   }
 
   @override
@@ -92,29 +102,33 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
         margin: EdgeInsets.fromLTRB(10, 10, 10, 0),
         child: Column(
           children: [
+            _buildDogWalkerCard(),
             Expanded(
               child: Center(
-                child: walkerLocation != null
+                child: _dogWalkerPosition != null
                     ? FlutterMap(
                         options: MapOptions(
-                          initialCenter: LatLng(
-                              _userPosition.latitude, _userPosition.longitude),
-                          initialZoom: 14,
+                          center: LatLng(
+                              _userPosition!.latitude, _userPosition!.longitude),
+                          zoom: 14,
                         ),
                         children: [
                           TileLayer(
-                            urlTemplate:
-                                'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            subdomains: ['a', 'b', 'c'],
-                          ),
+                              urlTemplate:
+                                  'https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}',
+                              additionalOptions: {
+                                'accessToken':
+                                    'pk.eyJ1IjoibGVqbGFhIiwiYSI6ImNsejh2M2hueDAxbW0ybXM3bzhtbDl2MXAifQ.4csFjEDrPm6eO7NL4PTwDA',
+                                'id': 'mapbox/streets-v11',
+                              }),
                           MarkerLayer(
                             markers: [
                               Marker(
                                 width: 80,
                                 height: 80,
-                                point: LatLng(_userPosition.latitude,
-                                    _userPosition.longitude),
-                                child: Container(
+                                point: LatLng(_userPosition!.latitude,
+                                    _userPosition!.longitude),
+                                builder: (ctx) => Container(
                                   child: Icon(
                                     Icons.location_pin,
                                     color: Colors.blue,
@@ -125,15 +139,28 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                               Marker(
                                 width: 80.0,
                                 height: 80.0,
-                                point: LatLng(_dogWalkerPosition.latitude,
-                                    _dogWalkerPosition.longitude),
-                                child: Container(
-                                  child: Icon(
-                                    Icons.location_pin,
-                                    color: Colors.green,
-                                    size: 40,
-                                  ),
+                                point: LatLng(_dogWalkerPosition!.latitude,
+                                    _dogWalkerPosition!.longitude),
+                                builder: (ctx) => Container(
+                                  child: Image.asset(
+                                      'assets/icons/walking-the-dog.png',
+                                      width: 40,
+                                      height: 40),
                                 ),
+                              ),
+                            ],
+                          ),
+                          PolylineLayer(
+                            polylines: [
+                              Polyline(
+                                points: [
+                                  LatLng(_userPosition!.latitude,
+                                      _userPosition!.longitude),
+                                  LatLng(_dogWalkerPosition!.latitude,
+                                      _dogWalkerPosition!.longitude),
+                                ],
+                                strokeWidth: 4.0,
+                                color: Colors.green,
                               ),
                             ],
                           ),
@@ -141,6 +168,37 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                       )
                     : CircularProgressIndicator(),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDogWalkerCard() {
+    return Container(
+      width: double.infinity,
+      color: const Color.fromARGB(255, 255, 255, 255),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            CircleAvatar(
+                radius: 72,
+                child: walkerLocation!.dogWalker!.dogWalkerPhoto != ""
+                    ? imageFromBase64String(
+                        walkerLocation!.dogWalker!.dogWalkerPhoto!)
+                    : Icon(Icons.person, size: 82)),
+            SizedBox(height: 10),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  walkerLocation!.dogWalker!.fullName! ?? "Nema",
+                  style: TextStyle(color: Color(0xff1590a1), fontSize: 30),
+                ),
+                SizedBox(height: 8)
+              ],
             ),
           ],
         ),

@@ -2,20 +2,24 @@
 
 FROM mcr.microsoft.com/dotnet/aspnet:6.0 AS base
 WORKDIR /app
+EXPOSE 7094
+ENV ASPNETCORE_URLS=https://+:7094
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
+
 COPY ["SretneSapice.Subscriber/SretneSapice.Subscriber.csproj", "SretneSapice.Subscriber/"]
 RUN dotnet restore "SretneSapice.Subscriber/SretneSapice.Subscriber.csproj"
 
 FROM build AS publish
 RUN dotnet publish "SretneSapice/SretneSapice.csproj" -c Release -o /app/publish
+
 COPY . .
 WORKDIR "/src/SretneSapice.Subscriber"
 RUN dotnet build "SretneSapice.Subscriber.csproj" -c Release -o /app/build
 
 FROM build AS publish
-EUN dotnet publish "SretneSapice.Subscriber.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "SretneSapice.Subscriber.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
 FROM base AS final
 WORKDIR /app

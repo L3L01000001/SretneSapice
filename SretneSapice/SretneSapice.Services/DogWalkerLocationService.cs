@@ -18,5 +18,19 @@ namespace SretneSapice.Services
         {
             return await _context.DogWalkerLocations.AnyAsync(dw => dw.DogWalkerId == dogWalkerId);
         }
+
+        public override async Task<DogWalkerLocationDto> GetById(int id)
+        {
+            var entity = await _context.Set<DogWalkerLocation>()
+                .Include(fp => fp.DogWalker)
+                .FirstOrDefaultAsync(fp => fp.DogWalkerId == id);
+
+            if (entity == null)
+            {
+                throw new Exception("Dog Walker location not found!");
+            }
+
+            return _mapper.Map<DogWalkerLocationDto>(entity);
+        }
     }
 }

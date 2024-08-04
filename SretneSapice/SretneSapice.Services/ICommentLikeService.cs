@@ -13,6 +13,5 @@ namespace SretneSapice.Services
     {
         Task LikeComment(int commentId, int userId);
         Task UnlikeComment(int commentId, int userId);
-        Task<List<CommentLikeDto>> GetLikesForComment(int commentId);
     }
 }

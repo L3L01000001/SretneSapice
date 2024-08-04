@@ -16,6 +16,9 @@ Comment _$CommentFromJson(Map<String, dynamic> json) => Comment(
       json['user'] == null
           ? null
           : User.fromJson(json['user'] as Map<String, dynamic>),
+      (json['commentLikes'] as List<dynamic>)
+          .map((e) => CommentLike.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
@@ -26,4 +29,5 @@ Map<String, dynamic> _$CommentToJson(Comment instance) => <String, dynamic>{
       'timestamp': instance.timestamp,
       'likesCount': instance.likesCount,
       'user': instance.user,
+      'commentLikes': instance.commentLikes,
     };

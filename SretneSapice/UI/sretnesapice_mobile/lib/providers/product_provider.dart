@@ -62,7 +62,8 @@ class ProductProvider extends BaseProvider<Product> {
     if (isValidResponseCode(response)) {
       var data = jsonDecode(response.body);
 
-      return data.map((x) => fromJson(x)).cast<Product>().toList();
+      List<Product> list = data.map((x) => fromJson(x)).cast<Product>().toList(); 
+      return list;
     } else {
       throw Exception("Greška!");
     }

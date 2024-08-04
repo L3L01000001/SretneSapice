@@ -528,8 +528,8 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
   Widget _buildWalkerReviews() {
     List<Widget> reviewCards = [];
 
-    if (dogWalker!.walkerReviews.isNotEmpty) {
-      for (var review in dogWalker!.walkerReviews) {
+    if (dogWalker!.walkerReviews!.isNotEmpty) {
+      for (var review in dogWalker!.walkerReviews!) {
         reviewCards.add(
           Card(
             elevation: 2,

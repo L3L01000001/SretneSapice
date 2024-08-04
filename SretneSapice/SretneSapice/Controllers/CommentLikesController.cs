@@ -29,12 +29,5 @@ namespace SretneSapice.Controllers
             await _commentLikeService.UnlikeComment(commentId, userId);
             await _commentService.UpdateCommentLikesCount(commentId);
         }
-
-        [HttpGet("likes/{commentId}")]
-        public async Task<IActionResult> GetLikesForComment([FromRoute] int commentId)
-        {
-            var result = await _commentLikeService.GetLikesForComment(commentId);
-            return Ok(result);
-        }
     }
 }

@@ -206,16 +206,39 @@ namespace SretneSapice.Services
         public async Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByLoggedInUser()
         {
             var now = DateTime.Now;
-            var allServiceRequests = _context.ServiceRequests
-                .Include(x => x.User)
-                .Include(x => x.DogWalker)
+
+            var allServiceRequests = await _context.ServiceRequests
                 .Where(x => x.UserId == LoggedInUserId && x.Status == "Accepted" && x.StartTime <= now && x.EndTime >= now)
-                .AsQueryable();
+                .Select(x => new ServiceRequestDto
+                {
+                    ServiceRequestId = x.ServiceRequestId,
+                    DogWalkerId = x.DogWalkerId,
+                    UserId = x.UserId,
+                    StartTime = x.StartTime,
+                    EndTime = x.EndTime,
+                    Date = x.Date,
+                    Status = x.Status,
+                    DogBreed = x.DogBreed,
+                    LiveLocationEnabled = x.LiveLocationEnabled,
+                    DogWalker = new DogWalkerDto
+                    {
+                        Name = x.DogWalker.Name,
+                        Surname = x.DogWalker.Surname
+                    },
+                    User = new UserDto
+                    {
+                        UserId = x.User.UserId,
+                        Email = x.User.Email,
+                        Phone = x.User.Phone,
+                        Username = x.User.Username
+                    }
+                })
+                .ToListAsync();
 
             PagedResult<ServiceRequestDto> result = new PagedResult<ServiceRequestDto>
             {
-                Count = await allServiceRequests.CountAsync(),
-                Result = _mapper.Map<List<ServiceRequestDto>>(await allServiceRequests.ToListAsync())
+                Count = allServiceRequests.Count,
+                Result = allServiceRequests
             };
 
             return result;

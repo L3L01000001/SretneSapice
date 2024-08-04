@@ -12,32 +12,35 @@ class CommentLikeProvider extends BaseProvider<CommentLike> {
   }
 
   Future<void> likeComment(int commentId, int userId) async {
-    var url = "$totalUrl/like";
+    var url = "$totalUrl/like?commentId=$commentId&userId=$userId";
 
     var uri = Uri.parse(url);
 
-    var headers = createHeaders();
-    var response = await http!.post(uri, headers: headers, body: jsonEncode({'commentId': commentId, 'userId': userId}),);
+    Map<String, String> headers = createHeaders();
+    var response = await http!.post(uri, headers: headers);
 
-    if (isValidResponseCode(response)) {
-      notifyListeners();
+    if (response.statusCode == 200) {
+      print("Uspješno likean komentar!");
     } else {
-      throw Exception('Failed to like comment');
+      throw Exception('Greška');
     }
   }
 
   Future<void> unlikeComment(int commentId, int userId) async {
-     var url = "$totalUrl/unlike";
+    var url = "$totalUrl/unlike?commentId=$commentId&userId=$userId";
 
     var uri = Uri.parse(url);
 
     var headers = createHeaders();
-    var response = await http!.put(uri, headers: headers, body: jsonEncode({'commentId': commentId, 'userId': userId}),);
-    
-    if (isValidResponseCode(response)) {
-      notifyListeners(); 
+    var response = await http!.put(
+      uri,
+      headers: headers
+    );
+
+    if (response.statusCode == 200) {
+      print("Uspješno unlikean komentar!");
     } else {
-      throw Exception('Failed to unlike comment');
+      throw Exception('Greška!');
     }
   }
 }

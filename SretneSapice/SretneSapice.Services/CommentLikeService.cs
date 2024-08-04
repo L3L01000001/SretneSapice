@@ -37,7 +37,6 @@ namespace SretneSapice.Services
 
             _context.CommentLikes.Add(newLike);
             await _context.SaveChangesAsync();
-
         }
 
         public async Task UnlikeComment(int commentId, int userId)
@@ -51,15 +50,5 @@ namespace SretneSapice.Services
                 await _context.SaveChangesAsync();
             }
         }
-
-        public async Task<List<CommentLikeDto>> GetLikesForComment(int commentId)
-        {
-            var likes = await _context.CommentLikes
-                .Where(cl => cl.CommentId == commentId)
-                .ToListAsync();
-
-            return _mapper.Map<List<CommentLikeDto>>(likes);
-        }
-
     }
 }

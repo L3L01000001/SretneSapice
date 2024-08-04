@@ -47,12 +47,12 @@ class ServiceRequestCard extends StatelessWidget {
                     children: [
                       ElevatedButton(
                         onPressed: onAccept,
-                        child: Text('Accept'),
+                        child: Text('Prihvati'),
                       ),
                       SizedBox(width: 10),
                       ElevatedButton(
                         onPressed: onReject,
-                        child: Text('Reject'),
+                        child: Text('Odbij'),
                       ),
                     ],
                   )

@@ -108,7 +108,7 @@ namespace SretneSapice.Services
         static MLContext mlContext = null;
         static ITransformer model = null;
 
-        public async Task<List<ProductDto>> Recommend(int id)
+        public List<ProductDto> Recommend(int id)
         {
             lock (isLocked)
             {
@@ -117,6 +117,11 @@ namespace SretneSapice.Services
                     mlContext = new MLContext();
 
                     var tmpData = _context.Orders.Include(o => o.OrderItems).ToList();
+
+                    if (!tmpData.Any())
+                    {
+                        throw new InvalidOperationException("No orders found in the database.");
+                    }
 
                     var data = new List<ProductEntry>();
 
@@ -148,6 +153,8 @@ namespace SretneSapice.Services
                         throw new InvalidOperationException("No valid data found for training.");
                     }
 
+                    Console.WriteLine($"Data count: {data.Count}");
+
                     var traindata = mlContext.Data.LoadFromEnumerable(data);
 
                     //STEP 3: Your data is already encoded so all you need to do is specify options for MatrxiFactorizationTrainer with a few extra hyperparameters
@@ -175,7 +182,7 @@ namespace SretneSapice.Services
 
             //prediction
 
-            var products = await _context.Products.Where(x => x.ProductId != id).ToListAsync();
+            var products = _context.Products.Where(x => x.ProductId != id);
 
             var predictionResult = new List<Tuple<Product, float>>();
 

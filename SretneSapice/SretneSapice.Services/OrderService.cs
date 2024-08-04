@@ -101,5 +101,59 @@ namespace SretneSapice.Services
 
             await _context.SaveChangesAsync();
         }
+
+        public async Task<OrderDto> PendingOrder(int orderId)
+        {
+            var order = await _context.Orders
+                                        .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.InCart)
+                                        .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
+
+            order.Status = OrderStatuses.Pending;
+
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<OrderDto>(order);
+        }
+
+        public async Task<OrderDto> CompleteOrder(int orderId)
+        {
+            var order = await _context.Orders
+                                        .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.Pending)
+                                        .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
+
+            order.Status = OrderStatuses.Completed;
+
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<OrderDto>(order);
+        }
+
+        public async Task<OrderDto> CancelOrder(int orderId)
+        {
+            var order = await _context.Orders
+                                        .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.Pending)
+                                        .FirstOrDefaultAsync();
+
+            if (order == null)
+            {
+                throw new Exception("Order not found.");
+            }
+
+            order.Status = OrderStatuses.Cancelled;
+
+            await _context.SaveChangesAsync();
+
+            return _mapper.Map<OrderDto>(order);
+        }
     }
 }

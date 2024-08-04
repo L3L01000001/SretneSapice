@@ -20,28 +20,28 @@ namespace SretneSapice.Controllers
         }
 
         [HttpGet("{dogWalkerId}/allowedActions")]
-        //[Authorize(Roles = "DogWalkerVerifier, User")]
+        [Authorize(Roles = "DogWalkerVerifier, User")]
         public virtual async Task<List<string>> AllowedActions(int dogWalkerId)
         {
             return await _dogWalkerService.AllowedActions(dogWalkerId);
         }
 
         [HttpPut("{dogWalkerId}/approve")]
-        //[Authorize(Roles = "DogWalkerVerifier")]
+        [Authorize(Roles = "DogWalkerVerifier")]
         public virtual async Task<DogWalkerDto> Approve(int dogWalkerId)
         {
             return await _dogWalkerService.Approve(dogWalkerId);
         }
 
         [HttpPut("{dogWalkerId}/reject")]
-        //[Authorize(Roles = "DogWalkerVerifier")]
+        [Authorize(Roles = "DogWalkerVerifier")]
         public virtual async Task<DogWalkerDto> Reject(int dogWalkerId)
         {
             return await _dogWalkerService.Reject(dogWalkerId);
         }
 
         [HttpPut("{dogWalkerId}/cancelApplication")]
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         public virtual async Task<DogWalkerDto> CancelApplication(int dogWalkerId)
         {
             return await _dogWalkerService.CancelApplication(dogWalkerId);

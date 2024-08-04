@@ -5,7 +5,6 @@ import 'package:sretnesapice_mobile/models/city.dart';
 import 'package:sretnesapice_mobile/providers/city_provider.dart';
 import 'package:sretnesapice_mobile/providers/user_provider.dart';
 import 'package:sretnesapice_mobile/requests/registration_request.dart';
-import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_mobile/widgets/text_input_widget.dart';
 
 class UserRegistrationScreen extends StatefulWidget {

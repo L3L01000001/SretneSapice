@@ -196,7 +196,7 @@ public partial class _180148Context : DbContext
 
         modelBuilder.Entity<DogWalkerLocation>(entity =>
         {
-            entity.HasKey(e => new { e.DogWalkerId, e.Timestamp }).HasName("PK__DogWalke__82636EF78AE5B872");
+            entity.HasKey(e => e.DogWalkerId).HasName("PK__DogWalke__82636EF78AE5B872");
 
             entity.ToTable("DogWalkerLocation");
 

@@ -17,8 +17,6 @@ namespace SretneSapice.Model.Dtos
 
         public virtual ICollection<CommentLikeDto> CommentLikes { get; } = new List<CommentLikeDto>();
 
-        public virtual ForumPostDto? Post { get; set; }
-
         public virtual UserDto? User { get; set; }
     }
 }

@@ -7,6 +7,7 @@ import 'package:sretnesapice_mobile/providers/comment_provider.dart';
 import 'package:sretnesapice_mobile/providers/forum_post_provider.dart';
 import 'package:sretnesapice_mobile/screens/loading_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
+import 'package:sretnesapice_mobile/widgets/comment.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 
 class ForumPostDetailsScreen extends StatefulWidget {
@@ -29,12 +30,16 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
 
   final int selectedIndex = 0;
 
+  int? loggedInUserId;
+
   @override
   void initState() {
     super.initState();
     _forumPostProvider = context.read<ForumPostProvider>();
     _commentProvider = context.read<CommentProvider>();
     _commentLikeProvider = context.read<CommentLikeProvider>();
+
+    loggedInUserId = Authorization.user?.userId;
 
     loadData();
   }
@@ -45,6 +50,26 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
     setState(() {
       this.forumPost = forumPost;
     });
+  }
+
+  void onLike(Comment comment) async {
+    try {
+      if (isLiked(comment)) {
+        final commentLike = comment.commentLikes
+            .firstWhere((com) => com.userId == loggedInUserId);
+
+        if (commentLike != null) {
+          await _commentLikeProvider!.unlikeComment(comment.commentId!, loggedInUserId!);
+        } else {
+          print('Nemoguće obaviti akciju!');
+        }
+      } else {
+        await _commentLikeProvider!.likeComment(comment.commentId!, loggedInUserId!);
+      }
+      loadData();
+    } catch (e) {
+      errorDialog(context, e);
+    }
   }
 
   bool _validateFields(String? commentContent) {
@@ -108,7 +133,7 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
                     _buildForumPostDetailsCard(),
                     SizedBox(height: 10),
                     Padding(
-                      padding: EdgeInsets.only(left: 5), 
+                      padding: EdgeInsets.only(left: 5),
                       child: Text(
                         "Komentari:",
                         style: TextStyle(
@@ -118,14 +143,7 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
                       ),
                     ),
                     SizedBox(height: 10),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: forumPost!.comments?.length,
-                      itemBuilder: (context, index) {
-                        return CommentWidget(
-                            comment: forumPost!.comments![index]);
-                      },
-                    ),
+                    Column(children: buildCommentsSection()),
                     buildInsertComment(),
                   ],
                 ),
@@ -147,7 +165,7 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Autor: ${forumPost!.user!.fullName}',
+              'Autor: ${forumPost!.user?.fullName!}',
               style: TextStyle(color: Colors.white),
             ),
             SizedBox(height: 10),
@@ -180,7 +198,7 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
             SizedBox(height: 10),
             // Tags
             Text(
-              'Tags: ${forumPost!.forumPostTags?.map((t) => t.tag?.tagName).join(", ")}',
+              'Tagovi: ${forumPost!.forumPostTags != null && forumPost!.forumPostTags!.isNotEmpty ? forumPost!.forumPostTags!.map((t) => t.tag?.tagName).join(", ") : "0"}',
               style:
                   TextStyle(fontStyle: FontStyle.italic, color: Colors.white),
             ),
@@ -228,42 +246,22 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
       ),
     );
   }
-}
 
-class CommentWidget extends StatelessWidget {
-  final Comment? comment;
-
-  const CommentWidget({required this.comment, Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    if (comment == null) {
-      return Container();
+  List<Widget> buildCommentsSection() {
+    if (forumPost!.comments!.length == 0) {
+      return [];
     }
 
-    return Card(
-      color: Colors.white,
-      child: ListTile(
-        title: Text(comment!.user?.fullName ?? ""),
-        subtitle: Row(
-          
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(comment!.commentContent ?? ""),
-            SizedBox(width: 8),
-            Row(
-              children: [
-                Icon(Icons.thumb_up_off_alt),
-                SizedBox(width: 4),
-                Text(
-                  "${comment!.likesCount ?? 0}",
-                  style: TextStyle(fontSize: 16),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+    return forumPost!.comments!.map((com) {
+      return CommentWidget(
+        comment: com,
+        isLiked: isLiked(com),
+        onLike: (isLiked) => onLike(com),
+      );
+    }).toList();
+  }
+
+  bool isLiked(Comment comment) {
+    return comment.commentLikes.any((like) => like.userId == loggedInUserId);
   }
 }

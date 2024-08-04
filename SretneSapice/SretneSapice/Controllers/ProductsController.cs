@@ -41,15 +41,9 @@ namespace SretneSapice.Controllers
         }
 
         [HttpGet("Recommend/{id}")]
-        public async Task<IActionResult> Recommend(int id)
+        public virtual List<ProductDto> Recommend(int id)
         {
-            var recommendedProducts = await _productService.Recommend(id);
-            if (recommendedProducts == null || recommendedProducts.Count == 0)
-            {
-                return NotFound(new { message = "No recommendations found." });
-            }
-
-            return Ok(recommendedProducts);
+            return ((IProductService)_service).Recommend(id);
         }
     }
 }
