@@ -16,5 +16,33 @@ namespace SretneSapice.Controllers
         {
             _orderService = service;
         }
+
+        [HttpPut("{orderId}/paid-order")]
+        public async Task<IActionResult> CompleteOrder(int orderId)
+        {
+            try
+            {
+                var orderDto = await _orderService.PaidOrder(orderId);
+                return Ok(orderDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
+
+        [HttpPut("{orderId}/cancel-order")]
+        public async Task<IActionResult> CancelOrder(int orderId)
+        {
+            try
+            {
+                var orderDto = await _orderService.CancelOrder(orderId);
+                return Ok(orderDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
+        }
     }
 }

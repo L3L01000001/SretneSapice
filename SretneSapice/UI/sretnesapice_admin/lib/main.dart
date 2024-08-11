@@ -6,6 +6,7 @@ import 'package:sretnesapice_admin/providers/forum_post_provider.dart';
 import 'package:sretnesapice_admin/providers/order_item_provider.dart';
 import 'package:sretnesapice_admin/providers/order_provider.dart';
 import 'package:sretnesapice_admin/providers/product_provider.dart';
+import 'package:sretnesapice_admin/providers/report_provider.dart';
 import 'package:sretnesapice_admin/providers/role_provider.dart';
 import 'package:sretnesapice_admin/providers/tag_provider.dart';
 import 'package:sretnesapice_admin/providers/user_provider.dart';
@@ -26,7 +27,8 @@ void main() {
       ChangeNotifierProvider(create: (_) => OrderItemProvider()),
       ChangeNotifierProvider(create: (_) => DogWalkerProvider()),
       ChangeNotifierProvider(create: (_) => RoleProvider()),
-      ChangeNotifierProvider(create: (_) => CityProvider())
+      ChangeNotifierProvider(create: (_) => CityProvider()),
+      ChangeNotifierProvider(create: (_) => ReportProvider())
     ],
     child: const MyMaterialApp(),
   ));
@@ -96,39 +98,56 @@ class _LoginPageState extends State<LoginPage> {
     try {
       Authorization.user = await _userProvider.Authenticate();
 
-      if (Authorization.user?.userRoles.any((role) => role.role?.name == "Administrator") == true) {
-      setState(() {
-        loggedInUserID = Authorization.user?.userId;
-      });
+      if (Authorization.user?.status == true) {
+        if (Authorization.user?.userRoles
+                .any((role) => role.role?.name == "Administrator") ==
+            true) {
+          setState(() {
+            loggedInUserID = Authorization.user?.userId;
+          });
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const ProductListScreen(),
-        ),
-      );
-    } else if (Authorization.user?.userRoles.any((role) => role.role?.name == "DogWalkerVerifier") == true) {
-      setState(() {
-        loggedInUserID = Authorization.user?.userId;
-      });
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const ProductListScreen(),
+            ),
+          );
+        } else if (Authorization.user?.userRoles
+                .any((role) => role.role?.name == "DogWalkerVerifier") ==
+            true) {
+          setState(() {
+            loggedInUserID = Authorization.user?.userId;
+          });
 
-      Navigator.of(context).push(
-        MaterialPageRoute(
-          builder: (context) => const DogWalkersListScreen(),
-        ),
-      );
-    } else {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const DogWalkersListScreen(),
+            ),
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              content: Text(
+                  "Vaš korisnički račun nema permisije za pristup admin panelu!"),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            ),
+          );
+        }
+      } else {
         showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-            content: Text(
-                "Vaš korisnički račun nema permisije za pristup admin panelu!"),
+            content: Text("Vaš korisnički račun je trenutno neaktivan! Kontaktirajte sretnesapice@outlook.com za pomoć."),
             actions: [
               TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-                child: Text('OK'),
-              )
+                  onPressed: () => Navigator.pop(context), child: Text("OK"))
             ],
           ),
         );
@@ -137,8 +156,7 @@ class _LoginPageState extends State<LoginPage> {
       showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
-                content: Text(
-                    "Pogrešno korisničko ime ili lozinka!"),
+                content: Text("Pogrešno korisničko ime ili lozinka!"),
                 actions: [
                   TextButton(
                       onPressed: () => Navigator.pop(context),
@@ -220,7 +238,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 35,
                   ),
                   _isLoading
-                      ? CircularProgressIndicator() // Show loading indicator if _isLoading is true
+                      ? CircularProgressIndicator()
                       : ElevatedButton(
                           onPressed: _login,
                           style: ButtonStyle(

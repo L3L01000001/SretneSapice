@@ -32,20 +32,26 @@ class _ServiceRequestListScreenState extends State<ServiceRequestListScreen> {
     loadData();
   }
 
-  Future loadData() async {
+Future loadData() async {
+  setState(() {
     loading = true;
-    try {
-      List<ServiceRequest> tmpData = await _serviceRequestProvider!
-          .getServiceRequestsByWalkerId(widget.id);
+  });
 
-      setState(() {
-        this.serviceRequests = tmpData;
-      });
+  try {
+    List<ServiceRequest> tmpData = await _serviceRequestProvider!
+        .getServiceRequestsByWalkerId(widget.id);
+
+    setState(() {
+      serviceRequests = tmpData;
       loading = false;
-    } on Exception catch (e) {
-      print(e);
-    }
+    });
+  } catch (e) {
+    print(e);
+    setState(() {
+      loading = false;
+    });
   }
+}
 
   void sortRequests(String sortOption) {
     setState(() {

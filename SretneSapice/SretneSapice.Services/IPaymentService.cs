@@ -9,9 +9,11 @@ using System.Threading.Tasks;
 
 namespace SretneSapice.Services
 {
-    public interface IPaymentService : ICRUDService<PaymentDto, BaseSearchObject, PaymentInsertRequest, PaymentUpdateRequest>
+    public interface IPaymentService : ICRUDService<PaymentDto, BaseSearchObject, PaymentInsertRequest, PaymentInsertRequest>
     {
         Task<PaymentDto> CompletePaymentAsync(int orderId);
         Task<PaymentDto> CancelPayment(int orderId);
+        Task UpdateTransactionIdAsync(PaymentInsertRequest request);
+        Task<int> PaymentExistsInTable(int orderId);
     }
 }

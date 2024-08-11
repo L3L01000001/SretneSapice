@@ -11,17 +11,15 @@ WORKDIR /src
 COPY ["SretneSapice.Subscriber/SretneSapice.Subscriber.csproj", "SretneSapice.Subscriber/"]
 RUN dotnet restore "SretneSapice.Subscriber/SretneSapice.Subscriber.csproj"
 
-FROM build AS publish
-RUN dotnet publish "SretneSapice/SretneSapice.csproj" -c Release -o /app/publish
-
 COPY . .
 WORKDIR "/src/SretneSapice.Subscriber"
 RUN dotnet build "SretneSapice.Subscriber.csproj" -c Release -o /app/build
 
+
 FROM build AS publish
-RUN dotnet publish "SretneSapice.Subscriber.csproj" -c Release -o /app/publish /p:UseAppHost=false
+RUN dotnet publish "SretneSapice.Subscriber.csproj" -c Release -o /app
 
 FROM base AS final
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=publish /app .
 ENTRYPOINT ["dotnet", "SretneSapice.Subscriber.dll"]

@@ -7,7 +7,6 @@ using SretneSapice.Handlers;
 using SretneSapice.Model.Dtos;
 using SretneSapice.Model.SearchObjects;
 using SretneSapice.Services;
-using SretneSapice.Services.Clients;
 using SretneSapice.Services.Database;
 using SretneSapice.Services.DogWalkerStatusStateMachine;
 using SretneSapice.Services.RabbitMQ;
@@ -37,6 +36,7 @@ builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddTransient<IUserShippingInformationService, UserShippingInformationService>();
 builder.Services.AddTransient<IDogWalkerAvailabilityService, DogWalkerAvailabilityService>();
 builder.Services.AddTransient<IDogWalkerLocationService, DogWalkerLocationService>();
+builder.Services.AddTransient<IReportService, ReportService>();
 builder.Services.AddSingleton<IMailProducer, MailProducer>();
 
 builder.Services.AddTransient<BaseState>();
@@ -90,14 +90,6 @@ builder.Services.AddAutoMapper(typeof(IUserService));
 builder.Services.AddAuthentication("BasicAuthentication")
     .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
 
-// paypal client configuration
-builder.Services.AddSingleton(x =>
-    new PaypalClient(
-        builder.Configuration["PayPalOptions:ClientId"],
-        builder.Configuration["PayPalOptions:ClientSecret"],
-        builder.Configuration["PayPalOptions:Mode"]
-    )
-);
 //builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
@@ -119,7 +111,7 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var dataContext = scope.ServiceProvider.GetRequiredService<_180148Context>();
-    dataContext.Database.EnsureCreated();
+
     dataContext.Database.Migrate();
 }
 

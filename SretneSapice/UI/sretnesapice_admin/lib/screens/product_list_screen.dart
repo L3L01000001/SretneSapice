@@ -99,12 +99,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
             });
           },
           icon: Icon(Icons.search),
-          label: Text("Pretraga"),
+          label: Text("Pretraga", style: TextStyle(color: Color.fromARGB(255, 6, 58, 137))),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18.0),
-              side: BorderSide(color: Color(0xFF8031CC), width: 2.0),
+              side: BorderSide(color: Color.fromARGB(255, 6, 58, 137), width: 2.0),
             ),
           ),
         ),
@@ -122,12 +122,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
             );
           },
           icon: Icon(Icons.add),
-          label: Text("Novi proizvod"),
+          label: Text("Novi proizvod", style: TextStyle(color: Color.fromARGB(255, 6, 58, 137))),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18.0),
-              side: BorderSide(color: Color(0xFF8031CC), width: 2.0),
+              side: BorderSide(color: Color.fromARGB(255, 6, 58, 137), width: 2.0),
             ),
           ),
         ),
@@ -184,11 +184,9 @@ class _ProductListScreenState extends State<ProductListScreen> {
                 result = data;
               });
             } else {
-              // Handle case when selected sorting option doesn't match any predefined option
               print('Invalid sorting option');
             }
           } catch (error) {
-            // Handle error when fetching data fails
             print('Error fetching products: $error');
           }
         },

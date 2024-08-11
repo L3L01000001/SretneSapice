@@ -51,6 +51,7 @@ dependencies:
   latlong2: ^0.8.0
   flutter_paypal_checkout: ^1.0.1
   currency_converter: ^0.0.2
+  flutter_dotenv: ^5.1.0
 
 dev_dependencies:
   json_serializable: ^6.6.2
@@ -81,6 +82,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/fonts/Quicksand-Regular.ttf 
+    - .env
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

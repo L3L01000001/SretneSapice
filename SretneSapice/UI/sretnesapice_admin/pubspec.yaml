@@ -42,6 +42,10 @@ dependencies:
   intl: ^0.17.0
   flutter_form_builder: ^7.8.0
   file_picker: ^4.6.1
+  charts_flutter: ^0.12.0
+  pie_chart: ^5.4.0
+  pdf: ^3.7.0
+  printing: ^5.6.0
 
 dev_dependencies:
   json_serializable: ^6.6.2

@@ -11,36 +11,70 @@ class PaymentProvider extends BaseProvider<Payment> {
     return Payment.fromJson(data);
   }
 
-   Future<String> initiatePayment(int orderId) async {
-    var url = "$totalUrl/initiate-payment?orderId=$orderId";
+  Future<void> updateTransactionId(int orderId, String transactionId) async {
+    var url = "$totalUrl/update-transaction-id";
+
+    var uri = Uri.parse(url);
+
+    var requestBody = jsonEncode({
+      'orderId': orderId,
+      'transactionId': transactionId,
+    });
+
+    Map<String, String> headers = createHeaders();
+    var response = await http!.put(uri, headers: headers, body: requestBody);
+
+    if (response.statusCode == 200) {
+      print("Updateano!");
+    } else {
+      throw Exception('Greška');
+    }
+  }
+
+  Future<void> completePayment(int orderId) async {
+    var url = "$totalUrl/$orderId/complete";
+
+    var uri = Uri.parse(url);
+
+    Map<String, String> headers = createHeaders();
+    var response = await http!.put(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      print("Plaćeno!");
+    } else {
+      throw Exception('Greška');
+    }
+  }
+
+  Future<void> cancelPayment(int orderId) async {
+    var url = "$totalUrl/$orderId/cancel";
+
+    var uri = Uri.parse(url);
+
+    Map<String, String> headers = createHeaders();
+    var response = await http!.put(uri, headers: headers);
+
+    if (response.statusCode == 200) {
+      print("Otkazano plaćanje!");
+    } else {
+      throw Exception('Greška');
+    }
+  }
+
+  Future<int> paymentWithOrderIdExists(int orderId) async {
+    var url = "$totalUrl/paymentWithOrderIdExists/$orderId";
 
     var uri = Uri.parse(url);
 
     var headers = createHeaders();
     var response = await http!.get(uri, headers: headers);
-    if (isValidResponseCode(response)) {
-      var data = jsonDecode(response.body) as Map<String, dynamic>;
-      if (data.containsKey('paypalUrl') && data['paypalUrl'] is String) {
-        return data['paypalUrl'] as String;
-      } else {
-        throw Exception("Invalid response format");
-      }
-    } else {
-      throw Exception("Failed to initiate payment: ${response.reasonPhrase}");
-    }
-  }
-
-  Future<Map<String, dynamic>> verifyPayment(String token) async {
-    var url = "$totalUrl/success?token=$token";
-    var uri = Uri.parse(url);
-    var headers = createHeaders();
-    var response = await http!.post(uri, headers: headers);
 
     if (isValidResponseCode(response)) {
-      var data = jsonDecode(response.body);
-      return data;
+      var data = json.decode(response.body);
+
+      return data as int;
     } else {
-      throw Exception("Error verifying payment");
+      throw Exception('Failed to load status');
     }
   }
 }

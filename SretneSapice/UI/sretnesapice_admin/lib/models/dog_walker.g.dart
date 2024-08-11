@@ -20,6 +20,12 @@ DogWalker _$DogWalkerFromJson(Map<String, dynamic> json) => DogWalker(
       json['rating'] as int?,
       json['isApproved'] as bool?,
       json['status'] as String?,
+      json['city'] == null
+          ? null
+          : City.fromJson(json['city'] as Map<String, dynamic>),
+      (json['serviceRequests'] as List<dynamic>?)
+          ?.map((e) => ServiceRequest.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$DogWalkerToJson(DogWalker instance) => <String, dynamic>{
@@ -36,4 +42,6 @@ Map<String, dynamic> _$DogWalkerToJson(DogWalker instance) => <String, dynamic>{
       'rating': instance.rating,
       'isApproved': instance.isApproved,
       'status': instance.status,
+      'city': instance.city,
+      'serviceRequests': instance.serviceRequests,
     };

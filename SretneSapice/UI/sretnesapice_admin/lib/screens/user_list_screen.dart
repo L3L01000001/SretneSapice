@@ -26,14 +26,21 @@ class _UserListScreenState extends State<UserListScreen> {
     super.didChangeDependencies();
     _userProvider = context.read<UserProvider>();
     _loadData();
+
+    print(_isActive);
   }
 
   Future<void> _loadData() async {
-    var data = await _userProvider.get(filter: {
-      'isRoleIncluded': true,
-      'roles': _selectedRoles.isNotEmpty ? _selectedRoles.join(',') : null,
-      'isActive': _isActive != null ? _isActive.toString() : null,
-    });
+    var filter = {
+    'isRoleIncluded': true,
+    'roles': _selectedRoles.isNotEmpty ? _selectedRoles.join(',') : null,
+  };
+
+  if (_isActive != null) {
+    filter['isActive'] = _isActive.toString();
+  }
+
+  var data = await _userProvider.get(filter: filter);
 
     setState(() {
       result = data;
@@ -117,7 +124,27 @@ class _UserListScreenState extends State<UserListScreen> {
         ),
         SizedBox(
           width: 8,
-        )
+        ),
+        ElevatedButton.icon(
+          onPressed: () async {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => UserDetailsScreen(
+                  user: null,
+                ),
+              ),
+            );
+          },
+          icon: Icon(Icons.add),
+          label: Text("Novi korisnik"),
+          style: ElevatedButton.styleFrom(
+            padding: EdgeInsets.all(16),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18.0),
+              side: BorderSide(color: Color(0xFF8031CC), width: 2.0),
+            ),
+          ),
+        ),
       ]),
     );
   }

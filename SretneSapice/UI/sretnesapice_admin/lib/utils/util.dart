@@ -34,3 +34,13 @@ String formatDate(dynamic) {
 
   return d.format(dynamic);
 }
+
+String formatDateOnly(dynamic) {
+  var d = DateFormat('dd.MM.yyyy');
+
+  if (dynamic == null) {
+    return "";
+  }
+
+  return d.format(dynamic);
+}

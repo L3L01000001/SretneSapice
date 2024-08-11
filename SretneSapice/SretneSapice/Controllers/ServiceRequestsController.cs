@@ -37,40 +37,6 @@ namespace SretneSapice.Controllers
             await _serviceRequestService.FinishServiceRequest(serviceRequestId);
         }
 
-        [HttpPost("{serviceRequestId}/enable-live-location")]
-        public async Task<IActionResult> EnableLiveLocation(int serviceRequest)
-        {
-            try
-            {
-                bool isScheduledServiceTime = await _serviceRequestService.IsScheduledServiceTime(serviceRequest);
-                if (!isScheduledServiceTime)
-                {
-                    return BadRequest("It's not currently scheduled service time.");
-                }
-
-                await _serviceRequestService.UpdateLiveLocationEnabled(serviceRequest, true);
-                return Ok("Live location enabled.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to enable live location: {ex.Message}");
-            }
-        }
-
-        [HttpPost("{serviceRequestId}/disable-live-location")]
-        public async Task<IActionResult> DisableLiveLocation(int serviceRequest)
-        {
-            try
-            {
-                await _serviceRequestService.UpdateLiveLocationEnabled(serviceRequest, false);
-                return Ok("Live location disabled.");
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"Failed to disable live location: {ex.Message}");
-            }
-        }
-
         [HttpGet("serviceRequests/{dogWalkerId}")]
         public async Task<ActionResult<PagedResult<ServiceRequestDto>>> GetServiceRequestsByWalkerId(int dogWalkerId)
         {

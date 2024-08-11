@@ -14,8 +14,7 @@ namespace SretneSapice.Services
         Task<decimal?> CalculateTotalAmount(int orderId);
         Task UpdateTotalAmount(int orderId);
         Task<string> GenerateUniqueOrderNumber();
-        Task<OrderDto> PendingOrder(int orderId);
-        Task<OrderDto> CompleteOrder(int orderId);
+        Task<OrderDto> PaidOrder(int orderId);
         Task<OrderDto> CancelOrder(int orderId);
     }
 }

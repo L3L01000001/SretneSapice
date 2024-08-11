@@ -102,7 +102,7 @@ namespace SretneSapice.Services
             await _context.SaveChangesAsync();
         }
 
-        public async Task<OrderDto> PendingOrder(int orderId)
+        public async Task<OrderDto> PaidOrder(int orderId)
         {
             var order = await _context.Orders
                                         .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.InCart)
@@ -113,25 +113,7 @@ namespace SretneSapice.Services
                 throw new Exception("Order not found.");
             }
 
-            order.Status = OrderStatuses.Pending;
-
-            await _context.SaveChangesAsync();
-
-            return _mapper.Map<OrderDto>(order);
-        }
-
-        public async Task<OrderDto> CompleteOrder(int orderId)
-        {
-            var order = await _context.Orders
-                                        .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.Pending)
-                                        .FirstOrDefaultAsync();
-
-            if (order == null)
-            {
-                throw new Exception("Order not found.");
-            }
-
-            order.Status = OrderStatuses.Completed;
+            order.Status = OrderStatuses.Paid;
 
             await _context.SaveChangesAsync();
 
@@ -141,7 +123,7 @@ namespace SretneSapice.Services
         public async Task<OrderDto> CancelOrder(int orderId)
         {
             var order = await _context.Orders
-                                        .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.Pending)
+                                        .Where(p => p.OrderId == orderId && p.Status == OrderStatuses.InCart)
                                         .FirstOrDefaultAsync();
 
             if (order == null)

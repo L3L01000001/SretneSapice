@@ -10,6 +10,7 @@ import 'package:sretnesapice_admin/models/search_result.dart';
 import 'package:sretnesapice_admin/models/user.dart';
 import 'package:sretnesapice_admin/providers/city_provider.dart';
 import 'package:sretnesapice_admin/providers/user_provider.dart';
+import 'package:sretnesapice_admin/screens/user_list_screen.dart';
 import 'package:sretnesapice_admin/utils/util.dart';
 import 'package:sretnesapice_admin/widgets/master_screen.dart';
 
@@ -43,7 +44,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       'username': widget.user?.username,
       'profilePhoto': widget.user?.profilePhoto,
       'status': widget.user?.status?.toString(),
-      'cityID': widget.user?.cityID
+      'cityID': widget.user?.cityID,
+      'password': widget.user?.password,
+      'confirmPassword': widget.user?.confirmPassword,
     };
 
     _cityProvider = context.read<CityProvider>();
@@ -68,25 +71,137 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
-        initialIndex: 1,
-        title: widget.user?.name ?? "Novi korisnik?",
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: EdgeInsets.all(32.0),
-            child: Column(
-              children: [
-                isLoading ? Container() : _buildForm(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Padding(padding: EdgeInsets.all(10), child: Container())
-                  ],
-                )
-              ],
-            ),
+      initialIndex: 1,
+      title: widget.user?.name ?? "Novi korisnik",
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(32.0),
+          child: Column(
+            children: [
+              isLoading ? Container() : _buildForm(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Padding(
+                      padding: EdgeInsets.all(10),
+                      child: Container(
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(15),
+                            gradient: LinearGradient(colors: [
+                              Color.fromARGB(255, 53, 3, 61),
+                              Color.fromARGB(255, 10, 77, 119)
+                            ])),
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            _formKey.currentState?.saveAndValidate();
+
+                            print(_formKey.currentState?.value);
+
+                            var request =
+                                new Map.from(_formKey.currentState!.value);
+
+                            if (widget.user != null) {
+                              request.remove('username');
+                              request.remove('email');
+                              request.remove('cityID');
+                              if (_base64Image != null &&
+                                  _base64Image!.isNotEmpty) {
+                                request['profilePhoto'] = _base64Image;
+                              } else {
+                                request.remove('profilePhoto');
+                              }
+                              request.remove('imageId');
+                              request.remove('status');
+                            } else {
+                              request.remove('profilePhoto');
+                              request.remove('imageId');
+                              request.remove('status');
+                            }
+
+                            try {
+                              if (widget.user == null) {
+                                await _userProvider.register(request);
+
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                          content: Text(
+                                              "Novi korisnik uspješno dodan!"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const UserListScreen(),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text("OK"),
+                                            )
+                                          ],
+                                        ));
+                              } else {
+                                print(request);
+                                print(widget.user!.userId!);
+                                await _userProvider.update(
+                                    widget.user!.userId!, request);
+
+                                showDialog(
+                                    context: context,
+                                    builder: (BuildContext context) =>
+                                        AlertDialog(
+                                          content: Text(
+                                              "Informacije uspješno izmijenjene!"),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context).push(
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        const UserListScreen(),
+                                                  ),
+                                                );
+                                              },
+                                              child: Text("OK"),
+                                            )
+                                          ],
+                                        ));
+                              }
+                            } on Exception catch (e) {
+                              showDialog(
+                                  context: context,
+                                  builder: (BuildContext context) =>
+                                      AlertDialog(
+                                        title: Text("Error"),
+                                        content: Text(e.toString()),
+                                        actions: [
+                                          TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: Text("OK"))
+                                        ],
+                                      ));
+                            }
+                          },
+                          child: Text("Sačuvaj",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.white)),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.transparent,
+                            shadowColor: Colors.transparent,
+                            padding: const EdgeInsets.all(20),
+                          ),
+                        ),
+                      ))
+                ],
+              )
+            ],
           ),
         ),
-        );
+      ),
+    );
   }
 
   FormBuilder _buildForm() {
@@ -96,97 +211,107 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       child: Container(
         color: Color.fromARGB(255, 223, 212, 244),
         padding: EdgeInsets.all(20),
-        child: Expanded(
-          child: SingleChildScrollView(
-            child: Column(children: [
+        child: SingleChildScrollView(
+          child: Column(children: [
+            Row(
+              children: [
+                Expanded(
+                  child: FormBuilderTextField(
+                    decoration: InputDecoration(labelText: "Ime"),
+                    name: "name",
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: FormBuilderTextField(
+                    decoration: InputDecoration(labelText: "Prezime"),
+                    name: "surname",
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: FormBuilderTextField(
+                    decoration: InputDecoration(labelText: "Korisničko ime"),
+                    name: "username",
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: FormBuilderTextField(
+                    decoration: InputDecoration(labelText: "Telefon"),
+                    name: "phone",
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                    child: FormBuilderDropdown<String>(
+                  name: 'cityID',
+                  initialValue: widget.user != null
+                      ? widget.user?.cityID?.toString()
+                      : null,
+                  decoration: InputDecoration(
+                      labelText: 'Grad',
+                      suffix: IconButton(
+                        icon: const Icon(Icons.close),
+                        onPressed: () {
+                          _formKey.currentState!.fields['cityID']?.reset();
+                        },
+                      ),
+                      hintText: 'Grad'),
+                  items: citiesResult?.result
+                          .map((item) => DropdownMenuItem(
+                                alignment: AlignmentDirectional.center,
+                                value: item.cityID.toString(),
+                                child: Text(item.name ?? ""),
+                              ))
+                          .toSet()
+                          .toList() ??
+                      [],
+                )),
+                SizedBox(
+                  width: 10,
+                ),
+                Expanded(
+                  child: FormBuilderTextField(
+                    decoration: InputDecoration(labelText: "Email"),
+                    name: "email",
+                  ),
+                ),
+              ],
+            ),
+            if (widget.user == null) ...[
               Row(
                 children: [
                   Expanded(
                     child: FormBuilderTextField(
-                      decoration: InputDecoration(labelText: "Ime"),
-                      name: "name",
+                      obscureText: true,
+                      decoration: InputDecoration(labelText: "Lozinka"),
+                      name: "password",
                     ),
                   ),
-                  SizedBox(
-                    width: 10,
-                  ),
+                  SizedBox(width: 10),
                   Expanded(
                     child: FormBuilderTextField(
-                      decoration: InputDecoration(labelText: "Prezime"),
-                      name: "surname",
+                      obscureText: true,
+                      decoration: InputDecoration(labelText: "Potvrdi lozinku"),
+                      name: "confirmPassword",
                     ),
                   ),
                 ],
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(labelText: "Korisničko ime"),
-                      name: "username",
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(labelText: "Telefon"),
-                      name: "phone",
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                      child: FormBuilderDropdown<String>(
-                    name: 'cityID',
-                    initialValue: widget.user != null
-                        ? widget.user?.cityID?.toString()
-                        : null,
-                    decoration: InputDecoration(
-                        labelText: 'Grad',
-                        suffix: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            _formKey.currentState!.fields['cityID']?.reset();
-                          },
-                        ),
-                        hintText: 'Grad'),
-                    items: citiesResult?.result
-                            .map((item) => DropdownMenuItem(
-                                  alignment: AlignmentDirectional.center,
-                                  value: item.cityID.toString(),
-                                  child: Text(item.name ?? ""),
-                                ))
-                            .toSet()
-                            .toList() ??
-                        [],
-                  )),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(labelText: "Email"),
-                      name: "email",
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: FormBuilderTextField(
-                      maxLines: null,
-                      decoration: InputDecoration(labelText: "Status"),
-                      name: "status",
-                    ),
-                  ),
-                ],
-              ),
+            ],
+            if (widget.user != null) ...[
               SizedBox(
                 height: 20,
               ),
@@ -248,8 +373,8 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   ),
                 ],
               )
-            ]),
-          ),
+            ]
+          ]),
         ),
       ),
     );

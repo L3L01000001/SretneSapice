@@ -35,113 +35,118 @@ import 'package:sretnesapice_mobile/screens/service_request_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/settings_screen.dart';
 import 'package:sretnesapice_mobile/screens/user_registration_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() => runApp(MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => ProductProvider()),
-        ChangeNotifierProvider(create: (_) => UserProvider()),
-        ChangeNotifierProvider(create: (_) => OrderProvider()),
-        ChangeNotifierProvider(create: (_) => ForumPostProvider()),
-        ChangeNotifierProvider(create: (_) => ProductTypeProvider()),
-        ChangeNotifierProvider(create: (_) => DogWalkerProvider()),
-        ChangeNotifierProvider(create: (_) => OrderItemProvider()),
-        ChangeNotifierProvider(create: (_) => RoleProvider()),
-        ChangeNotifierProvider(create: (_) => TagProvider()),
-        ChangeNotifierProvider(create: (_) => CityProvider()),
-        ChangeNotifierProvider(create: (_) => CommentProvider()),
-        ChangeNotifierProvider(create: (_) => CommentLikeProvider()),
-        ChangeNotifierProvider(create: (_) => FavoriteWalkerProvider()),
-        ChangeNotifierProvider(create: (_) => WalkerReviewProvider()),
-        ChangeNotifierProvider(
-            create: (_) => UserShippingInformationProvider()),
-        ChangeNotifierProvider(create: (_) => PaymentProvider()),
-        ChangeNotifierProvider(create: (_) => ServiceRequestProvider()),
-        ChangeNotifierProvider(create: (_) => AvailabilityProvider()),
-        ChangeNotifierProvider(create: (_) => DogWalkerLocationProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: true,
-        theme: ThemeData(
-          brightness: Brightness.light,
-          primaryColor: Colors.deepPurple,
-          fontFamily: 'Quicksand',
-          textTheme: TextTheme(
-              bodySmall: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 108, 21, 190)),
-              labelMedium: TextStyle(
-                  fontSize: 20.0,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 108, 21, 190)),
-              titleLarge: TextStyle(
-                  fontSize: 25.0,
-                  fontStyle: FontStyle.italic,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 108, 21, 190))),
-        ),
-        home: LoginPage(),
-        onGenerateRoute: (settings) {
-          if (settings.name == ForumPostListScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => ForumPostListScreen()));
-          } else if (settings.name == DogWalkerListScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => DogWalkerListScreen()));
-          } else if (settings.name == LoginPage.routeName) {
-            return MaterialPageRoute(builder: ((context) => LoginPage()));
-          } else if (settings.name == ProductListScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => ProductListScreen()));
-          } else if (settings.name == SettingsScreen.routeName) {
-            return MaterialPageRoute(builder: ((context) => SettingsScreen()));
-          } else if (settings.name == AddForumPostScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => AddForumPostScreen()));
-          } else if (settings.name == UserRegistrationScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => UserRegistrationScreen()));
-          } else if (settings.name == EditProfileScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => EditProfileScreen()));
-          } else if (settings.name == DogWalkerApplicationScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => DogWalkerApplicationScreen()));
-          } else if (settings.name == CartScreen.routeName) {
-            return MaterialPageRoute(builder: ((context) => CartScreen()));
-          } else if (settings.name == ServiceRequestListScreen.routeName) {
-            return MaterialPageRoute(
-              builder: (context) => ServiceRequestListScreen(
-                id: 0,
-              ),
-            );
-          } else if (settings.name == LiveTrackingScreen.routeName) {
-            return MaterialPageRoute(
-                builder: ((context) => LiveTrackingScreen(dogWalker: 0)));
-          }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-          var uri = Uri.parse(settings.name!);
-          if (uri.pathSegments.length == 2 &&
-              "/${uri.pathSegments.first}" ==
-                  ForumPostDetailsScreen.routeName) {
-            var id = uri.pathSegments[1];
-            return MaterialPageRoute(
-                builder: (context) => ForumPostDetailsScreen(id));
-          } else if (uri.pathSegments.length == 2 &&
-              "/${uri.pathSegments.first}" == ProductDetailsScreen.routeName) {
-            var id = uri.pathSegments[1];
-            return MaterialPageRoute(
-                builder: (context) => ProductDetailsScreen(id));
-          } else if (uri.pathSegments.length == 2 &&
-              "/${uri.pathSegments.first}" ==
-                  DogWalkerDetailsScreen.routeName) {
-            var id = uri.pathSegments[1];
-            return MaterialPageRoute(
-                builder: (context) => DogWalkerDetailsScreen(id));
-          }
-        },
+  // Load the .env file
+  await dotenv.load(fileName: ".env");
+
+  print("CLIENT_ID_VALUE: ${dotenv.env['CLIENT_ID_VALUE']}");
+  print("SECRET_KEY_VALUE: ${dotenv.env['SECRET_KEY_VALUE']}");
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => ProductProvider()),
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+      ChangeNotifierProvider(create: (_) => OrderProvider()),
+      ChangeNotifierProvider(create: (_) => ForumPostProvider()),
+      ChangeNotifierProvider(create: (_) => ProductTypeProvider()),
+      ChangeNotifierProvider(create: (_) => DogWalkerProvider()),
+      ChangeNotifierProvider(create: (_) => OrderItemProvider()),
+      ChangeNotifierProvider(create: (_) => RoleProvider()),
+      ChangeNotifierProvider(create: (_) => TagProvider()),
+      ChangeNotifierProvider(create: (_) => CityProvider()),
+      ChangeNotifierProvider(create: (_) => CommentProvider()),
+      ChangeNotifierProvider(create: (_) => CommentLikeProvider()),
+      ChangeNotifierProvider(create: (_) => FavoriteWalkerProvider()),
+      ChangeNotifierProvider(create: (_) => WalkerReviewProvider()),
+      ChangeNotifierProvider(create: (_) => UserShippingInformationProvider()),
+      ChangeNotifierProvider(create: (_) => PaymentProvider()),
+      ChangeNotifierProvider(create: (_) => ServiceRequestProvider()),
+      ChangeNotifierProvider(create: (_) => AvailabilityProvider()),
+      ChangeNotifierProvider(create: (_) => DogWalkerLocationProvider()),
+    ],
+    child: MaterialApp(
+      debugShowCheckedModeBanner: true,
+      theme: ThemeData(
+        brightness: Brightness.light,
+        primaryColor: Colors.deepPurple,
+        fontFamily: 'Quicksand',
+        textTheme: TextTheme(
+            bodySmall: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 108, 21, 190)),
+            labelMedium: TextStyle(
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 108, 21, 190)),
+            titleLarge: TextStyle(
+                fontSize: 25.0,
+                fontStyle: FontStyle.italic,
+                fontWeight: FontWeight.bold,
+                color: Color.fromARGB(255, 108, 21, 190))),
       ),
-    ));
+      home: LoginPage(),
+      onGenerateRoute: (settings) {
+        if (settings.name == ForumPostListScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => ForumPostListScreen()));
+        } else if (settings.name == DogWalkerListScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => DogWalkerListScreen()));
+        } else if (settings.name == LoginPage.routeName) {
+          return MaterialPageRoute(builder: ((context) => LoginPage()));
+        } else if (settings.name == ProductListScreen.routeName) {
+          return MaterialPageRoute(builder: ((context) => ProductListScreen()));
+        } else if (settings.name == SettingsScreen.routeName) {
+          return MaterialPageRoute(builder: ((context) => SettingsScreen()));
+        } else if (settings.name == AddForumPostScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => AddForumPostScreen()));
+        } else if (settings.name == UserRegistrationScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => UserRegistrationScreen()));
+        } else if (settings.name == EditProfileScreen.routeName) {
+          return MaterialPageRoute(builder: ((context) => EditProfileScreen()));
+        } else if (settings.name == DogWalkerApplicationScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => DogWalkerApplicationScreen()));
+        } else if (settings.name == CartScreen.routeName) {
+          return MaterialPageRoute(builder: ((context) => CartScreen()));
+        } else if (settings.name == ServiceRequestListScreen.routeName) {
+          return MaterialPageRoute(
+            builder: (context) => ServiceRequestListScreen(
+              id: 0,
+            ),
+          );
+        } else if (settings.name == LiveTrackingScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => LiveTrackingScreen(dogWalker: 0)));
+        }
+
+        var uri = Uri.parse(settings.name!);
+        if (uri.pathSegments.length == 2 &&
+            "/${uri.pathSegments.first}" == ForumPostDetailsScreen.routeName) {
+          var id = uri.pathSegments[1];
+          return MaterialPageRoute(
+              builder: (context) => ForumPostDetailsScreen(id));
+        } else if (uri.pathSegments.length == 2 &&
+            "/${uri.pathSegments.first}" == ProductDetailsScreen.routeName) {
+          var id = uri.pathSegments[1];
+          return MaterialPageRoute(
+              builder: (context) => ProductDetailsScreen(id));
+        } else if (uri.pathSegments.length == 2 &&
+            "/${uri.pathSegments.first}" == DogWalkerDetailsScreen.routeName) {
+          var id = uri.pathSegments[1];
+          return MaterialPageRoute(
+              builder: (context) => DogWalkerDetailsScreen(id));
+        }
+      },
+    ),
+  ));
+}
 
 class LoginPage extends StatefulWidget {
   static const String routeName = "/login";

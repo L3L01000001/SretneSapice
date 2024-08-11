@@ -8,8 +8,8 @@ namespace SretneSapice.Model.Requests
 {
     public class PaymentUpdateRequest
     {
-        public string? TransactionId { get; set; }
+        public int? OrderId { get; set; }
 
-        public string? Status { get; set; }
+        public string? TransactionId { get; set; }
     }
 }

@@ -6,9 +6,8 @@ using System.Threading.Tasks;
 
 namespace SretneSapice.Model.Requests
 {
-    internal class OrderUpdateRequest
+    public class OrderUpdateRequest
     {
-        public int? ShippingInfoId { get; set; }
         public string? Status { get; set; } 
     }
 }

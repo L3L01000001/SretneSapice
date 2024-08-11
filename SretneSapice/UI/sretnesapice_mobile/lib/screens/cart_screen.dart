@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:sretnesapice_mobile/models/paypal/amount.dart';
 import 'package:sretnesapice_mobile/models/paypal/details.dart';
 import 'package:sretnesapice_mobile/models/paypal/item_list.dart';
@@ -34,16 +35,14 @@ class CartScreen extends StatefulWidget {
 }
 
 class _CartScreenState extends State<CartScreen> {
-  static const CLIENT_ID =
-      String.fromEnvironment("CLIENT_ID_VALUE", defaultValue: '');
-  static const SECRET_KEY =
-      String.fromEnvironment("SECRET_KEY_VALUE", defaultValue: '');
+  String? CLIENT_ID = dotenv.env['CLIENT_ID_VALUE'];
+  String? SECRET_KEY = dotenv.env['SECRET_KEY_VALUE'];
   static const RETURN_URL = String.fromEnvironment("RETURN_URL_VALUE",
       defaultValue: 'success.snippetcoder.com');
   static const CANCEL_URL = String.fromEnvironment("CANCEL_URL_VALUE",
       defaultValue: 'cancel.snippetcoder.com');
   static const PAYPAL_NOTE = String.fromEnvironment('PAYPAL_NOTE_VALUE',
-      defaultValue: 'Čekamo vas opet!');
+      defaultValue: 'Dodjite nam opet!');
 
   static const CURRENCY =
       String.fromEnvironment('DEFAULT_CURRENCY_VALUE', defaultValue: 'USD');
@@ -116,7 +115,7 @@ class _CartScreenState extends State<CartScreen> {
 
   void deleteOrderItem(int orderItemId) async {
     try {
-      await _orderProvider!.hardDelete(orderItemId);
+      await _orderItemProvider!.hardDelete(orderItemId);
 
       await loadData();
     } catch (e) {
@@ -134,27 +133,33 @@ class _CartScreenState extends State<CartScreen> {
       try {
         await _userShippingInformationProvider!.insert(userShippingInfoRequest);
 
+        paymentRequest.orderId = cart!.orderId;
+        paymentRequest.paymentMethod = _paymentMethod == PaymentMethod.paypal
+            ? "Paypal"
+            : "CashOnDelivery";
+        paymentRequest.status = "Pending";
+        paymentRequest.amount = cart!.totalAmount;
+
+        int existingPaymentId = await _paymentProvider!
+            .paymentWithOrderIdExists(paymentRequest.orderId!);
+
+        print(existingPaymentId);
+
+        if (existingPaymentId != 0) {
+          await _paymentProvider?.update(existingPaymentId, paymentRequest);
+        } else {
+          await _paymentProvider!.insert(paymentRequest);
+        }
+
+        print(_paymentMethod);
+
         if (_paymentMethod == PaymentMethod.paypal) {
-          var transactions = _createAllTransactions();
-
-          paymentRequest.orderId = cart!.orderId;
-          paymentRequest.paymentMethod = "Paypal";
-          paymentRequest.status = "Pending";
-          paymentRequest.amount = cart!.totalAmount;
-
-          await _paymentProvider!.insert(paymentRequest);
-
-          if (transactions.isNotEmpty) {
-            _openPaypalGateway(context, transactions, cart!);
-          }
+          print(cart!.toJson());
+          var transaction = createNewTransaction(cart!);
+          print(transaction.amount.details.toJson());
+          print(transaction.itemList.toJson());
+          _openPaypalGateway(context, transaction, cart!);
         } else if (_paymentMethod == PaymentMethod.cashOnDelivery) {
-          paymentRequest.orderId = cart!.orderId;
-          paymentRequest.paymentMethod = "CashOnDelivery";
-          paymentRequest.status = "Pending";
-          paymentRequest.amount = cart!.totalAmount;
-
-          await _paymentProvider!.insert(paymentRequest);
-
           showDialog(
             context: context,
             builder: (context) => AlertDialog(
@@ -173,26 +178,6 @@ class _CartScreenState extends State<CartScreen> {
         errorDialog(context, e);
       }
     }
-  }
-
-  void _showPaymentSuccessAlert() {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("Čestitamo!"),
-          content: Text("Vaša transakcija je uspješno procesuirana."),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text("OK"),
-            ),
-          ],
-        );
-      },
-    );
   }
 
   @override
@@ -381,21 +366,6 @@ class _CartScreenState extends State<CartScreen> {
         ));
   }
 
-  List<Transaction> _createAllTransactions() {
-    var currency = CURRENCY;
-    double totalAmount = 0;
-    ItemList itemList = ItemList([]);
-
-    var newTransaction = createNewTransaction(cart!);
-    totalAmount += newTransaction.amount.total;
-    itemList.items.addAll(newTransaction.itemList.items);
-
-    var amount = Amount(totalAmount, currency, Details(totalAmount));
-    var transaction =
-        Transaction(amount, itemList, description: "Novo plaćanje");
-    return [transaction];
-  }
-
   Transaction createNewTransaction(Order cart) {
     var currency = CURRENCY;
     var total = cart.totalAmount!;
@@ -405,8 +375,8 @@ class _CartScreenState extends State<CartScreen> {
 
     List<Items> items = [];
     cart.orderItems?.forEach((orderItem) {
-      var item = Items(orderItem.product?.name ?? "Proizvod",
-          orderItem.quantity!, orderItem.subtotal!, currency);
+      var item = Items(orderItem.product!.name!,
+          orderItem.quantity!, orderItem.product!.price!, currency);
       items.add(item);
     });
 
@@ -416,53 +386,90 @@ class _CartScreenState extends State<CartScreen> {
     return transaction;
   }
 
-  void _openPaypalGateway(BuildContext context, List<Transaction> transactions,
-      Order selectedOrder) {
+  void _openPaypalGateway(
+      BuildContext context, Transaction transaction, Order selectedOrder) {
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (BuildContext context) => SafeArea(
-          child: PaypalCheckout(
-            sandboxMode: true,
-            clientId: CLIENT_ID,
-            secretKey: SECRET_KEY,
-            returnURL: RETURN_URL,
-            cancelURL: CANCEL_URL,
-            transactions: transactions,
-            note: PAYPAL_NOTE,
-            onSuccess: (Map params) async {
+        builder: (BuildContext context) => PaypalCheckout(
+          sandboxMode: true,
+          clientId: CLIENT_ID,
+          secretKey: SECRET_KEY,
+          returnURL: RETURN_URL,
+          cancelURL: CANCEL_URL,
+          transactions: [transaction],
+          note: PAYPAL_NOTE,
+          onSuccess: (Map params) async {
+            if (!mounted) return;
+            try {
               var paymentGatewayData = PaymentGatewayData(
-                  params["data"].toString(),
-                  params["message"].toString(),
-                  params["error"]);
-
-              print(paymentGatewayData);
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(
-                  content: Text(
-                    "Plaćanje je uspješno procesuirano",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  backgroundColor: Colors.green,
-                ),
+                params["data"].toString(),
+                params["message"].toString(),
+                params["error"],
               );
-            },
-            onError: (error) {
+
+              String transactionId = params["data"]["id"];
+              print("PayPal Transaction ID: $transactionId");
+
+              await _updatePaymentWithTransactionId(
+                  selectedOrder.orderId!, transactionId);
+
+              await _paymentProvider!.completePayment(selectedOrder.orderId!);
+              await _orderProvider!.paidOrder(selectedOrder.orderId!);
+
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "Plaćanje je uspješno procesuirano",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.green,
+                  ),
+                );
+              }
+            } catch (e) {
+              // Handle any exceptions that might occur
+              print("Error during payment success processing: $e");
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
-                    "Desila se greška prilikom procesuiranja plaćanja. Molimo kontaktirajte administratora",
+                    "Desila se greška prilikom obrade uspjeha plaćanja",
                     style: TextStyle(color: Colors.white),
                   ),
                   backgroundColor: Colors.red,
                 ),
               );
-              Navigator.pop(context);
-            },
-            onCancel: () {},
-          ),
+            }
+          },
+          onError: (error) {
+            print("PayPal error: $error");
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  "Desila se greška prilikom procesuiranja plaćanja. Molimo kontaktirajte administratora",
+                  style: TextStyle(color: Colors.white),
+                ),
+                backgroundColor: Colors.red,
+              ),
+            );
+
+            Navigator.pop(context);
+          },
+          onCancel: () async {
+            await _paymentProvider!.cancelPayment(selectedOrder.orderId!);
+          },
         ),
       ),
     );
+  }
+
+  Future<void> _updatePaymentWithTransactionId(
+      int orderId, String transactionId) async {
+    try {
+      await _paymentProvider!.updateTransactionId(orderId, transactionId);
+    } catch (e) {
+      print("Error updating payment record: $e");
+    }
   }
 
   Container setInput(BuildContext context, String label,

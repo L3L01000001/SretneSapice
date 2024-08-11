@@ -69,6 +69,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             DrawerHeader(
               child: Image.asset("assets/images/circle_logo.png"),
             ),
+            Text("Zdravo ${user?.name ?? ''}!", textAlign: TextAlign.center,),
             SizedBox(height: 20),
             if (!_isDogWalkerVerifier()) ...[
               _buildListTile(0, 'Proizvodi', 'assets/icons/products.png', () {
@@ -178,7 +179,13 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
               ),
             ),
             SafeArea(
-              child: widget.child!
+              child: Column(
+                children: [
+                  Expanded(
+                    child: widget.child ?? Container(),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

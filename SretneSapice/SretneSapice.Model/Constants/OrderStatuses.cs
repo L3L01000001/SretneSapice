@@ -10,15 +10,17 @@ namespace SretneSapice.Model.Constants
     {
         public const string InCart = "In Cart";
 
-        public const string Pending = "Pending";
+        public const string Paid = "Paid";
 
-        public const string Completed = "Completed";
+        public const string Processing = "Processing";
+
+        public const string Shipped = "Shipped";
 
         public const string Cancelled = "Cancelled";
 
         public static readonly List<string> ListOfOrderStatuses = new()
         {
-            InCart, Pending, Completed, Cancelled
+            InCart, Paid, Processing, Shipped, Cancelled
         };
     }
 }

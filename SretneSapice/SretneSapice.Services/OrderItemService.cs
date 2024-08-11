@@ -30,7 +30,7 @@ namespace SretneSapice.Services
 
         public override IQueryable<OrderItem> AddInclude(IQueryable<OrderItem> query, OrderItemSearchObject? search = null)
         {
-            query = query.Include(x => x.Product);
+            query = query.Include(x => x.Product).Include(x => x.Order);
             return base.AddInclude(query, search);
         }
 

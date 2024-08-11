@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:sretnesapice_admin/models/city.dart';
+import 'package:sretnesapice_admin/models/service_request.dart';
 
 part 'dog_walker.g.dart';
 
@@ -17,6 +19,8 @@ class DogWalker {
   int? rating;
   bool? isApproved;
   String? status;
+  City? city;
+  List<ServiceRequest>? serviceRequests;
 
   DogWalker(
       this.dogWalkerId,
@@ -31,7 +35,9 @@ class DogWalker {
       this.dogWalkerPhoto,
       this.rating,
       this.isApproved,
-      this.status);
+      this.status,
+      this.city,
+      this.serviceRequests);
 
   factory DogWalker.fromJson(Map<String, dynamic> json) =>
       _$DogWalkerFromJson(json);

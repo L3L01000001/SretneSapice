@@ -19,8 +19,10 @@ namespace SretneSapice.Services
 {
     public class ProductService : BaseCRUDService<ProductDto, Product, ProductSearchObject, ProductInsertRequest, ProductUpdateRequest>, IProductService
     {
-        public ProductService(_180148Context context, IMapper mapper) : base(context, mapper)
+        private readonly IOrderService _orderService;
+        public ProductService(_180148Context context, IMapper mapper, IOrderService orderService) : base(context, mapper)
         {
+            _orderService = orderService;
         }
 
         public override async Task BeforeInsert(Product entity, ProductInsertRequest insert)
@@ -56,6 +58,51 @@ namespace SretneSapice.Services
             }
 
             return base.AddFilter(query, search);
+        }
+
+        public override async Task<ProductDto> Update(int id, ProductUpdateRequest update)
+        {
+            var set = _context.Set<Product>();
+
+            var product = await set.FindAsync(id);
+
+            if (product is null)
+                throw new InvalidOperationException();
+
+            var oldPrice = product.Price;
+            _mapper.Map(update, product);
+
+            await _context.SaveChangesAsync();
+
+            if (product.Price != oldPrice)
+            {
+                var orderItems = _context.OrderItems
+                    .Include(x => x.Order)
+                    .Where(oi => oi.ProductId == id && oi.Order.Status == "In Cart")
+                    .ToList();
+
+                var affectedOrderIds = new HashSet<int>();
+
+                foreach (var item in orderItems)
+                {
+                    item.Subtotal = item.Quantity * product.Price;
+
+                    await _context.SaveChangesAsync();
+
+                    affectedOrderIds.Add(item.Order.OrderId);
+                }
+
+                var affectedOrders = _context.Orders
+                    .Where(o => affectedOrderIds.Contains(o.OrderId))
+                    .ToList();
+
+                foreach (var order in affectedOrders)
+                {
+                    await _orderService.UpdateTotalAmount(order.OrderId);
+                }
+            }
+
+            return _mapper.Map<ProductDto>(product);
         }
 
         public async Task<PagedResult<ProductDto>> GetProductsByPriceLowToHighAsync()

@@ -16,7 +16,6 @@ namespace SretneSapice.Services
         Task RejectServiceRequest(int serviceRequestId);
         Task FinishServiceRequest(int serviceRequestId);
         Task<bool> IsScheduledServiceTime(int serviceId);
-        Task UpdateLiveLocationEnabled(int serviceId, bool enableLiveLocation);
         Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByWalkerId(int dogWalkerId);
         Task<PagedResult<ServiceRequestDto>> GetServiceRequestsByLoggedInUser();
     }
