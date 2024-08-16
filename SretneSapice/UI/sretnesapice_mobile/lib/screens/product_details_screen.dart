@@ -142,7 +142,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   ),
                   alignment: Alignment.center,
                   child: Text(
-                    formatNumber(product!.price),
+                    formatPrice(product!.price),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.blue[900],

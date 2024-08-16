@@ -125,7 +125,7 @@ namespace SretneSapice.Services.Database
             new Product() { ProductId = 10, Name = "Igracka loptica na konopcu", Description = "Igracka za male pse, zamrsena lopta na konopcu", Code = "TW010", Price = (decimal)5.50, StockQuantity = 55, ProductTypeId = 2, Brand = "Kerbl", ProductPhoto = proizvodSlika2, CreatedDate = new DateTime(2024, 6, 20) }
             );
 
-            modelBuilder.Entity<Comment>().HasData//10
+            modelBuilder.Entity<Comment>().HasData
             (
                 new Comment() { CommentId = 1, PostId = 4, UserId = 2, CommentContent = "Najbolja hrana po mom misljenju je natures protection", Timestamp = DateTime.Now, LikesCount = 2 },
                 new Comment() { CommentId = 2, PostId = 4, UserId = 6, CommentContent = "Ja bih rekla da je to Rustican.", Timestamp = DateTime.Now, LikesCount = 3 },
@@ -153,7 +153,7 @@ namespace SretneSapice.Services.Database
             modelBuilder.Entity<UserShippingInformation>().HasData
             (
                 new UserShippingInformation() { ShippingInfoId = 1, UserId = 2, Address = "Dr Ante Starcevica", City = "Mostar", Zipcode = "88000", Phone = "063 444 444" },
-                new UserShippingInformation() { ShippingInfoId = 2, UserId = 3, Address = "Dr Ante Starcevica48", City = "Mostar", Zipcode = "", Phone = "" },
+                new UserShippingInformation() { ShippingInfoId = 2, UserId = 6, Address = "Dr Ante Starcevica48", City = "Mostar", Zipcode = "", Phone = "" },
                 new UserShippingInformation() { ShippingInfoId = 3, UserId = 4, Address = "Dr Ante Starcevica 46", City = "Mostar", Zipcode = "88000", Phone = "063 333 444" },
                 new UserShippingInformation() { ShippingInfoId = 4, UserId = 5, Address = "Dr Ante Starcevica 44", City = "Mostar", Zipcode = "88000", Phone = "062 454 444" }
             );
@@ -161,8 +161,11 @@ namespace SretneSapice.Services.Database
             modelBuilder.Entity<Order>().HasData
             (
                 new Order() { OrderId = 1, OrderNumber = "GV6YEER", UserId = 2, ShippingInfoId = 1, Date = new DateTime(2024, 6, 19), Status = "In Cart", TotalAmount = (decimal)42.00 },
-                new Order() { OrderId = 2, OrderNumber = "8E2Q3CC", UserId = 3, ShippingInfoId = 2, Date = new DateTime(2024, 7, 5), Status = "In Cart", TotalAmount = (decimal)53.00 },
-                new Order() { OrderId = 3, OrderNumber = "8F2Q6CC", UserId = 5, ShippingInfoId = 4, Date = new DateTime(2024, 7, 4), Status = "In Cart", TotalAmount = (decimal)166.00 }
+                new Order() { OrderId = 2, OrderNumber = "8E2Q3CC", UserId = 6, ShippingInfoId = 2, Date = new DateTime(2024, 7, 5), Status = "In Cart", TotalAmount = (decimal)53.00 },
+                new Order() { OrderId = 3, OrderNumber = "8F2Q6CC", UserId = 5, ShippingInfoId = 4, Date = new DateTime(2024, 7, 4), Status = "In Cart", TotalAmount = (decimal)166.00 },
+                new Order() { OrderId = 4, OrderNumber = "KJ2TY9L", UserId = 4, ShippingInfoId = 3, Date = new DateTime(2024, 7, 10), Status = "In Cart", TotalAmount = (decimal)89.00 },
+                new Order() { OrderId = 5, OrderNumber = "9G7UE2B", UserId = 4, ShippingInfoId = 3, Date = new DateTime(2024, 7, 5), Status = "Processing", TotalAmount = (decimal)120.00 },
+                new Order() { OrderId = 6, OrderNumber = "3D5H1XC", UserId = 6, ShippingInfoId = 2, Date = new DateTime(2024, 7, 5), Status = "Processing", TotalAmount = (decimal)60.00 }
             );
 
 
@@ -174,14 +177,20 @@ namespace SretneSapice.Services.Database
                new OrderItem() { OrderItemId = 4, OrderId = 2, ProductId = 4, Quantity = 3, Subtotal = (decimal)16.50 },
                new OrderItem() { OrderItemId = 5, OrderId = 2, ProductId = 5, Quantity = 2, Subtotal = (decimal)31.00 },
                new OrderItem() { OrderItemId = 6, OrderId = 3, ProductId = 6, Quantity = 5, Subtotal = (decimal)75.00 },
-               new OrderItem() { OrderItemId = 7, OrderId = 3, ProductId = 7, Quantity = 2, Subtotal = (decimal)91.00 }
+               new OrderItem() { OrderItemId = 7, OrderId = 3, ProductId = 7, Quantity = 2, Subtotal = (decimal)91.00 },
+               new OrderItem() { OrderItemId = 8, OrderId = 4, ProductId = 2, Quantity = 1, Subtotal = (decimal)15.00 },
+               new OrderItem() { OrderItemId = 9, OrderId = 4, ProductId = 5, Quantity = 2, Subtotal = (decimal)45.00 },
+               new OrderItem() { OrderItemId = 10, OrderId = 5, ProductId = 1, Quantity = 1, Subtotal = (decimal)60.00 },
+               new OrderItem() { OrderItemId = 11, OrderId = 5, ProductId = 6, Quantity = 3, Subtotal = (decimal)60.00 },
+               new OrderItem() { OrderItemId = 12, OrderId = 6, ProductId = 3, Quantity = 2, Subtotal = (decimal)40.00 },
+               new OrderItem() { OrderItemId = 13, OrderId = 6, ProductId = 7, Quantity = 1, Subtotal = (decimal)20.00 }
            );
 
             modelBuilder.Entity<ServiceRequest>().HasData
             (
               new ServiceRequest() { ServiceRequestId = 1, DogWalkerId = 1, UserId = 2, StartTime = new DateTime(2024, 6, 19, 9, 0, 0), EndTime = new DateTime(2024, 6, 19, 11, 0, 0), Date = new DateTime(2024, 6, 19), Status = "Finished", DogBreed = "Maltezer" },
               new ServiceRequest() { ServiceRequestId = 2, DogWalkerId = 1, UserId = 5, StartTime = new DateTime(2024, 6, 19, 12, 0, 0), EndTime = new DateTime(2024, 6, 18, 15, 0, 0), Date = new DateTime(2024, 6, 19), Status = "Finished", DogBreed = "Zlatni retriver" },
-              new ServiceRequest() { ServiceRequestId = 3, DogWalkerId = 1, UserId = 5, StartTime = new DateTime(2024, 7, 11, 11, 0, 0), EndTime = new DateTime(2024, 7, 11, 12, 0, 0), Date = new DateTime(2024, 7, 11), Status = "Pending", DogBreed = "Pudlica" },
+              new ServiceRequest() { ServiceRequestId = 3, DogWalkerId = 1, UserId = 5, StartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 12, 0, 0), EndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, DateTime.Now.Day, 15, 0, 0), Date = DateTime.Now.Date, Status = "Pending", DogBreed = "Pudlica" },
               new ServiceRequest() { ServiceRequestId = 4, DogWalkerId = 1, UserId = 5, StartTime = new DateTime(2024, 7, 10, 12, 0, 0), EndTime = new DateTime(2024, 7, 10, 15, 0, 0), Date = new DateTime(2024, 7, 10), Status = "Accepted", DogBreed = "Njemacki ovcar" },
               new ServiceRequest() { ServiceRequestId = 5, DogWalkerId = 1, UserId = 2, StartTime = new DateTime(2024, 7, 21, 11, 0, 0), EndTime = new DateTime(2024, 7, 21, 11, 0, 0), Date = new DateTime(2024, 7, 21), Status = "Accepted", DogBreed = "Pitbull" },
               new ServiceRequest() { ServiceRequestId = 6, DogWalkerId = 1, UserId = 5, StartTime = new DateTime(2024, 6, 18, 11, 0, 0), EndTime = new DateTime(2024, 6, 18, 12, 0, 0), Date = new DateTime(2024, 6, 18), Status = "Rejected", DogBreed = "Belgijski ovcar" },

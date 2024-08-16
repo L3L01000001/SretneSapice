@@ -152,7 +152,7 @@ class _OrderListScreenState extends State<OrderListScreen> {
                 result = data;
               });
             } else if (_selectedSortingOption == 'U korpi') {
-              var data = await _orderProvider.get(filter: {'status': 'InCart'});
+              var data = await _orderProvider.get(filter: {'status': 'In Cart'});
               setState(() {
                 result = data;
               });

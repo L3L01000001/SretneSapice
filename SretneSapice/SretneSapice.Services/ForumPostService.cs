@@ -145,7 +145,7 @@ namespace SretneSapice.Services
 
             if(search?.MostPopular == true)
             {
-                filteredQuery = filteredQuery.OrderByDescending(p => p.LikesCount);
+                filteredQuery = filteredQuery.OrderByDescending(p => p.Comments.Count);
             }
 
             return filteredQuery;

@@ -12,7 +12,7 @@ using SretneSapice.Services.Database;
 namespace SretneSapice.Services.Migrations
 {
     [DbContext(typeof(_180148Context))]
-    [Migration("20240730185120_InitialCreate")]
+    [Migration("20240816203734_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -125,7 +125,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Najbolja hrana po mom misljenju je natures protection",
                             LikesCount = 2,
                             PostId = 4,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2555),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4878),
                             UserId = 2
                         },
                         new
@@ -134,7 +134,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Ja bih rekla da je to Rustican.",
                             LikesCount = 3,
                             PostId = 4,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2563),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4888),
                             UserId = 6
                         },
                         new
@@ -143,7 +143,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Najbolji groomer u Mostaru je Sretna Sapica u Franjevackoj.",
                             LikesCount = 0,
                             PostId = 5,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2568),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4895),
                             UserId = 2
                         },
                         new
@@ -152,7 +152,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Najbolji groomer je na rudniku.",
                             LikesCount = 0,
                             PostId = 5,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2574),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4903),
                             UserId = 6
                         },
                         new
@@ -161,7 +161,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Preporucujem veterinara u Sarajevu, ne u Mostaru",
                             LikesCount = 0,
                             PostId = 6,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2579),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4915),
                             UserId = 5
                         },
                         new
@@ -170,7 +170,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Nemojte davati psu nista osim njegove hrane",
                             LikesCount = 0,
                             PostId = 6,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2585),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4934),
                             UserId = 6
                         },
                         new
@@ -179,7 +179,7 @@ namespace SretneSapice.Services.Migrations
                             CommentContent = "Moguce da je problem trovanja koji hara gradom.",
                             LikesCount = 2,
                             PostId = 6,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2590),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4942),
                             UserId = 6
                         });
                 });
@@ -220,28 +220,28 @@ namespace SretneSapice.Services.Migrations
                         {
                             LikeId = 1,
                             CommentId = 2,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2630),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(5009),
                             UserId = 5
                         },
                         new
                         {
                             LikeId = 2,
                             CommentId = 2,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2637),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(5018),
                             UserId = 2
                         },
                         new
                         {
                             LikeId = 3,
                             CommentId = 7,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2642),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(5032),
                             UserId = 2
                         },
                         new
                         {
                             LikeId = 4,
                             CommentId = 7,
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2646),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(5134),
                             UserId = 5
                         });
                 });
@@ -527,7 +527,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 1,
                             LikesCount = 0,
                             PostContent = "Molim vas za pomoc, naime, trazim osobu u Mostaru koja profesionalno vrsi usluge dresure psa. Hvala unaprijed",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2246),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4165),
                             Title = "Kako dresirati psa?",
                             UserId = 2
                         },
@@ -536,7 +536,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 2,
                             LikesCount = 0,
                             PostContent = "Molim vas za preporuku gdje kupiti odjelca za pse u BiH? Bilo koji grad.",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2255),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4283),
                             Title = "Gdje kupiti odjecu za psa?",
                             UserId = 2
                         },
@@ -545,7 +545,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 3,
                             LikesCount = 0,
                             PostContent = "Pozdrav, potrebna mi je preporuka za veterinara, Sarajevo.",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2261),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4335),
                             Title = "Veterinari u Sarajevu",
                             UserId = 5
                         },
@@ -554,7 +554,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 4,
                             LikesCount = 0,
                             PostContent = "Koja je po vama najbolja hrana za nase ljubimce?",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2268),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4355),
                             Title = "Koja je najbolja hrana za pse?",
                             UserId = 5
                         },
@@ -563,7 +563,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 5,
                             LikesCount = 0,
                             PostContent = "Pozdrav, potrebna mi je preporuka za groomera u Mostaru koji je u mogucnosti napraviti ovu frizuru psu (slika)",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2274),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4371),
                             Title = "Preporuka za groomera",
                             UserId = 5
                         },
@@ -572,7 +572,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 6,
                             LikesCount = 0,
                             PostContent = "Da li jos neko od vas ima maltezera koji cesto ima stomacne probleme i kako rijesiti to?",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2280),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4384),
                             Title = "Stomacni problemi maltezer",
                             UserId = 2
                         },
@@ -581,7 +581,7 @@ namespace SretneSapice.Services.Migrations
                             PostId = 7,
                             LikesCount = 0,
                             PostContent = "Zdravo, zanima me koje organizacije za udomljavanje pasa postoje u BiH?",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2286),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4396),
                             Title = "Odakle udomiti psa?",
                             UserId = 2
                         });
@@ -710,7 +710,7 @@ namespace SretneSapice.Services.Migrations
                             ShippingInfoId = 2,
                             Status = "In Cart",
                             TotalAmount = 53m,
-                            UserId = 3
+                            UserId = 6
                         },
                         new
                         {
@@ -721,6 +721,36 @@ namespace SretneSapice.Services.Migrations
                             Status = "In Cart",
                             TotalAmount = 166m,
                             UserId = 5
+                        },
+                        new
+                        {
+                            OrderId = 4,
+                            Date = new DateTime(2024, 7, 10, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderNumber = "KJ2TY9L",
+                            ShippingInfoId = 3,
+                            Status = "In Cart",
+                            TotalAmount = 89m,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            OrderId = 5,
+                            Date = new DateTime(2024, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderNumber = "9G7UE2B",
+                            ShippingInfoId = 3,
+                            Status = "Processing",
+                            TotalAmount = 120m,
+                            UserId = 4
+                        },
+                        new
+                        {
+                            OrderId = 6,
+                            Date = new DateTime(2024, 7, 5, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            OrderNumber = "3D5H1XC",
+                            ShippingInfoId = 2,
+                            Status = "Processing",
+                            TotalAmount = 60m,
+                            UserId = 6
                         });
                 });
 
@@ -812,6 +842,54 @@ namespace SretneSapice.Services.Migrations
                             ProductId = 7,
                             Quantity = 2,
                             Subtotal = 91m
+                        },
+                        new
+                        {
+                            OrderItemId = 8,
+                            OrderId = 4,
+                            ProductId = 2,
+                            Quantity = 1,
+                            Subtotal = 15m
+                        },
+                        new
+                        {
+                            OrderItemId = 9,
+                            OrderId = 4,
+                            ProductId = 5,
+                            Quantity = 2,
+                            Subtotal = 45m
+                        },
+                        new
+                        {
+                            OrderItemId = 10,
+                            OrderId = 5,
+                            ProductId = 1,
+                            Quantity = 1,
+                            Subtotal = 60m
+                        },
+                        new
+                        {
+                            OrderItemId = 11,
+                            OrderId = 5,
+                            ProductId = 6,
+                            Quantity = 3,
+                            Subtotal = 60m
+                        },
+                        new
+                        {
+                            OrderItemId = 12,
+                            OrderId = 6,
+                            ProductId = 3,
+                            Quantity = 2,
+                            Subtotal = 40m
+                        },
+                        new
+                        {
+                            OrderItemId = 13,
+                            OrderId = 6,
+                            ProductId = 7,
+                            Quantity = 1,
+                            Subtotal = 20m
                         });
                 });
 
@@ -918,7 +996,7 @@ namespace SretneSapice.Services.Migrations
                             ProductId = 1,
                             Brand = "Natures Protection",
                             Code = "TW001",
-                            CreatedDate = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2463),
+                            CreatedDate = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4736),
                             Description = "Nature's protection hrana za pse - najkvalitetnije za maltezere",
                             Name = "Nature's protection hranae",
                             Price = 30.5m,
@@ -944,7 +1022,7 @@ namespace SretneSapice.Services.Migrations
                             ProductId = 3,
                             Brand = "Friend",
                             Code = "TW003",
-                            CreatedDate = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2482),
+                            CreatedDate = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4763),
                             Description = "Ovratnica za pse protiv parazita svih vrsta.",
                             Name = "Antiparazitna ovratnica",
                             Price = 5.5m,
@@ -957,7 +1035,7 @@ namespace SretneSapice.Services.Migrations
                             ProductId = 4,
                             Brand = "Friend",
                             Code = "TW004",
-                            CreatedDate = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2488),
+                            CreatedDate = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4775),
                             Description = "Ampule za pse protiv parazita svih vrsta.",
                             Name = "Antiparazitne ampule",
                             Price = 5.5m,
@@ -970,7 +1048,7 @@ namespace SretneSapice.Services.Migrations
                             ProductId = 5,
                             Brand = "Royal Canin",
                             Code = "TW005",
-                            CreatedDate = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2494),
+                            CreatedDate = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4786),
                             Description = "Hrana za pse - junior",
                             Name = "Royal canin hrana",
                             Price = 15.5m,
@@ -983,7 +1061,7 @@ namespace SretneSapice.Services.Migrations
                             ProductId = 6,
                             Brand = "Flexi",
                             Code = "TW006",
-                            CreatedDate = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2502),
+                            CreatedDate = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4797),
                             Description = "Povodac za pse 3M dug",
                             Name = "Flexi povodac",
                             Price = 15m,
@@ -1197,12 +1275,12 @@ namespace SretneSapice.Services.Migrations
                         new
                         {
                             ServiceRequestId = 3,
-                            Date = new DateTime(2024, 7, 11, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Date = new DateTime(2024, 8, 16, 0, 0, 0, 0, DateTimeKind.Local),
                             DogBreed = "Pudlica",
                             DogWalkerId = 1,
-                            EndTime = new DateTime(2024, 7, 11, 12, 0, 0, 0, DateTimeKind.Unspecified),
+                            EndTime = new DateTime(2024, 8, 16, 15, 0, 0, 0, DateTimeKind.Unspecified),
                             LiveLocationEnabled = false,
-                            StartTime = new DateTime(2024, 7, 11, 11, 0, 0, 0, DateTimeKind.Unspecified),
+                            StartTime = new DateTime(2024, 8, 16, 12, 0, 0, 0, DateTimeKind.Unspecified),
                             Status = "Pending",
                             UserId = 5
                         },
@@ -1475,56 +1553,56 @@ namespace SretneSapice.Services.Migrations
                         new
                         {
                             UserRoleId = 1,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2105),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(3742),
                             RoleId = 1,
                             UserId = 1
                         },
                         new
                         {
                             UserRoleId = 2,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2161),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(3884),
                             RoleId = 2,
                             UserId = 2
                         },
                         new
                         {
                             UserRoleId = 3,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2166),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(3891),
                             RoleId = 4,
                             UserId = 3
                         },
                         new
                         {
                             UserRoleId = 4,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2172),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(3898),
                             RoleId = 2,
                             UserId = 4
                         },
                         new
                         {
                             UserRoleId = 5,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2177),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(3904),
                             RoleId = 3,
                             UserId = 4
                         },
                         new
                         {
                             UserRoleId = 6,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2182),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(3991),
                             RoleId = 2,
                             UserId = 5
                         },
                         new
                         {
                             UserRoleId = 7,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2187),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4027),
                             RoleId = 2,
                             UserId = 6
                         },
                         new
                         {
                             UserRoleId = 8,
-                            DateOfChange = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2192),
+                            DateOfChange = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(4037),
                             RoleId = 3,
                             UserId = 6
                         });
@@ -1583,7 +1661,7 @@ namespace SretneSapice.Services.Migrations
                             Address = "Dr Ante Starcevica48",
                             City = "Mostar",
                             Phone = "",
-                            UserId = 3,
+                            UserId = 6,
                             Zipcode = ""
                         },
                         new
@@ -1649,7 +1727,7 @@ namespace SretneSapice.Services.Migrations
                             DogWalkerId = 1,
                             Rating = 5,
                             ReviewText = "Usluga odlicno odradjena! Opet cu zakazati.",
-                            Timestamp = new DateTime(2024, 7, 30, 20, 51, 20, 531, DateTimeKind.Local).AddTicks(2967),
+                            Timestamp = new DateTime(2024, 8, 16, 22, 37, 34, 19, DateTimeKind.Local).AddTicks(5714),
                             UserId = 2
                         });
                 });

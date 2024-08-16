@@ -91,8 +91,8 @@ class _CartScreenState extends State<CartScreen> {
 
   Future loadData() async {
     if (Authorization.user?.userId != null) {
-      var orderData =
-          await _orderProvider!.get({'userId': Authorization.user!.userId});
+      var orderData = await _orderProvider!
+          .get({'userId': Authorization.user!.userId, 'status': 'In Cart'});
 
       if (orderData.isNotEmpty) {
         setState(() {
