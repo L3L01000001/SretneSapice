@@ -95,8 +95,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                           onPressed: () async {
                             _formKey.currentState?.saveAndValidate();
 
-                            print(_formKey.currentState?.value);
-
                             var request =
                                 new Map.from(_formKey.currentState!.value);
 
@@ -143,8 +141,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                           ],
                                         ));
                               } else {
-                                print(request);
-                                print(widget.user!.userId!);
                                 await _userProvider.update(
                                     widget.user!.userId!, request);
 

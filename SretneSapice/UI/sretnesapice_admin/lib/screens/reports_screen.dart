@@ -161,8 +161,6 @@ class _ReportsScreenState extends State<ReportsScreen> {
 
     _loadData();
     _fetchPieChartData();
-
-    print(todayCount);
   }
 
   Future<void> _loadData() async {
@@ -354,7 +352,8 @@ class _ReportsScreenState extends State<ReportsScreen> {
               Row(
                 children: [
                   Text("Generiši izvještaj za period od",
-                            style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                   SizedBox(width: 20),
                   Container(
                     width: 300,
@@ -379,7 +378,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                   ),
                   SizedBox(width: 20),
-                  Text("do", style: TextStyle(fontWeight: FontWeight.bold,fontSize: 20)),
+                  Text("do",
+                      style:
+                          TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
                   SizedBox(width: 20),
                   Container(
                     width: 300,
@@ -397,7 +398,9 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         padding: const EdgeInsets.all(20),
                       ),
                       child: Text(
-                          toDate != null ? formatDateOnly(toDate) : 'Izaberi datum',
+                          toDate != null
+                              ? formatDateOnly(toDate)
+                              : 'Izaberi datum',
                           style: TextStyle(fontSize: 20, color: Colors.white)),
                     ),
                   ),
@@ -407,8 +410,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                         backgroundColor: Colors.purple,
                         shadowColor: Colors.transparent,
                         padding: const EdgeInsets.all(20),
-                        fixedSize: Size.fromWidth(300)
-                      ),
+                        fixedSize: Size.fromWidth(300)),
                     onPressed: () async {
                       if (fromDate != null && toDate != null) {
                         var number = await _reportProvider.getTotalRequests(
@@ -424,7 +426,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                       }
                     },
                     child: Text('Filtriraj',
-                          style: TextStyle(fontSize: 20, color: Colors.white)),
+                        style: TextStyle(fontSize: 20, color: Colors.white)),
                   ),
                 ],
               ),
@@ -731,7 +733,7 @@ class _ReportsScreenState extends State<ReportsScreen> {
                                       fontSize: 14)),
                             ),
                           ),
-                          DataCell(Text(formatNumber(e.price),
+                          DataCell(Text(formatPrice(e.price),
                               style: TextStyle(
                                   fontWeight: FontWeight.bold, fontSize: 14))),
                           DataCell(Text(e.stockQuantity?.toString() ?? "",

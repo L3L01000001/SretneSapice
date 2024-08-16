@@ -63,10 +63,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18.0),
-        color: Colors.grey[100], 
-        border: Border.all(
-            color: Color.fromARGB(255, 61, 6, 137),
-            width: 1.0), 
+        color: Colors.grey[100],
+        border: Border.all(color: Color.fromARGB(255, 61, 6, 137), width: 1.0),
       ),
       child: Row(children: [
         Expanded(
@@ -99,12 +97,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
             });
           },
           icon: Icon(Icons.search),
-          label: Text("Pretraga", style: TextStyle(color: Color.fromARGB(255, 6, 58, 137))),
+          label: Text("Pretraga",
+              style: TextStyle(color: Color.fromARGB(255, 6, 58, 137))),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18.0),
-              side: BorderSide(color: Color.fromARGB(255, 6, 58, 137), width: 2.0),
+              side: BorderSide(
+                  color: Color.fromARGB(255, 6, 58, 137), width: 2.0),
             ),
           ),
         ),
@@ -122,12 +122,14 @@ class _ProductListScreenState extends State<ProductListScreen> {
             );
           },
           icon: Icon(Icons.add),
-          label: Text("Novi proizvod", style: TextStyle(color: Color.fromARGB(255, 6, 58, 137))),
+          label: Text("Novi proizvod",
+              style: TextStyle(color: Color.fromARGB(255, 6, 58, 137))),
           style: ElevatedButton.styleFrom(
             padding: EdgeInsets.all(16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(18.0),
-              side: BorderSide(color: Color.fromARGB(255, 6, 58, 137), width: 2.0),
+              side: BorderSide(
+                  color: Color.fromARGB(255, 6, 58, 137), width: 2.0),
             ),
           ),
         ),
@@ -169,17 +171,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
           try {
             if (_selectedSortingOption == 'Najjeftinije') {
-              var data = await _productProvider.getProductsByPriceLowToHigh();
+              var data = await _productProvider.get(filter: {'priceLtoH': true});
+
               setState(() {
                 result = data;
               });
             } else if (_selectedSortingOption == 'Najskuplje') {
-              var data = await _productProvider.getProductsByPriceHighToLow();
+              var data = await _productProvider.get(filter: {'priceHtoL': true});
               setState(() {
                 result = data;
               });
             } else if (_selectedSortingOption == 'Najnovije') {
-              var data = await _productProvider.getNewestProducts();
+              var data = await _productProvider.get(filter: {'newest': true});
               setState(() {
                 result = data;
               });
@@ -327,7 +330,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14))),
-                            DataCell(Text(formatNumber(e.price),
+                            DataCell(Text(formatPrice(e.price),
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14))),
@@ -391,8 +394,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                         ),
                                         TextButton(
                                           onPressed: () {
-                                            Navigator.of(context)
-                                                .pop();
+                                            Navigator.of(context).pop();
                                           },
                                           child: Text("Odustani"),
                                         ),

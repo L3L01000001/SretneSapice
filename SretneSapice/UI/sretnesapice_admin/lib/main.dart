@@ -152,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         );
       }
-    } on Exception catch (e) {
+    } on Exception {
       showDialog(
           context: context,
           builder: (BuildContext context) => AlertDialog(
@@ -265,7 +265,7 @@ final ThemeData myTheme = ThemeData(
   primaryColor: Color(0xFF8031CC),
   fontFamily: 'Quicksand',
   textTheme: TextTheme(
-    headline1: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-    bodyText1: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+    displayLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+    displayMedium: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
   ),
 );

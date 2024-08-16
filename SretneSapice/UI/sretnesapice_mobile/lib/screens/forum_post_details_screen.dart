@@ -59,12 +59,27 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
             .firstWhere((com) => com.userId == loggedInUserId);
 
         if (commentLike != null) {
-          await _commentLikeProvider!.unlikeComment(comment.commentId!, loggedInUserId!);
+          await _commentLikeProvider!
+              .unlikeComment(comment.commentId!, loggedInUserId!);
         } else {
-          print('Nemoguće obaviti akciju!');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              content: Text("Nešto je pošlo po zlu! Nemoguće obaviti akciju."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            ),
+          );
         }
       } else {
-        await _commentLikeProvider!.likeComment(comment.commentId!, loggedInUserId!);
+        await _commentLikeProvider!
+            .likeComment(comment.commentId!, loggedInUserId!);
       }
       loadData();
     } catch (e) {

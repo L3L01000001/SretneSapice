@@ -21,8 +21,6 @@ namespace SretneSapice.Services
 
         Task<List<string>> AllowedActions(int dogWalkerId);
         int CalculateFinishedServiceRequests(int dogWalkerId);
-        Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostReviewsFirst();
-        Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostFinishedServicesFirst();
 
         Task<bool> HasUserAppliedToBeDogWalker(int userId);
         Task<string> GetDogWalkerStatusByUserId(int userId);

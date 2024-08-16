@@ -55,23 +55,6 @@ namespace SretneSapice.Controllers
             return numberOfFinishedServices;
         }
 
-        [HttpGet("getDogWalkersWithMostReviewsFirst")]
-        public async Task<ActionResult<PagedResult<DogWalkerDto>>> GetDogWalkersWithMostReviewsFirst()
-        {
-            var dogwalkers =  await _dogWalkerService.GetDogWalkersWithMostReviewsFirst();
-
-            return Ok(dogwalkers);
-        }
-
-
-        [HttpGet("getDogWalkersWithMostFinishedServicesFirst")]
-        public async Task<ActionResult<PagedResult<DogWalkerDto>>> GetDogWalkersWithMostFinishedServicesFirst()
-        {
-            var dogwalkers = await _dogWalkerService.GetDogWalkersWithMostFinishedServicesFirst();
-            return Ok(dogwalkers);
-
-        }
-
         [HttpGet("hasUserAppliedToBeDogWalker/{userId}")]
         public async Task<IActionResult> CheckDogWalkerApplicationStatus(int userId)
         {

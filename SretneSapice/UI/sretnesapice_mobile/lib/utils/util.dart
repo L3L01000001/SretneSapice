@@ -55,6 +55,15 @@ String formatTime(dynamic) {
   return DateFormat('HH:mm').format(dynamic);
 }
 
+String formatPrice(dynamic value) {
+  var f = NumberFormat('###,##0.00', 'en_US');
+
+  if (value == null) {
+    return "";
+  }
+  return f.format(value);
+}
+
 Future<dynamic> errorDialog(BuildContext context, Object e) {
   return showDialog(
       context: context,

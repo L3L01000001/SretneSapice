@@ -10,5 +10,8 @@ namespace SretneSapice.Model.SearchObjects
     {
         public string? Name { get; set; }
         public bool? Top5 { get; set; }
+        public bool? Newest { get; set; }
+        public bool? PriceLtoH { get; set; }
+        public bool? PriceHtoL { get; set; }
     }
 }

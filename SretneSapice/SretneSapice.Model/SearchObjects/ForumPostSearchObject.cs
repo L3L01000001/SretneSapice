@@ -11,5 +11,8 @@ namespace SretneSapice.Model.SearchObjects
         public string? PostContent { get; set; }
         public int? UserId { get; set; }
         public bool? Top5 { get; set; }
+        public bool? Newest { get; set; }
+        public bool? Oldest { get; set; }
+        public bool? MostPopular { get; set; }
     }
 }

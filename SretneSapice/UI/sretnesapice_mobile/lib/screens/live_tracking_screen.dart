@@ -33,8 +33,6 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
     _dogWalkerLocationProvider = context.read<DogWalkerLocationProvider>();
 
     _fetchPositions();
-
-    print(_userPosition);
   }
 
   Future<void> _fetchPositions() async {
@@ -62,7 +60,7 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
       }
 
       setState(() {
-         this._userPosition = user;
+        this._userPosition = user;
         this._dogWalkerPosition = _dogWalkerPosition;
         this.walkerLocation = walkerLocation;
       });
@@ -108,8 +106,8 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
                 child: _dogWalkerPosition != null
                     ? FlutterMap(
                         options: MapOptions(
-                          center: LatLng(
-                              _userPosition!.latitude, _userPosition!.longitude),
+                          center: LatLng(_userPosition!.latitude,
+                              _userPosition!.longitude),
                           zoom: 14,
                         ),
                         children: [

@@ -19,27 +19,6 @@ namespace SretneSapice.Controllers
             _productService = service;
         }
 
-        [HttpGet("Price-low-to-high")]
-        public async Task<ActionResult<PagedResult<ProductDto>>> GetProductsByPriceLowToHigh()
-        {
-            var products = await _productService.GetProductsByPriceLowToHighAsync();
-            return Ok(products);
-        }
-
-        [HttpGet("Price-high-to-low")]
-        public async Task<ActionResult<PagedResult<ProductDto>>> GetProductsByPriceHighToLow()
-        {
-            var products = await _productService.GetProductsByPriceHighToLowAsync();
-            return Ok(products);
-        }
-
-        [HttpGet("Newest")]
-        public async Task<ActionResult<PagedResult<ProductDto>>> GetNewestProducts()
-        {
-            var products = await _productService.GetNewestProductsAsync();
-            return Ok(products);
-        }
-
         [HttpGet("Recommend/{id}")]
         public virtual List<ProductDto> Recommend(int id)
         {

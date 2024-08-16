@@ -133,52 +133,22 @@ namespace SretneSapice.Services
                                      .Take(5);
             }
 
+            if(search?.Newest == true)
+            {
+                filteredQuery = filteredQuery.OrderByDescending(p => p.Timestamp);
+            }
+
+            if(search?.Oldest == true)
+            {
+                filteredQuery = filteredQuery.OrderBy(p => p.Timestamp);
+            }
+
+            if(search?.MostPopular == true)
+            {
+                filteredQuery = filteredQuery.OrderByDescending(p => p.LikesCount);
+            }
+
             return filteredQuery;
-        }
-
-        public async Task<PagedResult<ForumPostDto>> GetForumPostsByNewestAsync()
-        {
-            var query = _context.ForumPosts.Include(x => x.Comments).OrderByDescending(p => p.Timestamp).AsQueryable();
-
-            PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
-
-            result.Count = await query.CountAsync();
-
-            var forumPosts = await query.ToListAsync();
-
-            result.Result = _mapper.Map<List<ForumPostDto>>(forumPosts);
-
-            return result;
-        }
-
-        public async Task<PagedResult<ForumPostDto>> GetForumPostsByOldestAsync()
-        {
-            var query = _context.ForumPosts.Include(x => x.Comments).OrderBy(p => p.Timestamp).AsQueryable();
-
-            PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
-
-            result.Count = await query.CountAsync();
-
-            var forumPosts = await query.ToListAsync();
-
-            result.Result = _mapper.Map<List<ForumPostDto>>(forumPosts);
-
-            return result;
-        }
-
-        public async Task<PagedResult<ForumPostDto>> GetForumPostsByMostPopularAsync()
-        {
-            var query = _context.ForumPosts.Include(x => x.Comments).OrderByDescending(p => p.LikesCount).AsQueryable();
-
-            PagedResult<ForumPostDto> result = new PagedResult<ForumPostDto>();
-
-            result.Count = await query.CountAsync();
-
-            var forumPosts = await query.ToListAsync();
-
-            result.Result = _mapper.Map<List<ForumPostDto>>(forumPosts);
-
-            return result;
         }
     }
 }

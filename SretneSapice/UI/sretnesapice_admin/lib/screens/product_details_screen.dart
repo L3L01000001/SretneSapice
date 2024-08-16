@@ -95,8 +95,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                           onPressed: () async {
                             _formKey.currentState?.saveAndValidate();
 
-                            print(_formKey.currentState?.value);
-
                             var request =
                                 new Map.from(_formKey.currentState!.value);
 
@@ -366,14 +364,6 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ),
                   ),
                 ],
-              ),
-              FormBuilderTextField(
-                name: 'productPhoto',
-                initialValue: _initialValue['productPhoto'],
-                decoration: InputDecoration(
-                  border: InputBorder.none,
-                ),
-                style: TextStyle(height: 0),
               ),
               Row(
                 children: [

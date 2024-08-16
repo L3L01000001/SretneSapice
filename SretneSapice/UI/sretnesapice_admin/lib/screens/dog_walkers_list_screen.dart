@@ -40,7 +40,7 @@ class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Odobrena aplikacija!'),
       ));
-      _loadData(); 
+      _loadData();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Greška!'),
@@ -54,7 +54,7 @@ class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Aplikacija odbijena!'),
       ));
-      _loadData(); 
+      _loadData();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Greška!'),
@@ -310,14 +310,20 @@ class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
       buttons.add(
         ElevatedButton(
           onPressed: () => _approveDogWalker(dogWalker.dogWalkerId!),
-          child: Text('Accept'),
+          child: Text('Prihvati',
+              style: TextStyle(
+                color: Colors.white,
+              )),
         ),
       );
       buttons.add(SizedBox(width: 8));
       buttons.add(
         ElevatedButton(
           onPressed: () => _rejectDogWalker(dogWalker.dogWalkerId!),
-          child: Text('Odbij aplikacijsku formu'),
+          child: Text('Odbij',
+              style: TextStyle(
+                color: Colors.white,
+              )),
           style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
         ),
       );
@@ -337,7 +343,7 @@ class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
         ElevatedButton(
           onPressed: () => _approveDogWalker(dogWalker.dogWalkerId!),
           style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-          child: Text('Prihvati aplikacijsku formu',
+          child: Text('Prihvati',
               style: TextStyle(
                 color: Colors.white,
               )),

@@ -120,12 +120,12 @@ namespace SretneSapice.Services
                 filteredQuery = filteredQuery.Where(x => x.Name.Contains(firstName) || x.Surname.Contains(lastName));
             }
 
-            if(search?.Rating > 0)
+            if (search?.Rating > 0)
             {
                 filteredQuery = filteredQuery.Where(x => x.Rating == search.Rating);
             }
 
-            if(search?.BestRating == true)
+            if (search?.BestRating == true)
             {
                 filteredQuery = filteredQuery.Where(x => x.Rating == 5);
             }
@@ -135,14 +135,24 @@ namespace SretneSapice.Services
                 filteredQuery = filteredQuery.Where(x => x.CityId == search.CityId);
             }
 
-            if(search?.isApproved == true)
+            if (search?.isApproved == true)
             {
                 filteredQuery = filteredQuery.Where(x => x.IsApproved == true);
             }
 
-            if(search?.Top5 == true)
+            if (search?.Top5 == true)
             {
                 filteredQuery = filteredQuery.OrderByDescending(x => x.ServiceRequests.Count()).Take(5);
+            }
+
+            if (search?.MostReviews == true)
+            {
+                filteredQuery = filteredQuery.Include(dw => dw.WalkerReviews).OrderByDescending(dw => dw.WalkerReviews.Count);
+            }
+
+            if(search?.MostFinishedServices == true)
+            {
+                filteredQuery = filteredQuery.OrderByDescending(dw => dw.ServiceRequests.Count(sr => sr.Status == "Finished"));
             }
 
             return filteredQuery;
@@ -164,44 +174,6 @@ namespace SretneSapice.Services
             {
                 return 0;
             }
-        }
-
-        public async Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostReviewsFirst()
-        {
-            var dogWalkersWithReviews = _context.DogWalkers
-                                            .Include(x => x.City)
-                                            .Include(dw => dw.WalkerReviews).AsQueryable();
-
-            var mostReviewsFirst = dogWalkersWithReviews.OrderByDescending(dw => dw.WalkerReviews.Count);
-
-            PagedResult<DogWalkerDto> result = new PagedResult<DogWalkerDto>();
-
-            result.Count = await mostReviewsFirst.CountAsync();
-
-            var dogwalkers = await mostReviewsFirst.ToListAsync();
-
-            result.Result = _mapper.Map<List<DogWalkerDto>>(dogwalkers);
-
-            return result;
-        }
-
-        public async Task<PagedResult<DogWalkerDto>> GetDogWalkersWithMostFinishedServicesFirst()
-        {
-            var dogWalkersWithReviews =  _context.DogWalkers.Include(x => x.City)
-                                            .Include(dw => dw.ServiceRequests)
-                                            .AsQueryable();
-
-            var mostFinishedServicesFirst = dogWalkersWithReviews.OrderByDescending(dw => dw.ServiceRequests.Count(sr => sr.Status == "Finished"));
-
-            PagedResult<DogWalkerDto> result = new PagedResult<DogWalkerDto>();
-
-            result.Count = await mostFinishedServicesFirst.CountAsync();
-
-            var dogwalkers = await mostFinishedServicesFirst.ToListAsync();
-
-            result.Result = _mapper.Map<List<DogWalkerDto>>(dogwalkers);
-
-            return result;
         }
 
         public async Task<bool> HasUserAppliedToBeDogWalker(int userId)

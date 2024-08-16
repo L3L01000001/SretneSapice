@@ -143,21 +143,15 @@ class _CartScreenState extends State<CartScreen> {
         int existingPaymentId = await _paymentProvider!
             .paymentWithOrderIdExists(paymentRequest.orderId!);
 
-        print(existingPaymentId);
-
         if (existingPaymentId != 0) {
           await _paymentProvider?.update(existingPaymentId, paymentRequest);
         } else {
           await _paymentProvider!.insert(paymentRequest);
         }
 
-        print(_paymentMethod);
-
         if (_paymentMethod == PaymentMethod.paypal) {
-          print(cart!.toJson());
           var transaction = createNewTransaction(cart!);
-          print(transaction.amount.details.toJson());
-          print(transaction.itemList.toJson());
+
           _openPaypalGateway(context, transaction, cart!);
         } else if (_paymentMethod == PaymentMethod.cashOnDelivery) {
           showDialog(
@@ -375,8 +369,8 @@ class _CartScreenState extends State<CartScreen> {
 
     List<Items> items = [];
     cart.orderItems?.forEach((orderItem) {
-      var item = Items(orderItem.product!.name!,
-          orderItem.quantity!, orderItem.product!.price!, currency);
+      var item = Items(orderItem.product!.name!, orderItem.quantity!,
+          orderItem.product!.price!, currency);
       items.add(item);
     });
 
@@ -408,7 +402,6 @@ class _CartScreenState extends State<CartScreen> {
               );
 
               String transactionId = params["data"]["id"];
-              print("PayPal Transaction ID: $transactionId");
 
               await _updatePaymentWithTransactionId(
                   selectedOrder.orderId!, transactionId);
@@ -428,8 +421,6 @@ class _CartScreenState extends State<CartScreen> {
                 );
               }
             } catch (e) {
-              // Handle any exceptions that might occur
-              print("Error during payment success processing: $e");
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
@@ -442,7 +433,6 @@ class _CartScreenState extends State<CartScreen> {
             }
           },
           onError: (error) {
-            print("PayPal error: $error");
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(
                 content: Text(

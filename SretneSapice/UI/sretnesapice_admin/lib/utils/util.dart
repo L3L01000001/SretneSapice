@@ -25,10 +25,19 @@ String formatNumber(dynamic) {
   return f.format(dynamic);
 }
 
+String formatPrice(dynamic value) {
+  var f = NumberFormat('###,##0.00', 'en_US');
+
+  if (value == null) {
+    return "";
+  }
+  return f.format(value);
+}
+
 String formatDate(dynamic) {
   var d = DateFormat('dd.MM.yyyy HH:mm');
 
-  if(dynamic == null){
+  if (dynamic == null) {
     return "";
   }
 

@@ -12,8 +12,5 @@ namespace SretneSapice.Services
 {
     public interface IForumPostService : ICRUDService<ForumPostDto, ForumPostSearchObject, ForumPostInsertRequest, ForumPostUpdateRequest>
     {
-        Task<PagedResult<ForumPostDto>> GetForumPostsByNewestAsync();
-        Task<PagedResult<ForumPostDto>> GetForumPostsByOldestAsync();
-        Task<PagedResult<ForumPostDto>> GetForumPostsByMostPopularAsync();
     }
 }

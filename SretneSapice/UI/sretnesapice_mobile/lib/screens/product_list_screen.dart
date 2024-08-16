@@ -122,18 +122,18 @@ class _ProductListScreenState extends State<ProductListScreen> {
           try {
             if (_selectedSortingOption == 'Najjeftinije') {
               var tmpdata =
-                  await _productProvider!.getProductsByPriceLowToHigh();
+                  await _productProvider!.get({'priceLtoH': true});
               setState(() {
                 data = tmpdata;
               });
             } else if (_selectedSortingOption == 'Najskuplje') {
               var tmpdata =
-                  await _productProvider!.getProductsByPriceHighToLow();
+                  await _productProvider!.get({'priceHtoL': true});
               setState(() {
                 data = tmpdata;
               });
             } else if (_selectedSortingOption == 'Najnovije') {
-              var tmpdata = await _productProvider!.getNewestProducts();
+              var tmpdata = await _productProvider!.get({'newest': true});
               setState(() {
                 data = tmpdata;
               });
@@ -257,7 +257,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                         ),
                         alignment: Alignment.center,
                         child: Text(
-                          formatNumber(x.price),
+                          formatPrice(x.price),
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.blue[900],

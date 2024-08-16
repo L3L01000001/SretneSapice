@@ -186,18 +186,18 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
 
           try {
             if (_selectedSortingOption == 'Najnovije') {
-              var tmpdata = await _forumPostProvider!.getForumPostsByNewest();
+              var tmpdata = await _forumPostProvider!.get({'newest': true});
               setState(() {
                 data = tmpdata;
               });
             } else if (_selectedSortingOption == 'Najstarije') {
-              var tmpdata = await _forumPostProvider!.getForumPostsByOldest();
+              var tmpdata = await _forumPostProvider!.get({'oldest': true});
               setState(() {
                 data = tmpdata;
               });
             } else if (_selectedSortingOption == 'Najpopularnije') {
               var tmpdata =
-                  await _forumPostProvider!.getForumPostsByMostPopular();
+                  await _forumPostProvider!.get({'mostPopular': true});
               setState(() {
                 data = tmpdata;
               });

@@ -40,11 +40,8 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Load the .env file
   await dotenv.load(fileName: ".env");
 
-  print("CLIENT_ID_VALUE: ${dotenv.env['CLIENT_ID_VALUE']}");
-  print("SECRET_KEY_VALUE: ${dotenv.env['SECRET_KEY_VALUE']}");
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ProductProvider()),
@@ -373,13 +370,15 @@ class _LoginPageState extends State<LoginPage> {
 
         Authorization.user = await _userProvider.Authenticate();
 
-        if (Authorization.user?.userRoles
-                    .any((role) => role.role?.name == "User") ==
-                true ||
-            Authorization.user?.userRoles
-                    .any((role) => role.role?.name == "DogWalker") ==
-                true) {
-          Navigator.pushNamed(context, ForumPostListScreen.routeName);
+        if (Authorization.user?.status == true) {
+          if (Authorization.user?.userRoles
+                      .any((role) => role.role?.name == "User") ==
+                  true ||
+              Authorization.user?.userRoles
+                      .any((role) => role.role?.name == "DogWalker") ==
+                  true) {
+            Navigator.pushNamed(context, ForumPostListScreen.routeName);
+          }
         } else {
           showDialog(
               context: context,

@@ -57,6 +57,21 @@ namespace SretneSapice.Services
                              .Include(p => p.ProductType);
             }
 
+            if(search?.Newest == true)
+            {
+                query = query.OrderByDescending(p => p.CreatedDate);
+            }
+
+            if (search?.PriceLtoH == true)
+            {
+                query = query.OrderBy(p => p.Price);
+            }
+
+            if (search?.PriceHtoL == true)
+            {
+                query = query.OrderByDescending(p => p.Price);
+            }
+
             return base.AddFilter(query, search);
         }
 
@@ -103,52 +118,6 @@ namespace SretneSapice.Services
             }
 
             return _mapper.Map<ProductDto>(product);
-        }
-
-        public async Task<PagedResult<ProductDto>> GetProductsByPriceLowToHighAsync()
-        {
-
-            var query = _context.Products.OrderBy(p => p.Price).AsQueryable();
-
-            PagedResult<ProductDto> result = new PagedResult<ProductDto>();
-
-            result.Count = await query.CountAsync();
-
-            var products = await query.ToListAsync();
-
-            result.Result = _mapper.Map<List<ProductDto>>(products);
-
-            return result;
-        }
-
-        public async Task<PagedResult<ProductDto>> GetProductsByPriceHighToLowAsync()
-        {
-            var query = _context.Products.OrderByDescending(p => p.Price).AsQueryable();
-
-            PagedResult<ProductDto> result = new PagedResult<ProductDto>();
-
-            result.Count = await query.CountAsync();
-
-            var products = await query.ToListAsync();
-
-            result.Result = _mapper.Map<List<ProductDto>>(products);
-
-            return result;
-        }
-
-        public async Task<PagedResult<ProductDto>> GetNewestProductsAsync()
-        {
-            var query =  _context.Products.OrderByDescending(p => p.CreatedDate).AsQueryable();
-
-            PagedResult<ProductDto> result = new PagedResult<ProductDto>();
-
-            result.Count = await query.CountAsync();
-
-            var products = await query.ToListAsync();
-
-            result.Result = _mapper.Map<List<ProductDto>>(products);
-
-            return result;
         }
 
         static object isLocked = new object();

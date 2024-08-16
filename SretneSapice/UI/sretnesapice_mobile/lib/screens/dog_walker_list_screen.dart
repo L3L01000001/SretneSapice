@@ -81,7 +81,20 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
           await _favoriteWalkerProvider
               ?.hardDelete(favoriteWalker.favoriteWalkerId!);
         } else {
-          print('Nemoguće obaviti akciju!');
+          showDialog(
+            context: context,
+            builder: (BuildContext context) => AlertDialog(
+              content: Text("Nešto je pošlo po zlu! Nemoguće obaviti akciju."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('OK'),
+                )
+              ],
+            ),
+          );
         }
       } else {
         favoriteWalkerRequest.dogWalkerId = dogWalkerId;
@@ -236,9 +249,9 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
           try {
             if (_selectedSortingOption == 'Najviše dojmova') {
               var tmpdata =
-                  await _dogWalkerProvider!.getDogWalkersWithMostReviewsFirst();
+                  await _dogWalkerProvider?.get({'mostReviews': true});
               setState(() {
-                data = tmpdata;
+                data = tmpdata!;
               });
             } else if (_selectedSortingOption == 'Najbolji rating') {
               var tmpData = await _dogWalkerProvider?.get({'bestRating': true});
@@ -246,10 +259,10 @@ class _DogWalkerListScreenState extends State<DogWalkerListScreen> {
                 data = tmpData!;
               });
             } else if (_selectedSortingOption == 'Najviše usluga') {
-              var tmpdata = await _dogWalkerProvider!
-                  .getDogWalkersWithMostFinishedServicesFirst();
+              var tmpdata =
+                  await _dogWalkerProvider?.get({'mostFinishedServices': true});
               setState(() {
-                data = tmpdata;
+                data = tmpdata!;
               });
             } else {
               print('Invalid sorting option');

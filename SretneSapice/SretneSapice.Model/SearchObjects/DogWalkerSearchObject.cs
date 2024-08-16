@@ -14,5 +14,7 @@ namespace SretneSapice.Model.SearchObjects
         public bool? BestRating { get; set; }
         public int? CityId { get; set; }
         public bool? Top5 { get; set; }
+        public bool? MostReviews { get; set; }
+        public bool? MostFinishedServices { get; set; }
     }
 }

@@ -26,21 +26,19 @@ class _UserListScreenState extends State<UserListScreen> {
     super.didChangeDependencies();
     _userProvider = context.read<UserProvider>();
     _loadData();
-
-    print(_isActive);
   }
 
   Future<void> _loadData() async {
     var filter = {
-    'isRoleIncluded': true,
-    'roles': _selectedRoles.isNotEmpty ? _selectedRoles.join(',') : null,
-  };
+      'isRoleIncluded': true,
+      'roles': _selectedRoles.isNotEmpty ? _selectedRoles.join(',') : null,
+    };
 
-  if (_isActive != null) {
-    filter['isActive'] = _isActive.toString();
-  }
+    if (_isActive != null) {
+      filter['isActive'] = _isActive.toString();
+    }
 
-  var data = await _userProvider.get(filter: filter);
+    var data = await _userProvider.get(filter: filter);
 
     setState(() {
       result = data;

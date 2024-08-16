@@ -20,26 +20,5 @@ namespace SretneSapice.Controllers
             _forumPostService = service;
         }
 
-        [HttpGet("Newest")]
-        public async Task<ActionResult<PagedResult<ForumPostDto>>> GetForumPostsByNewest()
-        {
-            var posts = await _forumPostService.GetForumPostsByNewestAsync();
-            return Ok(posts);
-        }
-
-        [HttpGet("Oldest")]
-        public async Task<ActionResult<PagedResult<ForumPostDto>>> GetForumPostsByOldest()
-        {
-            var posts = await _forumPostService.GetForumPostsByOldestAsync();
-            return Ok(posts);
-        }
-
-        [HttpGet("Mostpopular")]
-        public async Task<ActionResult<PagedResult<ForumPostDto>>> GetForumPostsByMostPopular()
-        {
-            var posts = await _forumPostService.GetForumPostsByMostPopularAsync();
-            return Ok(posts);
-        }
-
     }
 }

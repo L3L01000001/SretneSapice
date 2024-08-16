@@ -119,8 +119,6 @@ abstract class BaseProvider<T> with ChangeNotifier {
     String? username = Authorization.username;
     String? password = Authorization.password;
 
-    print("passed creds: $username, $password");
-
     String basicAuth =
         "Basic ${base64Encode(utf8.encode('$username:$password'))}";
 

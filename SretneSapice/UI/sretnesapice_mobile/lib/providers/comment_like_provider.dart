@@ -20,7 +20,7 @@ class CommentLikeProvider extends BaseProvider<CommentLike> {
     var response = await http!.post(uri, headers: headers);
 
     if (response.statusCode == 200) {
-      print("Uspješno likean komentar!");
+      print("Uspješno lajkan komentar!");
     } else {
       throw Exception('Greška');
     }
@@ -32,13 +32,10 @@ class CommentLikeProvider extends BaseProvider<CommentLike> {
     var uri = Uri.parse(url);
 
     var headers = createHeaders();
-    var response = await http!.put(
-      uri,
-      headers: headers
-    );
+    var response = await http!.put(uri, headers: headers);
 
     if (response.statusCode == 200) {
-      print("Uspješno unlikean komentar!");
+      print("Uspješno unlajkan komentar!");
     } else {
       throw Exception('Greška!');
     }
