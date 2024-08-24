@@ -12,6 +12,9 @@ Kredencijali outlook maila s kojeg se šalju mailovi:
 mail: sretnesapice@outlook.com
 pass: sapice123
 
+Napomena: Praćenje lokacije šetača od strane korisnika koji je zatražio usluge moguće je tokom perioda u kojem se usluga izvršava. 
+'Prikaži lokaciju šetača' bit će prisutno u dijelu 'Moj Profil'
+
 ENV FAJL ZA PAY PAL SECRET_KEY I CLIENT_ID:
 
 Prije builda UI mobile aplikacije potrebno je napraviti .env fajl u UI/sretnesapice_mobile u kojem se nalaze CLIENT_ID_VALUE i SECRET_KEY_VALUE za PAYPAL GATEWAY. Vrijednosti će biti poslane na sljedeće mailove: amel.music@edu.fit.ba i rs.ii@edu.fit.ba i također dodani u komentar prilikom predavanja rada.
