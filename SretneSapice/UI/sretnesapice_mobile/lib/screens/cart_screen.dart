@@ -179,16 +179,37 @@ class _CartScreenState extends State<CartScreen> {
     return MasterScreenWidget(
       initialIndex: selectedIndex,
       child: SingleChildScrollView(
-        child: Container(
-          child: Padding(
+        child: Column(children: [
+          if (showShippingInfoForm)
+            Container(
+              color: Colors.white,
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: IconButton(
+                    iconSize: 25,
+                    icon: Icon(Icons.arrow_back),
+                    color: Colors.blue[900],
+                    onPressed: () {
+                      setState(() {
+                        showShippingInfoForm = false;
+                      });
+                    }),
+              ),
+            ),
+          Padding(
             padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
                   decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(15),
+                    border: Border.all(
+                      color: Color.fromARGB(255, 3, 92, 165),
+                      width: 2.0,
+                    ),
+                  ),
                   child: Center(
                       child: Text(
                     showShippingInfoForm ? "PODACI ZA DOSTAVU" : "CHECKOUT",
@@ -278,7 +299,7 @@ class _CartScreenState extends State<CartScreen> {
               ],
             ),
           ),
-        ),
+        ]),
       ),
     );
   }

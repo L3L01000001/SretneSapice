@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:sretnesapice_mobile/models/service_request.dart';
-import 'package:sretnesapice_mobile/providers/service_request_provider.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 
 class ServiceRequestCard extends StatelessWidget {

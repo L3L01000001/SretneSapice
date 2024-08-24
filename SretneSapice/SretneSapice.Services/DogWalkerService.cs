@@ -190,7 +190,7 @@ namespace SretneSapice.Services
         public override async Task<DogWalkerDto> GetById(int id)
         {
             var entity = await _context.Set<DogWalker>()
-                .Include(x => x.WalkerReviews)
+                .Include(x => x.WalkerReviews).ThenInclude(wr => wr.User)
                 .Include(x => x.ServiceRequests)
                 .Include(x => x.City)
                 .Include(x => x.User)

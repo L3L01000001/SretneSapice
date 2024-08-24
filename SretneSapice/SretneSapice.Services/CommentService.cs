@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using RabbitMQ.Client;
 using SretneSapice.Model.Dtos;
@@ -8,6 +9,7 @@ using SretneSapice.Services.Database;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,8 +17,14 @@ namespace SretneSapice.Services
 {
     public class CommentService : BaseCRUDService<CommentDto, Comment, BaseSearchObject, CommentInsertRequest, CommentUpdateRequest> , ICommentService
     {
-        public CommentService(_180148Context context, IMapper mapper) : base(context, mapper)
+        public int LoggedInUserId;
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IDogWalkerService _dogWalkerService;
+        public CommentService(_180148Context context, IMapper mapper, IHttpContextAccessor httpContextAccessor) : base(context, mapper)
         {
+            _httpContextAccessor = httpContextAccessor;
+            ClaimsIdentity user = (ClaimsIdentity)_httpContextAccessor.HttpContext.User.Identity;
+            LoggedInUserId = Convert.ToInt32(user.FindFirst(ClaimTypes.NameIdentifier)?.Value);
         }
 
         public override async Task<CommentDto> Insert(CommentInsertRequest insertRequest)
@@ -26,6 +34,8 @@ namespace SretneSapice.Services
             commentEntity.Timestamp = DateTime.Now;
 
             commentEntity.LikesCount = 0;
+
+            commentEntity.UserId = LoggedInUserId;
 
             await _context.Comments.AddAsync(commentEntity);
             await _context.SaveChangesAsync();

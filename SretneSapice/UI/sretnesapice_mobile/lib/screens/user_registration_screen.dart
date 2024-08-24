@@ -77,7 +77,7 @@ class _UserRegistrationScreenState extends State<UserRegistrationScreen> {
             builder: (BuildContext context) => AlertDialog(
                   title: Text("Uspješna registracija!"),
                   content: Text(
-                      style: Theme.of(context).textTheme.bodyText1,
+                      style: Theme.of(context).textTheme.displayMedium,
                       "Registriran korisnik ${registeredUser.name}"),
                   actions: [
                     TextButton(

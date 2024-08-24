@@ -208,7 +208,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
         .map((x) => Container(
               width: 130,
               height: 220,
-              padding: EdgeInsets.all(16.0),
+              padding: EdgeInsets.all(10.0),
               decoration: BoxDecoration(
                 color: Color(0xff315ccc),
                 borderRadius: BorderRadius.only(

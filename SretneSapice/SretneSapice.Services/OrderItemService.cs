@@ -62,27 +62,41 @@ namespace SretneSapice.Services
                 await _context.SaveChangesAsync();
             }
 
-            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == insertRequest.ProductId);
+            var existingOrderItem = await _context.OrderItems
+         .FirstOrDefaultAsync(oi => oi.OrderId == order.OrderId && oi.ProductId == insertRequest.ProductId);
 
+            var product = await _context.Products.FirstOrDefaultAsync(p => p.ProductId == insertRequest.ProductId);
             if (product == null)
             {
                 throw new Exception("Product not found");
             }
 
-            insertRequest.Subtotal = insertRequest.Quantity * product.Price;
-            insertRequest.OrderId = order.OrderId;
 
-            var orderItemEntity = _mapper.Map<OrderItem>(insertRequest);
+            if (existingOrderItem != null)
+            {
+                existingOrderItem.Quantity += insertRequest.Quantity;
+                existingOrderItem.Subtotal = existingOrderItem.Quantity * product.Price;
 
-            await _context.OrderItems.AddAsync(orderItemEntity);
+                await _context.SaveChangesAsync();
+            }
+            else
+            {
+                insertRequest.Subtotal = insertRequest.Quantity * product.Price;
+                insertRequest.OrderId = order.OrderId;
 
-            await _context.SaveChangesAsync();
+                var orderItemEntity = _mapper.Map<OrderItem>(insertRequest);
+
+                await _context.OrderItems.AddAsync(orderItemEntity);
+                await _context.SaveChangesAsync();
+            }
 
             order.TotalAmount = await _orderService.CalculateTotalAmount(order.OrderId);
 
             await _context.SaveChangesAsync();
 
-            return _mapper.Map<OrderItemDto>(orderItemEntity);
+            return existingOrderItem != null
+         ? _mapper.Map<OrderItemDto>(existingOrderItem)
+         : _mapper.Map<OrderItemDto>(insertRequest);
         }
 
         public override async Task<OrderItemDto> Update(int id, OrderItemUpdateRequest updateRequest)

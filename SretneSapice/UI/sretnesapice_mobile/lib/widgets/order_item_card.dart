@@ -66,7 +66,7 @@ class OrderItemCard extends StatelessWidget {
                     ),
                     alignment: Alignment.center,
                     child: Text(
-                      formatNumber(price),
+                      formatPrice(price),
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: Colors.blue[900],

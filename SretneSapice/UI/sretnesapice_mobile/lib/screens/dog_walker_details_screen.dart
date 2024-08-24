@@ -83,15 +83,34 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
         initialIndex: selectedIndex,
         child: Stack(children: [
           SingleChildScrollView(
-            child: Container(
-              child: Column(children: [
-                _buildDogWalkerCard(),
-                _buildInfoLine(),
-                if (!showReviews && !showCalendar) _buildDogWalkerInfo(),
-                if (showReviews) _buildWalkerReviews(),
-                if (showCalendar) _buildCalendar(),
-              ]),
-            ),
+            child: Column(children: [
+              if (showReviews || showCalendar)
+                Container(
+                  color: Colors.white,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: IconButton(
+                        iconSize: 25,
+                        icon: Icon(Icons.arrow_back),
+                        onPressed: () {
+                          setState(() {
+                            if (showReviews && !showCalendar) showReviews = false;
+                            if (showReviews && showCalendar) {
+                              showReviews = false;
+                              showCalendar = false;
+                            }
+                            if (!showReviews && showCalendar)
+                              showCalendar = false;
+                          });
+                        }),
+                  ),
+                ),
+              _buildDogWalkerCard(),
+              _buildInfoLine(),
+              if (!showReviews && !showCalendar) _buildDogWalkerInfo(),
+              if (showReviews) _buildWalkerReviews(),
+              if (showCalendar) _buildCalendar(),
+            ]),
           ),
           if (!addWalkerReview && !showCalendar)
             Positioned(

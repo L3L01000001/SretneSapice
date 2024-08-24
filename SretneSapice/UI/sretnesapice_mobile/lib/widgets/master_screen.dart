@@ -56,6 +56,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(70.0),
           child: AppBar(
+            backgroundColor: Colors.white,
             scrolledUnderElevation: 0,
             automaticallyImplyLeading: false,
             title: Row(

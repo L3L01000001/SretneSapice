@@ -73,7 +73,9 @@ namespace SretneSapice.Services
         {
             var entity = await _context.Set<ForumPost>()
                 .Include(fp => fp.ForumPostTags).ThenInclude(fpt => fpt.Tag)
-                .Include(fp => fp.Comments).ThenInclude(fpl => fpl.CommentLikes)
+                .Include(fp => fp.Comments)
+                    .ThenInclude(c => c.User)            
+                    .ThenInclude(c => c.CommentLikes)
                 .Include(fp => fp.User)
                 .FirstOrDefaultAsync(fp => fp.PostId == id);
 

@@ -61,6 +61,8 @@ class _ForumPostDetailsScreenState extends State<ForumPostDetailsScreen> {
         if (commentLike != null) {
           await _commentLikeProvider!
               .unlikeComment(comment.commentId!, loggedInUserId!);
+
+              loadData();
         } else {
           showDialog(
             context: context,

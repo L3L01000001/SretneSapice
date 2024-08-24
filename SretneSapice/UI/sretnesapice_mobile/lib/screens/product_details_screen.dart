@@ -74,7 +74,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     _buildProductDetailsCard(),
                     SizedBox(height: 10),
                     Text("Preporučeno ",
-                        style: Theme.of(context).textTheme.displayMedium),
+                        style: TextStyle(color: Colors.blue, fontSize: 22)),
                     Container(
                       margin: EdgeInsets.only(top: 10),
                       height: 200,

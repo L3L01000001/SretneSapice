@@ -153,7 +153,7 @@ class _DogWalkerApplicationScreenState
                                           .textTheme
                                           .labelMedium
                                           ?.copyWith(
-                                              fontSize: 18,
+                                              fontSize: 14,
                                               color: Color(0xff1590a1))),
                                   Column(
                                     children: [
