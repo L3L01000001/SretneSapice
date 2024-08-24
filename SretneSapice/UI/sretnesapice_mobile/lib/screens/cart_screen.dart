@@ -416,12 +416,6 @@ class _CartScreenState extends State<CartScreen> {
           onSuccess: (Map params) async {
             if (!mounted) return;
             try {
-              var paymentGatewayData = PaymentGatewayData(
-                params["data"].toString(),
-                params["message"].toString(),
-                params["error"],
-              );
-
               String transactionId = params["data"]["id"];
 
               await _updatePaymentWithTransactionId(

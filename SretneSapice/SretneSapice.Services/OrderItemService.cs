@@ -95,8 +95,8 @@ namespace SretneSapice.Services
             await _context.SaveChangesAsync();
 
             return existingOrderItem != null
-         ? _mapper.Map<OrderItemDto>(existingOrderItem)
-         : _mapper.Map<OrderItemDto>(insertRequest);
+                    ? _mapper.Map<OrderItemDto>(existingOrderItem)
+                    : _mapper.Map<OrderItemDto>(insertRequest);
         }
 
         public override async Task<OrderItemDto> Update(int id, OrderItemUpdateRequest updateRequest)
