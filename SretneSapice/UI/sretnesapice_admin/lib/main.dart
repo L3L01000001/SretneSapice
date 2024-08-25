@@ -208,7 +208,7 @@ class _LoginPageState extends State<LoginPage> {
                         prefixIcon: Icon(Icons.account_circle,
                             color: Color(0xFF8031CC)),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       ),
                       controller: _usernameController,
                     ),
@@ -228,7 +228,7 @@ class _LoginPageState extends State<LoginPage> {
                         prefixIcon:
                             Icon(Icons.password, color: Color(0xFF8031CC)),
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 10),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 12),
                       ),
                       controller: _passwordController,
                       obscureText: true,

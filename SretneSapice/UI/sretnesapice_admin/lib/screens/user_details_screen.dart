@@ -215,6 +215,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   child: FormBuilderTextField(
                     decoration: InputDecoration(labelText: "Ime"),
                     name: "name",
+                    validator: validateRequired,
                   ),
                 ),
                 SizedBox(
@@ -224,6 +225,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   child: FormBuilderTextField(
                     decoration: InputDecoration(labelText: "Prezime"),
                     name: "surname",
+                    validator: validateRequired,
                   ),
                 ),
               ],
@@ -234,6 +236,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   child: FormBuilderTextField(
                     decoration: InputDecoration(labelText: "Korisničko ime"),
                     name: "username",
+                    validator: validateRequired,
                   ),
                 ),
                 SizedBox(
@@ -243,6 +246,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                   child: FormBuilderTextField(
                     decoration: InputDecoration(labelText: "Telefon"),
                     name: "phone",
+                    validator: validateRequired,
                   ),
                 ),
               ],
@@ -253,6 +257,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 Expanded(
                     child: FormBuilderDropdown<String>(
                   name: 'cityID',
+                  validator: validateNumeric,
                   initialValue: widget.user != null
                       ? widget.user?.cityID?.toString()
                       : null,
@@ -280,9 +285,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                 ),
                 Expanded(
                   child: FormBuilderTextField(
-                    decoration: InputDecoration(labelText: "Email"),
-                    name: "email",
-                  ),
+                      decoration: InputDecoration(labelText: "Email"),
+                      name: "email",
+                      validator: validateRequired),
                 ),
               ],
             ),
@@ -294,6 +299,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       obscureText: true,
                       decoration: InputDecoration(labelText: "Lozinka"),
                       name: "password",
+                      validator: validateRequired,
                     ),
                   ),
                   SizedBox(width: 10),
@@ -302,6 +308,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                       obscureText: true,
                       decoration: InputDecoration(labelText: "Potvrdi lozinku"),
                       name: "confirmPassword",
+                      validator: validateRequired,
                     ),
                   ),
                 ],

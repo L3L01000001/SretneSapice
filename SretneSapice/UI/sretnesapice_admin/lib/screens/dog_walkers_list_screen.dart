@@ -235,8 +235,8 @@ class _DogWalkersListScreenState extends State<DogWalkersListScreen> {
                   rows: result!.result
                       .map(
                         (DogWalker e) => DataRow(
-                          color: MaterialStateProperty.resolveWith<Color?>(
-                              (Set<MaterialState> states) {
+                          color: WidgetStateProperty.resolveWith<Color?>(
+                              (Set<WidgetState> states) {
                             return Colors.white; //
                           }),
                           onLongPress: () => {

@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:sretnesapice_admin/main.dart';
 import 'package:sretnesapice_admin/models/user.dart';
 import 'package:sretnesapice_admin/screens/dog_walkers_list_screen.dart';
 import 'package:sretnesapice_admin/screens/forum_post_list_screen.dart';
 import 'package:sretnesapice_admin/screens/order_list_screen.dart';
 import 'package:sretnesapice_admin/screens/product_list_screen.dart';
-import 'package:sretnesapice_admin/screens/product_details_screen.dart';
 import 'package:sretnesapice_admin/screens/reports_screen.dart';
 import 'package:sretnesapice_admin/screens/user_list_screen.dart';
 import 'package:sretnesapice_admin/utils/util.dart';
@@ -14,7 +12,7 @@ import 'package:sretnesapice_admin/utils/util.dart';
 class MasterScreenWidget extends StatefulWidget {
   Widget? child;
   String? title;
-  int initialIndex; 
+  int initialIndex;
   MasterScreenWidget(
       {this.child, this.title, required this.initialIndex, super.key});
 
@@ -30,15 +28,14 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
   @override
   void initState() {
     super.initState();
-    _selectedIndex =
-        widget.initialIndex; 
+    _selectedIndex = widget.initialIndex;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.transparent, 
+        backgroundColor: Colors.transparent,
         iconTheme: IconThemeData(color: Colors.white),
         title: Text(
           widget.title ?? "",
@@ -69,7 +66,12 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
             DrawerHeader(
               child: Image.asset("assets/images/circle_logo.png"),
             ),
-            Text("Zdravo ${user?.name ?? ''}!", textAlign: TextAlign.center,),
+            Text("Zdravo ${user?.name ?? ''}!",
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF8031CC))),
             SizedBox(height: 20),
             if (!_isDogWalkerVerifier()) ...[
               _buildListTile(0, 'Proizvodi', 'assets/icons/products.png', () {
@@ -168,27 +170,27 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
         ),
       ),
       body: Stack(
-          children: [
-            Positioned.fill(
-              child: Image.asset(
-                'assets/images/background.jpg',
-                fit: BoxFit.cover,
-                height: double.infinity,
-                width: double.infinity,
-                opacity: AlwaysStoppedAnimation(.3),
-              ),
+        children: [
+          Positioned.fill(
+            child: Image.asset(
+              'assets/images/background.jpg',
+              fit: BoxFit.cover,
+              height: double.infinity,
+              width: double.infinity,
+              opacity: AlwaysStoppedAnimation(.3),
             ),
-            SafeArea(
-              child: Column(
-                children: [
-                  Expanded(
-                    child: widget.child ?? Container(),
-                  ),
-                ],
-              ),
+          ),
+          SafeArea(
+            child: Column(
+              children: [
+                Expanded(
+                  child: widget.child ?? Container(),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -237,8 +239,9 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
     return _selectedIndex;
   }
 
-   bool _isDogWalkerVerifier() {
-    return user?.userRoles?.any((role) => role.role?.name == "DogWalkerVerifier") ??
+  bool _isDogWalkerVerifier() {
+    return user?.userRoles
+            ?.any((role) => role.role?.name == "DogWalkerVerifier") ??
         false;
   }
 }

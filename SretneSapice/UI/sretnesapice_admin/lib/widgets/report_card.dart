@@ -17,7 +17,8 @@ class ReportCard extends StatefulWidget {
   _ReportCardState createState() => _ReportCardState();
 }
 
-class _ReportCardState extends State<ReportCard> with SingleTickerProviderStateMixin {
+class _ReportCardState extends State<ReportCard>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<int> _animation;
   late int _startCount;
@@ -33,7 +34,8 @@ class _ReportCardState extends State<ReportCard> with SingleTickerProviderStateM
       });
 
     _startCount = 0;
-    _animation = IntTween(begin: _startCount, end: widget.count).animate(_controller);
+    _animation =
+        IntTween(begin: _startCount, end: widget.count).animate(_controller);
     _controller.forward();
   }
 
@@ -42,7 +44,8 @@ class _ReportCardState extends State<ReportCard> with SingleTickerProviderStateM
     super.didUpdateWidget(oldWidget);
     if (oldWidget.count != widget.count) {
       _startCount = _animation.value;
-      _animation = IntTween(begin: _startCount, end: widget.count).animate(_controller);
+      _animation =
+          IntTween(begin: _startCount, end: widget.count).animate(_controller);
       _controller.forward(from: 0);
     }
   }

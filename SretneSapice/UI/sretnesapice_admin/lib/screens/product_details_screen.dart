@@ -160,8 +160,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                   context: context,
                                   builder: (BuildContext context) =>
                                       AlertDialog(
-                                        title: Text("Error"),
-                                        content: Text(e.toString()),
+                                        title: Text("Greška"),
+                                        content: Text("Popunite obavezna polja!"),
                                         actions: [
                                           TextButton(
                                               onPressed: () =>
@@ -197,235 +197,238 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
       child: Container(
         color: Color.fromARGB(255, 223, 212, 244),
         padding: EdgeInsets.all(20),
-        child: Expanded(
-          child: SingleChildScrollView(
-            child: Column(children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(
-                        labelText: "Šifra",
-                        labelStyle: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 61, 6, 137),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      name: "code",
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: FormBuilderTextField(
-                      maxLines: null,
-                      decoration: InputDecoration(
-                        labelText: "Naziv",
-                        labelStyle: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 61, 6, 137),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      name: "name",
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(
-                        labelText: "Količina",
-                        labelStyle: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 61, 6, 137),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      name: "stockQuantity",
-                    ),
-                  ),
-                  SizedBox(
-                    width: 10,
-                  ),
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(
-                        labelText: "Cijena",
-                        labelStyle: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 61, 6, 137),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      name: "price",
-                    ),
-                  ),
-                ],
-              ),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Expanded(
-                      child: FormBuilderDropdown<String>(
-                    name: 'productTypeID',
-                    initialValue: widget.product != null
-                        ? widget.product?.productTypeID?.toString()
-                        : null,
-                    decoration: InputDecoration(
-                        labelText: 'Vrsta proizvoda',
-                        labelStyle: TextStyle(
-                          fontSize: 14,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                        suffix: IconButton(
-                          icon: const Icon(Icons.close),
-                          onPressed: () {
-                            _formKey.currentState!.fields['productTypeID']
-                                ?.reset();
-                          },
-                        ),
-                        hintText: 'Vrsta proizvoda'),
-                    style: TextStyle(
+        child: Column(children: [
+          Row(
+            children: [
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: InputDecoration(
+                    labelText: "Šifra",
+                    labelStyle: TextStyle(
+                      fontSize: 18,
                       color: Color.fromARGB(255, 61, 6, 137),
                       fontWeight: FontWeight.bold,
                     ),
-                    items: productTypesResult?.result
-                            .map((item) => DropdownMenuItem(
-                                  alignment: AlignmentDirectional.center,
-                                  value: item.productTypeId.toString(),
-                                  child: Text(item.productTypeName ?? ""),
-                                ))
-                            .toSet()
-                            .toList() ??
-                        [],
-                  )),
-                  SizedBox(
-                    width: 10,
                   ),
-                  Expanded(
-                    child: FormBuilderTextField(
-                      decoration: InputDecoration(
-                        labelText: "Brend",
-                        labelStyle: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 61, 6, 137),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      name: "brand",
-                    ),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 61, 6, 137),
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
+                  name: "code",
+                  validator: validateRequired
+                ),
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: FormBuilderTextField(
-                      maxLines: 2,
-                      decoration: InputDecoration(
-                        labelText: "Opis",
-                        labelStyle: TextStyle(
-                          fontSize: 18,
-                          color: Color.fromARGB(255, 61, 6, 137),
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      style: TextStyle(
-                        color: Color.fromARGB(255, 61, 6, 137),
-                        fontWeight: FontWeight.bold,
-                      ),
-                      name: "description",
-                    ),
-                  ),
-                ],
+              SizedBox(
+                width: 10,
               ),
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Container(
-                          width: 250,
-                          height: 250,
-                          color: Colors.grey[200],
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              if (_base64Image != null)
-                                Image.memory(
-                                  base64Decode(_base64Image!),
-                                  width: 250,
-                                  height: 250,
-                                  fit: BoxFit.cover,
-                                )
-                              else if (widget.product == null)
-                                Icon(Icons.photo, size: 100, color: Colors.grey)
-                              else if (widget.product?.productPhoto != "")
-                                imageFromBase64String(
-                                    widget.product!.productPhoto!)
-                              else
-                                Icon(Icons.photo, size: 100, color: Colors.grey)
-                            ],
-                          ),
-                        ),
-                      ],
+              Expanded(
+                child: FormBuilderTextField(
+                  maxLines: null,
+                  decoration: InputDecoration(
+                    labelText: "Naziv",
+                    labelStyle: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 61, 6, 137),
+                      fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(width: 20),
-                  Expanded(
-                    child: FormBuilderField(
-                      name: 'imageId',
-                      builder: ((field) {
-                        return Container(
-                          child: ElevatedButton.icon(
-                            onPressed: getImage,
-                            icon: Icon(Icons.file_upload),
-                            label: Text("Odaberi sliku"),
-                            style: ElevatedButton.styleFrom(
-                              padding: EdgeInsets.all(16),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(18.0),
-                                side: BorderSide(
-                                    color: Color(0xFF8031CC), width: 2.0),
-                              ),
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 61, 6, 137),
+                    fontWeight: FontWeight.bold,
                   ),
-                ],
-              )
-            ]),
+                  name: "name",
+                  validator: validateRequired
+                ),
+              ),
+            ],
           ),
-        ),
+          Row(
+            children: [
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: InputDecoration(
+                    labelText: "Količina",
+                    labelStyle: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 61, 6, 137),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 61, 6, 137),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  name: "stockQuantity",
+                  validator: validateNumeric,
+                ),
+              ),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: InputDecoration(
+                    labelText: "Cijena",
+                    labelStyle: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 61, 6, 137),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 61, 6, 137),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  name: "price",
+                  validator: validateDecimalPrice,
+                ),
+              ),
+            ],
+          ),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              Expanded(
+                  child: FormBuilderDropdown<String>(
+                name: 'productTypeID',
+                validator: validateNumeric,
+                initialValue: widget.product != null
+                    ? widget.product?.productTypeID?.toString()
+                    : null,
+                decoration: InputDecoration(
+                    labelText: 'Vrsta proizvoda',
+                    labelStyle: TextStyle(
+                      fontSize: 14,
+                      color: Color.fromARGB(255, 61, 6, 137),
+                      fontWeight: FontWeight.bold,
+                    ),
+                    suffix: IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        _formKey.currentState!.fields['productTypeID']
+                            ?.reset();
+                      },
+                    ),
+                    hintText: 'Vrsta proizvoda'),
+                style: TextStyle(
+                  color: Color.fromARGB(255, 61, 6, 137),
+                  fontWeight: FontWeight.bold,
+                ),
+                items: productTypesResult?.result
+                        .map((item) => DropdownMenuItem(
+                              alignment: AlignmentDirectional.center,
+                              value: item.productTypeId.toString(),
+                              child: Text(item.productTypeName ?? ""),
+                            ))
+                        .toSet()
+                        .toList() ??
+                    [],
+              )),
+              SizedBox(
+                width: 10,
+              ),
+              Expanded(
+                child: FormBuilderTextField(
+                  decoration: InputDecoration(
+                    labelText: "Brend",
+                    labelStyle: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 61, 6, 137),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 61, 6, 137),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  name: "brand",
+                  validator: validateRequired
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: FormBuilderTextField(
+                  maxLines: 2,
+                  decoration: InputDecoration(
+                    labelText: "Opis",
+                    labelStyle: TextStyle(
+                      fontSize: 18,
+                      color: Color.fromARGB(255, 61, 6, 137),
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  style: TextStyle(
+                    color: Color.fromARGB(255, 61, 6, 137),
+                    fontWeight: FontWeight.bold,
+                  ),
+                  name: "description",
+                  validator: validateRequired
+                ),
+              ),
+            ],
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    Container(
+                      width: 250,
+                      height: 250,
+                      color: Colors.grey[200],
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          if (_base64Image != null)
+                            Image.memory(
+                              base64Decode(_base64Image!),
+                              width: 250,
+                              height: 250,
+                              fit: BoxFit.cover,
+                            )
+                          else if (widget.product == null)
+                            Icon(Icons.photo, size: 100, color: Colors.grey)
+                          else if (widget.product?.productPhoto != "")
+                            imageFromBase64String(
+                                widget.product!.productPhoto!)
+                          else
+                            Icon(Icons.photo, size: 100, color: Colors.grey)
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(width: 20),
+              Expanded(
+                child: FormBuilderField(
+                  name: 'imageId',
+                  builder: ((field) {
+                    return Container(
+                      child: ElevatedButton.icon(
+                        onPressed: getImage,
+                        icon: Icon(Icons.file_upload),
+                        label: Text("Odaberi sliku"),
+                        style: ElevatedButton.styleFrom(
+                          padding: EdgeInsets.all(16),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(18.0),
+                            side: BorderSide(
+                                color: Color(0xFF8031CC), width: 2.0),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ),
+              ),
+            ],
+          )
+        ]),
       ),
     );
   }

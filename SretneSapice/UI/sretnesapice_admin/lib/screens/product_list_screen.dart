@@ -354,7 +354,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
                                     return AlertDialog(
                                       title: Text("Brisanje proizvoda"),
                                       content: Text(
-                                          "Jeste li sigurni da želite obrisati proizvod?"),
+                                          "Jeste li sigurni da želite obrisati proizvod?", style: TextStyle(fontSize: 18)),
                                       actions: [
                                         TextButton(
                                           onPressed: () async {

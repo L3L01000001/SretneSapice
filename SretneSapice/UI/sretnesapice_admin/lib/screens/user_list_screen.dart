@@ -313,9 +313,16 @@ class _UserListScreenState extends State<UserListScreen> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text(""),
+                                        title: Text(
+                                          "Promjena statusa računa",
+                                          style: TextStyle(
+                                              color: Colors.deepPurple),
+                                        ),
                                         content: Text(
-                                            "Jeste li sigurni da želite onemogućiti pristup ovom korisniku?"),
+                                            "Jeste li sigurni da želite onemogućiti pristup ovom korisniku?",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.deepPurple)),
                                         actions: [
                                           TextButton(
                                             onPressed: () async {
@@ -324,29 +331,32 @@ class _UserListScreenState extends State<UserListScreen> {
 
                                               showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                            content: Text(
-                                                                "Korisniku uspješno onemogućen pristup!"),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .push(
-                                                                    MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              const UserListScreen(),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    Text("OK"),
-                                                              )
-                                                            ],
-                                                          ));
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      AlertDialog(
+                                                        content: Text(
+                                                            "Korisniku uspješno onemogućen pristup!",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors
+                                                                    .deepPurple)),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const UserListScreen(),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Text("OK"),
+                                                          )
+                                                        ],
+                                                      ));
                                             },
                                             style: TextButton.styleFrom(
                                                 backgroundColor: Colors.red),
@@ -370,9 +380,16 @@ class _UserListScreenState extends State<UserListScreen> {
                                     context: context,
                                     builder: (BuildContext context) {
                                       return AlertDialog(
-                                        title: Text(""),
+                                        title: Text(
+                                          "Promjena statusa računa",
+                                          style: TextStyle(
+                                              color: Colors.deepPurple),
+                                        ),
                                         content: Text(
-                                            "Jeste li sigurni da želite omogućiti pristup ovom korisniku?"),
+                                            "Jeste li sigurni da želite omogućiti pristup ovom korisniku?",
+                                            style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.deepPurple)),
                                         actions: [
                                           TextButton(
                                             onPressed: () async {
@@ -390,29 +407,32 @@ class _UserListScreenState extends State<UserListScreen> {
 
                                               showDialog(
                                                   context: context,
-                                                  builder:
-                                                      (BuildContext context) =>
-                                                          AlertDialog(
-                                                            content: Text(
-                                                                "Korisniku uspješno omogućen pristup!"),
-                                                            actions: [
-                                                              TextButton(
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .push(
-                                                                    MaterialPageRoute(
-                                                                      builder:
-                                                                          (context) =>
-                                                                              const UserListScreen(),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    Text("OK"),
-                                                              )
-                                                            ],
-                                                          ));
+                                                  builder: (BuildContext
+                                                          context) =>
+                                                      AlertDialog(
+                                                        content: Text(
+                                                            "Korisniku uspješno omogućen pristup!",
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                color: Colors
+                                                                    .deepPurple)),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () {
+                                                              Navigator.of(
+                                                                      context)
+                                                                  .push(
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          const UserListScreen(),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Text("OK"),
+                                                          )
+                                                        ],
+                                                      ));
                                             },
                                             style: TextButton.styleFrom(
                                                 backgroundColor: Colors.green),

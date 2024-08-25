@@ -43,12 +43,13 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
       initialIndex: 2,
       child: Padding(
         padding: EdgeInsets.all(16.0),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        child:
+            Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           _buildSearch(),
           SizedBox(height: 16),
           Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [_buildSortingDropdown()]),
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [_buildSortingDropdown()]),
           SizedBox(height: 16),
           _buildDataListView()
         ]),
@@ -61,9 +62,8 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(18.0),
-        color: Colors.grey[100], 
-        border: Border.all(
-            color: Color(0xFF8031CC), width: 1.0), 
+        color: Colors.grey[100],
+        border: Border.all(color: Color(0xFF8031CC), width: 1.0),
       ),
       child: Row(children: [
         Expanded(
@@ -126,7 +126,7 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
               Text(
                 'Sortiraj po:',
                 style: TextStyle(
-                  fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold,
                     decoration: TextDecoration.none,
                     color: Color.fromARGB(255, 61, 6, 137)),
               ),
@@ -153,7 +153,8 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                 result = data;
               });
             } else if (_selectedSortingOption == 'Najpopularnije') {
-              var data = await _forumPostProvider.get(filter: {'mostPopular': true});
+              var data =
+                  await _forumPostProvider.get(filter: {'mostPopular': true});
               setState(() {
                 result = data;
               });
@@ -278,7 +279,11 @@ class _ForumPostListScreenState extends State<ForumPostListScreen> {
                                     fontWeight: FontWeight.bold,
                                     fontSize: 14))),
                             DataCell(
-                              Text((e.forumPostTags?.map((t) => t?.tag?.tagName).join(', ') ?? 'Nema tagova'),
+                              Text(
+                                  (e.forumPostTags
+                                          ?.map((t) => t?.tag?.tagName)
+                                          .join(', ') ??
+                                      'Nema tagova'),
                                   style: TextStyle(
                                       fontWeight: FontWeight.bold,
                                       fontSize: 14)),

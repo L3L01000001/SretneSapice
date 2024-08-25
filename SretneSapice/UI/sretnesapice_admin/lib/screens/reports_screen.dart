@@ -188,6 +188,10 @@ class _ReportsScreenState extends State<ReportsScreen> {
     });
   }
 
+  bool _validateDates(DateTime fromDate, DateTime toDate) {
+    return fromDate.isBefore(toDate);
+  }
+
   Future<void> _selectDate(BuildContext context, bool isFrom) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -405,28 +409,53 @@ class _ReportsScreenState extends State<ReportsScreen> {
                     ),
                   ),
                   Spacer(),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.purple,
-                        shadowColor: Colors.transparent,
-                        padding: const EdgeInsets.all(20),
-                        fixedSize: Size.fromWidth(300)),
-                    onPressed: () async {
-                      if (fromDate != null && toDate != null) {
-                        var number = await _reportProvider.getTotalRequests(
-                            filter: {'dateFrom': fromDate, 'dateTo': toDate});
+                  Expanded(
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.purple,
+                          shadowColor: Colors.transparent,
+                          padding: const EdgeInsets.all(20)),
+                      onPressed: () async {
+                        if (fromDate != null && toDate != null) {
+                          if (_validateDates(fromDate!, toDate!)) {
+                            var number = await _reportProvider.getTotalRequests(
+                                filter: {
+                                  'dateFrom': fromDate,
+                                  'dateTo': toDate
+                                });
 
-                        var list = await _reportProvider.getStatusBreakdown(
-                            filter: {'dateFrom': fromDate, 'dateTo': toDate});
+                            var list = await _reportProvider.getStatusBreakdown(
+                                filter: {
+                                  'dateFrom': fromDate,
+                                  'dateTo': toDate
+                                });
 
-                        setState(() {
-                          filteredCountOfServiceRequests = number;
-                          filteredList = list;
-                        });
-                      }
-                    },
-                    child: Text('Filtriraj',
-                        style: TextStyle(fontSize: 20, color: Colors.white)),
+                            setState(() {
+                              filteredCountOfServiceRequests = number;
+                              filteredList = list;
+                            });
+                          } else {
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext context) => AlertDialog(
+                                content: const Text(
+                                    "Datumi nisu korektno odabrani. Pokušajte s drugim vrijednostima."),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () {
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Text('OK'),
+                                  )
+                                ],
+                              ),
+                            );
+                          }
+                        }
+                      },
+                      child: Text('Filtriraj',
+                          style: TextStyle(fontSize: 20, color: Colors.white)),
+                    ),
                   ),
                 ],
               ),
@@ -1020,9 +1049,27 @@ class _ReportsScreenState extends State<ReportsScreen> {
   }
 
   Widget _buildPieChart(List<RequestsByStatus> data) {
+    if (data == null || data.isEmpty) {
+      return Center(
+        child: Text(
+          'Nema podataka',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      );
+    }
+
     final Map<String, double> dataMap = {
       for (var item in data) item.status!: item.count!.toDouble(),
     };
+
+    if (dataMap.isEmpty) {
+      return Center(
+        child: Text(
+          'Nema podataka',
+          style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        ),
+      );
+    }
 
     final List<Color> colorList = [
       Colors.blue,

@@ -16,6 +16,42 @@ Image imageFromBase64String(String base64Image) {
   return Image.memory(base64Decode(base64Image));
 }
 
+String? validateRequired(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Obavezno polje';
+  }
+  return null;
+}
+
+String? validateNumeric(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Obavezno polje';
+  }
+  final number = num.tryParse(value);
+  if (number == null) {
+    return 'Morate ispuniti ovo polje';
+  }
+  return null;
+}
+
+String? validateDecimalPrice(String? value) {
+  if (value == null || value.isEmpty) {
+    return 'Obavezno polje';
+  }
+
+  final decimal = num.tryParse(value);
+
+  if (decimal == null) {
+    return 'Popunite polje';
+  }
+
+  if (decimal < 0) {
+    return 'Cijena ne može biti negativna.';
+  }
+
+  return null;
+}
+
 String formatNumber(dynamic) {
   var f = NumberFormat('###,00');
 
