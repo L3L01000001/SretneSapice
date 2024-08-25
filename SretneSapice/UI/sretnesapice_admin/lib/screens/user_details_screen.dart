@@ -170,8 +170,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                   context: context,
                                   builder: (BuildContext context) =>
                                       AlertDialog(
-                                        title: Text("Error"),
-                                        content: Text(e.toString()),
+                                        title: Text("Greška"),
+                                        content:
+                                            Text("Popunite obavezna polja!"),
                                         actions: [
                                           TextButton(
                                               onPressed: () =>
