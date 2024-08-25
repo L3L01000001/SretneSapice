@@ -94,7 +94,8 @@ class _DogWalkerDetailsScreenState extends State<DogWalkerDetailsScreen> {
                         icon: Icon(Icons.arrow_back),
                         onPressed: () {
                           setState(() {
-                            if (showReviews && !showCalendar) showReviews = false;
+                            if (showReviews && !showCalendar)
+                              showReviews = false;
                             if (showReviews && showCalendar) {
                               showReviews = false;
                               showCalendar = false;

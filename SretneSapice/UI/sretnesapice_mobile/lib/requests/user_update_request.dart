@@ -11,6 +11,7 @@ class UserUpdateRequest {
   String? username;
   int? cityID;
   String? profilePhoto;
+  bool? status;
 
   UserUpdateRequest() {}
 

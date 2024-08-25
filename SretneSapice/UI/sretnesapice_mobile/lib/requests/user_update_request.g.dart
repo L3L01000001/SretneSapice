@@ -14,7 +14,8 @@ UserUpdateRequest _$UserUpdateRequestFromJson(Map<String, dynamic> json) =>
       ..phone = json['phone'] as String?
       ..username = json['username'] as String?
       ..cityID = (json['cityID'] as num?)?.toInt()
-      ..profilePhoto = json['profilePhoto'] as String?;
+      ..profilePhoto = json['profilePhoto'] as String?
+      ..status = json['status'] as bool?;
 
 Map<String, dynamic> _$UserUpdateRequestToJson(UserUpdateRequest instance) =>
     <String, dynamic>{
@@ -25,4 +26,5 @@ Map<String, dynamic> _$UserUpdateRequestToJson(UserUpdateRequest instance) =>
       'username': instance.username,
       'cityID': instance.cityID,
       'profilePhoto': instance.profilePhoto,
+      'status': instance.status,
     };

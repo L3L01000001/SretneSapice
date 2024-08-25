@@ -43,7 +43,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
       'phone': widget.user?.phone,
       'username': widget.user?.username,
       'profilePhoto': widget.user?.profilePhoto,
-      'status': widget.user?.status?.toString(),
+      'status': widget.user?.status,
       'cityID': widget.user?.cityID,
       'password': widget.user?.password,
       'confirmPassword': widget.user?.confirmPassword,
@@ -99,6 +99,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                 new Map.from(_formKey.currentState!.value);
 
                             if (widget.user != null) {
+                              request['status'] = widget.user!.status;
                               request.remove('username');
                               request.remove('email');
                               request.remove('cityID');
@@ -106,14 +107,11 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
                                   _base64Image!.isNotEmpty) {
                                 request['profilePhoto'] = _base64Image;
                               } else {
-                                request.remove('profilePhoto');
+                                request['profilePhoto'] = widget.user!.profilePhoto;
                               }
                               request.remove('imageId');
-                              request.remove('status');
                             } else {
-                              request.remove('profilePhoto');
                               request.remove('imageId');
-                              request.remove('status');
                             }
 
                             try {

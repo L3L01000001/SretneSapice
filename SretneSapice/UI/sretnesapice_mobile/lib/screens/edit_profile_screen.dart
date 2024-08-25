@@ -80,11 +80,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           _imageFile == null
                               ? CircleAvatar(
                                   radius: 50,
-                                  backgroundImage: user!.profilePhoto != null
+                                  backgroundImage: user!.profilePhoto != ""
                                       ? MemoryImage(
                                           base64Decode(user!.profilePhoto!))
                                       : null,
-                                  child: user!.profilePhoto == null
+                                  child: user!.profilePhoto == ""
                                       ? Icon(Icons.person, size: 50)
                                       : null,
                                 )
@@ -119,10 +119,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       userUpdateRequest.email = _emailController.text;
                       userUpdateRequest.phone = _phoneController.text;
                       userUpdateRequest.username = _usernameController.text;
+                      userUpdateRequest.status = true;
+
                       if (_imageFile != null) {
                         List<int> imageBytes = await _imageFile!.readAsBytes();
                         String base64Image = base64Encode(imageBytes);
                         userUpdateRequest.profilePhoto = base64Image;
+                      } else {
+                        userUpdateRequest.profilePhoto = user!.profilePhoto;
                       }
 
                       await _userProvider?.update(
@@ -135,11 +139,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                 },
                 style: ButtonStyle(
                   backgroundColor: MaterialStateProperty.all<Color>(
-                      Color.fromARGB(255, 121, 26, 222)), 
-                  padding: MaterialStateProperty.all<EdgeInsetsGeometry>(
-                      EdgeInsets.fromLTRB(
-                          15, 0, 15, 0)),
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      Color.fromARGB(255, 121, 26, 222)),
+                  padding: WidgetStateProperty.all<EdgeInsetsGeometry>(
+                      EdgeInsets.fromLTRB(15, 0, 15, 0)),
+                  shape: WidgetStateProperty.all<RoundedRectangleBorder>(
                     RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30.0),
                     ),
@@ -149,7 +152,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   'Sačuvaj',
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.white, 
+                    color: Colors.white,
                   ),
                 ),
               )

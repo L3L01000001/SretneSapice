@@ -16,6 +16,7 @@ import 'package:sretnesapice_mobile/providers/payment_provider.dart';
 import 'package:sretnesapice_mobile/providers/user_shipping_information_provider.dart';
 import 'package:sretnesapice_mobile/requests/order_item_update_request.dart';
 import 'package:sretnesapice_mobile/requests/user_shipping_info_request.dart';
+import 'package:sretnesapice_mobile/screens/product_list_screen.dart';
 import 'package:sretnesapice_mobile/utils/util.dart';
 import 'package:sretnesapice_mobile/widgets/master_screen.dart';
 import 'package:sretnesapice_mobile/widgets/order_item_card.dart';
@@ -42,7 +43,7 @@ class _CartScreenState extends State<CartScreen> {
   static const CANCEL_URL = String.fromEnvironment("CANCEL_URL_VALUE",
       defaultValue: 'cancel.snippetcoder.com');
   static const PAYPAL_NOTE = String.fromEnvironment('PAYPAL_NOTE_VALUE',
-      defaultValue: 'Dodjite nam opet!');
+      defaultValue: 'Očekujemo vas ponovo!');
 
   static const CURRENCY =
       String.fromEnvironment('DEFAULT_CURRENCY_VALUE', defaultValue: 'USD');
@@ -76,6 +77,10 @@ class _CartScreenState extends State<CartScreen> {
   final _formKey = GlobalKey<FormState>();
 
   PaymentMethod _paymentMethod = PaymentMethod.paypal;
+
+  late ScaffoldMessengerState _scaffoldMessengerState;
+
+  bool paid = false;
 
   @override
   void initState() {
@@ -175,130 +180,153 @@ class _CartScreenState extends State<CartScreen> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _scaffoldMessengerState = ScaffoldMessenger.of(context);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MasterScreenWidget(
       initialIndex: selectedIndex,
       child: SingleChildScrollView(
         child: Column(children: [
-          if (showShippingInfoForm)
+          if (paid)
             Container(
-              color: Colors.white,
-              child: Align(
-                alignment: Alignment.centerLeft,
-                child: IconButton(
-                    iconSize: 25,
-                    icon: Icon(Icons.arrow_back),
-                    color: Colors.blue[900],
-                    onPressed: () {
-                      setState(() {
-                        showShippingInfoForm = false;
-                      });
-                    }),
-              ),
-            ),
-          Padding(
-            padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    border: Border.all(
-                      color: Color.fromARGB(255, 3, 92, 165),
-                      width: 2.0,
-                    ),
+              decoration: BoxDecoration(
+                  color: Colors.white, borderRadius: BorderRadius.circular(15)),
+              height: 200,
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(15.0),
+                  child: Text(
+                    "Uspješno plaćena narudžba! Paket će ubrzo biti poslan na Vašu adresu!",
+                    style: TextStyle(fontSize: 20, color: Color(0xff315ccc)),
                   ),
-                  child: Center(
-                      child: Text(
-                    showShippingInfoForm ? "PODACI ZA DOSTAVU" : "CHECKOUT",
-                    style: TextStyle(fontSize: 30, color: Color(0xff315ccc)),
-                  )),
                 ),
-                if (cart == null ||
-                    cart!.orderItems == null ||
-                    cart!.orderItems!.isEmpty)
+              ),
+            )
+          else ...[
+            if (showShippingInfoForm)
+              Container(
+                color: Colors.white,
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: IconButton(
+                      iconSize: 25,
+                      icon: Icon(Icons.arrow_back),
+                      color: Colors.blue[900],
+                      onPressed: () {
+                        setState(() {
+                          showShippingInfoForm = false;
+                        });
+                      }),
+                ),
+              ),
+            Padding(
+              padding: EdgeInsets.only(left: 15.0, right: 15.0, top: 15.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Container(
                     decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(15)),
-                    height: 200,
-                    child: Center(
-                      child: Padding(
-                        padding: const EdgeInsets.only(top: 20.0),
-                        child: Text(
-                          "Korpa je prazna!",
-                          style:
-                              TextStyle(fontSize: 24, color: Color(0xff315ccc)),
-                        ),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: Color.fromARGB(255, 3, 92, 165),
+                        width: 2.0,
                       ),
                     ),
-                  )
-                else ...[
-                  if (showShippingInfoForm) _buildShippingInfoForm(),
-                  if (!showShippingInfoForm)
-                    Column(
-                      children: [
-                        if (cart != null &&
-                            cart!.orderItems != null &&
-                            cart!.orderItems!.isNotEmpty) ...[
-                          Column(
-                            children: _buildOrderItemCardList(),
+                    child: Center(
+                        child: Text(
+                      showShippingInfoForm ? "PODACI ZA DOSTAVU" : "CHECKOUT",
+                      style: TextStyle(fontSize: 30, color: Color(0xff315ccc)),
+                    )),
+                  ),
+                  if (cart == null ||
+                      cart!.orderItems == null ||
+                      cart!.orderItems!.isEmpty)
+                    Container(
+                      decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(15)),
+                      height: 200,
+                      child: Center(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 20.0),
+                          child: Text(
+                            "Korpa je prazna!",
+                            style: TextStyle(
+                                fontSize: 24, color: Color(0xff315ccc)),
                           ),
-                          const Divider(
-                            color: Color(0xff315ccc),
-                            thickness: 3,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              const Text(
-                                "TOTAL",
-                                style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff315ccc),
-                                ),
-                              ),
-                              Text(
-                                "${cart?.totalAmount} KM",
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color(0xff315ccc),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(height: 15),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  setState(() {
-                                    showShippingInfoForm = true;
-                                  });
-                                },
-                                child: Text(
-                                  'Sljedeći korak',
+                        ),
+                      ),
+                    )
+                  else ...[
+                    if (showShippingInfoForm) _buildShippingInfoForm(),
+                    if (!showShippingInfoForm)
+                      Column(
+                        children: [
+                          if (cart != null &&
+                              cart!.orderItems != null &&
+                              cart!.orderItems!.isNotEmpty) ...[
+                            Column(
+                              children: _buildOrderItemCardList(),
+                            ),
+                            const Divider(
+                              color: Color(0xff315ccc),
+                              thickness: 3,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text(
+                                  "TOTAL",
                                   style: TextStyle(
-                                      color: Colors.white, fontSize: 16),
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff315ccc),
+                                  ),
                                 ),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Color(0xff315ccc),
+                                Text(
+                                  "${cart?.totalAmount} KM",
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    color: Color(0xff315ccc),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
+                              ],
+                            ),
+                            SizedBox(height: 15),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ElevatedButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      showShippingInfoForm = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    'Sljedeći korak',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 16),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xff315ccc),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
-                      ],
-                    ),
+                      ),
+                  ],
                 ],
-              ],
+              ),
             ),
-          ),
+          ],
         ]),
       ),
     );
@@ -372,8 +400,7 @@ class _CartScreenState extends State<CartScreen> {
             ElevatedButton(
               onPressed: submitOrder,
               style: ButtonStyle(
-                  backgroundColor:
-                      MaterialStateProperty.all(Color(0xff315ccc))),
+                  backgroundColor: WidgetStateProperty.all(Color(0xff315ccc))),
               child: Text("Završi narudžbu",
                   style: TextStyle(fontSize: 18, color: Colors.white)),
             ),
@@ -414,7 +441,6 @@ class _CartScreenState extends State<CartScreen> {
           transactions: [transaction],
           note: PAYPAL_NOTE,
           onSuccess: (Map params) async {
-            if (!mounted) return;
             try {
               String transactionId = params["data"]["id"];
 
@@ -424,8 +450,12 @@ class _CartScreenState extends State<CartScreen> {
               await _paymentProvider!.completePayment(selectedOrder.orderId!);
               await _orderProvider!.paidOrder(selectedOrder.orderId!);
 
+              setState(() {
+                paid = true;
+              });
+
               if (mounted) {
-                ScaffoldMessenger.of(context).showSnackBar(
+                _scaffoldMessengerState.showSnackBar(
                   const SnackBar(
                     content: Text(
                       "Plaćanje je uspješno procesuirano",
@@ -436,6 +466,21 @@ class _CartScreenState extends State<CartScreen> {
                 );
               }
             } catch (e) {
+              if (mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text(
+                      "Desila se greška prilikom obrade uspjeha plaćanja",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    backgroundColor: Colors.red,
+                  ),
+                );
+              }
+            }
+          },
+          onError: (error) {
+            if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
                   content: Text(
@@ -446,17 +491,6 @@ class _CartScreenState extends State<CartScreen> {
                 ),
               );
             }
-          },
-          onError: (error) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text(
-                  "Desila se greška prilikom procesuiranja plaćanja. Molimo kontaktirajte administratora",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Colors.red,
-              ),
-            );
 
             Navigator.pop(context);
           },

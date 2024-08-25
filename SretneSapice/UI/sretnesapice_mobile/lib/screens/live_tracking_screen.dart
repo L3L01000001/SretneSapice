@@ -177,30 +177,58 @@ class _LiveTrackingScreenState extends State<LiveTrackingScreen> {
     return Container(
       width: double.infinity,
       color: const Color.fromARGB(255, 255, 255, 255),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            CircleAvatar(
-                radius: 72,
-                child: walkerLocation!.dogWalker!.dogWalkerPhoto != ""
-                    ? imageFromBase64String(
-                        walkerLocation!.dogWalker!.dogWalkerPhoto!)
-                    : Icon(Icons.person, size: 82)),
-            SizedBox(height: 10),
-            Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  walkerLocation!.dogWalker!.fullName! ?? "Nema",
-                  style: TextStyle(color: Color(0xff1590a1), fontSize: 30),
-                ),
-                SizedBox(height: 8)
-              ],
+      child: walkerLocation == null
+          ? Container(
+              height: 150, child: Center(child: CircularProgressIndicator()))
+          : Container(
+              child: Column(
+                children: [
+                  SizedBox(height: 10),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      CircleAvatar(
+                          radius: 52,
+                          child: walkerLocation!.dogWalker!.dogWalkerPhoto != ""
+                              ? imageFromBase64String(
+                                  walkerLocation!.dogWalker!.dogWalkerPhoto!)
+                              : Icon(Icons.person, size: 52)),
+                      SizedBox(width: 10),
+                      Text(
+                        walkerLocation!.dogWalker!.fullName! ?? "Nema",
+                        style:
+                            TextStyle(color: Color(0xff1590a1), fontSize: 30),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Container(
+                    padding: EdgeInsets.symmetric(horizontal: 10.0),
+                    height: 50,
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          Color(0xff1590a1),
+                          Color(0xff31bacc),
+                        ],
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("LOKACIJA",
+                            style: TextStyle(
+                              fontSize: 24,
+                              color: Colors.white,
+                            )),
+                      ],
+                    ),
+                  )
+                ],
+              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

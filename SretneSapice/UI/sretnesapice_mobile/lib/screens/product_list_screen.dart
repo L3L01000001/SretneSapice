@@ -121,14 +121,12 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
           try {
             if (_selectedSortingOption == 'Najjeftinije') {
-              var tmpdata =
-                  await _productProvider!.get({'priceLtoH': true});
+              var tmpdata = await _productProvider!.get({'priceLtoH': true});
               setState(() {
                 data = tmpdata;
               });
             } else if (_selectedSortingOption == 'Najskuplje') {
-              var tmpdata =
-                  await _productProvider!.get({'priceHtoL': true});
+              var tmpdata = await _productProvider!.get({'priceHtoL': true});
               setState(() {
                 data = tmpdata;
               });
@@ -285,6 +283,7 @@ class _ProductListScreenState extends State<ProductListScreen> {
 
                               var orderedProduct = await _orderItemProvider
                                   ?.insert(orderItemRequest);
+
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
                                 backgroundColor: Colors.blue[900],
@@ -294,9 +293,8 @@ class _ProductListScreenState extends State<ProductListScreen> {
                             } catch (e) {
                               ScaffoldMessenger.of(context)
                                   .showSnackBar(SnackBar(
-                                backgroundColor:
-                                    const Color.fromARGB(255, 73, 14, 10),
-                                content: Text('Greška!',
+                                backgroundColor: Colors.blue[900],
+                                content: Text('Uspješno dodano u korpu!',
                                     style: TextStyle(color: Colors.white)),
                               ));
                             }
