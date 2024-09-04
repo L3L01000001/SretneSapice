@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sretnesapice_mobile/screens/cart_screen.dart';
 import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
+import 'package:sretnesapice_mobile/screens/fromToDo4924.dart';
 import 'package:sretnesapice_mobile/screens/product_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/settings_screen.dart';
 
@@ -40,7 +41,7 @@ class _MasterScreenWidgetState extends State<MasterScreenWidget> {
       case 0:
         return ForumPostListScreen.routeName;
       case 1:
-        return DogWalkerListScreen.routeName;
+        return FromToDo4924ListScreen.routeName;
       case 2:
         return ProductListScreen.routeName;
       case 3:

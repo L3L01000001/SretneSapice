@@ -76,6 +76,9 @@ namespace SretneSapice.Services.Profiles
             CreateMap<DogWalkerLocation, DogWalkerLocationDto>();
             CreateMap<DogWalkerLocationInsertRequest, DogWalkerLocation>();
 
+            CreateMap<ToDo4924, ToDo4924Dto>();
+            CreateMap<ToDo4924InsertRequest, ToDo4924>();
+
             CreateMap<List<string>, ICollection<Tag>>()
             .ConvertUsing<StringListToTagCollectionConverter>();
         }

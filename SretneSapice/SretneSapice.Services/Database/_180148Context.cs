@@ -54,6 +54,7 @@ public partial class _180148Context : DbContext
     public virtual DbSet<UserRole> UserRoles { get; set; }
 
     public virtual DbSet<ForumPostTag> ForumPostTags { get; set; }
+    public virtual DbSet<ToDo4924> ToDo4924s { get; set; }
 
     public virtual DbSet<UserShippingInformation> UserShippingInformations { get; set; }
 

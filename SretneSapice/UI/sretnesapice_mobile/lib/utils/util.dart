@@ -64,6 +64,16 @@ String formatPrice(dynamic value) {
   return f.format(value);
 }
 
+String formatDateOnly(dynamic) {
+  var d = DateFormat('dd.MM.yyyy');
+
+  if (dynamic == null) {
+    return "";
+  }
+
+  return d.format(dynamic);
+}
+
 Future<dynamic> errorDialog(BuildContext context, Object e) {
   return showDialog(
       context: context,

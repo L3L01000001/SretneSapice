@@ -16,6 +16,7 @@ import 'package:sretnesapice_mobile/providers/product_type_provider.dart';
 import 'package:sretnesapice_mobile/providers/role_provider.dart';
 import 'package:sretnesapice_mobile/providers/service_request_provider.dart';
 import 'package:sretnesapice_mobile/providers/tag_provider.dart';
+import 'package:sretnesapice_mobile/providers/to_do_4924_provider.dart';
 import 'package:sretnesapice_mobile/providers/user_provider.dart';
 import 'package:sretnesapice_mobile/providers/user_shipping_information_provider.dart';
 import 'package:sretnesapice_mobile/providers/walker_review_provider.dart';
@@ -28,6 +29,7 @@ import 'package:sretnesapice_mobile/screens/dog_walker_list_screen.dart';
 import 'package:sretnesapice_mobile/screens/edit_profile_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_details_screen.dart';
 import 'package:sretnesapice_mobile/screens/forum_post_list_screen.dart';
+import 'package:sretnesapice_mobile/screens/fromToDo4924.dart';
 import 'package:sretnesapice_mobile/screens/live_tracking_screen.dart';
 import 'package:sretnesapice_mobile/screens/product_details_screen.dart';
 import 'package:sretnesapice_mobile/screens/product_list_screen.dart';
@@ -63,6 +65,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => ServiceRequestProvider()),
       ChangeNotifierProvider(create: (_) => AvailabilityProvider()),
       ChangeNotifierProvider(create: (_) => DogWalkerLocationProvider()),
+      ChangeNotifierProvider(create: (_) => ToDo4924Provider())
     ],
     child: MaterialApp(
       debugShowCheckedModeBanner: true,
@@ -121,6 +124,9 @@ void main() async {
         } else if (settings.name == LiveTrackingScreen.routeName) {
           return MaterialPageRoute(
               builder: ((context) => LiveTrackingScreen(dogWalker: 0)));
+        } else if (settings.name == FromToDo4924ListScreen.routeName) {
+          return MaterialPageRoute(
+              builder: ((context) => FromToDo4924ListScreen()));
         }
 
         var uri = Uri.parse(settings.name!);

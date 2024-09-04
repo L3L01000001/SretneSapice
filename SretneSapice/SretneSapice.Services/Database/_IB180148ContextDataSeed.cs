@@ -209,7 +209,11 @@ namespace SretneSapice.Services.Database
                 new WalkerReview() { ReviewId = 1, DogWalkerId = 1, UserId = 2, Rating = 5, ReviewText = "Usluga odlicno odradjena! Opet cu zakazati.", Timestamp = DateTime.Now }
             );
 
-
+            modelBuilder.Entity<ToDo4924>().HasData
+            (
+                new ToDo4924() { ToDoId = 1, NazivAktivnosti = "Aktivnost 1", OpisAktivnosti = "Opis akt", DatumIzvrsenja = new DateTime(2024, 6, 19, 11, 0, 0), StatusAktivnosti = "U toku", UserId = 5 },
+                new ToDo4924() { ToDoId = 2, NazivAktivnosti = "Aktivnost 2", OpisAktivnosti = "Opis akt2", DatumIzvrsenja = new DateTime(2024, 8, 19, 11, 0, 0), StatusAktivnosti = "U toku", UserId = 2 }
+            );
 
         }
     }
